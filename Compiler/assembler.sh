@@ -1,5 +1,9 @@
 #! /bin/bash
 
+# Converts a C file to an Assembly file
+# Links and generates an executable
+# ./assembler.sh file.c
+
 file=$1
 echo ""
 cat ${file}
