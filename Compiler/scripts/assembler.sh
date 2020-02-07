@@ -1,17 +1,15 @@
 #! /bin/bash
 
-# Converts a C file to an Assembly file
+# Compiles a C file to an Assembly file
 # Links and generates an executable
 # ./assembler.sh file.c
 
 file=$1
-echo ""
-cat ${file}
-echo -e "\n"
+echo "Converted: $1"
 filename="${file%.*}"
 
 # compiler
-clang -S ${file} -o ${filename}.s
+gcc -S -w ${file} -o ${filename}.s
 
 # assembler
 as -o ${filename}.o ${filename}.s
