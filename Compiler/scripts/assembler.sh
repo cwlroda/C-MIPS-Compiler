@@ -11,15 +11,12 @@ echo -e "\n"
 filename="${file%.*}"
 
 # compiler
-gcc -S ${file} -o ${filename}".s"
+clang -S ${file} -o ${filename}.s
 
 # assembler
-as -o ${filename}".o" ${filename}".s"
+as -o ${filename}.o ${filename}.s
 
-#linker
-ld -macosx_version_min 10.14.0 -o ${filename} ${filename}.o -lSystem
-
-# executable
-./${filename}
-echo $?
+# linker
+# NOTE: does not work with multiple files
+# ld -macosx_version_min 10.14.0 -o ${filename} ${filename}.o -lSystem
 
