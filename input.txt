@@ -1,0 +1,9 @@
+int A;
+int B;
+if(A==10){
+    if(B==20){
+        A=B;
+    }
+    B=A;
+}
+int C;
