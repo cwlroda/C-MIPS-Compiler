@@ -4,7 +4,7 @@
   #include <cassert>
   #include <math.h>
 
-  extern const Expression *g_root; // A way of getting the AST out
+  extern const nodePtr *g_root; // A way of getting the AST out
 
   //! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
@@ -43,12 +43,12 @@
 
 ROOT: PROGRAM_LIST{ g_root = $1; };
 
-PROG: PROG FUNCTION 	{ $$ = new Top_List($2, $1);}
-    |	PROG G_VAR    	{ $$ = new Top_List($2, $1); }
-    |	PROG G_ARR		{ $$ = new Top_List($2, $1); }
-    | 	FUNC            { $$ = new Top_List($1, NULL); }
-    | 	G_VAR           { $$ = new Top_List($1, NULL); }
-    | 	G_ARR			{ $$ = new Top_List($1, NULL); }
+PROG: PROG FUNCTION 	{ $$ = new Top($2, $1);}
+    |	PROG G_VAR    	{ $$ = new Top($2, $1); }
+    |	PROG G_ARR		{ $$ = new Top($2, $1); }
+    | 	FUNC            { $$ = new Top($1, NULL); }
+    | 	G_VAR           { $$ = new Top($1, NULL); }
+    | 	G_ARR			{ $$ = new Top($1, NULL); }
 
 FUNC: TYPE VAR L_BRACKET PARAM R_BRACKET L_CURLY SCOPE R_CURLY  { $$ = new FuncDef(*$1, *$2, $4, $7); }
     | 	TYPE VAR L_BRACKET R_BRACKET L_CURLY SCOPE R_CURLY      { $$ = new FuncDef(*$1, *$2, NULL, $6); }
