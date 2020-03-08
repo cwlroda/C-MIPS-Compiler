@@ -1,0 +1,383 @@
+Nonterminals useless in grammar
+
+    IF_ELSE
+    EXPR
+
+
+Terminals unused in grammar
+
+    T_IF
+    T_ELSE
+    T_PLUS
+    T_MINUS
+
+
+Rules useless in grammar
+
+   16 STATEMENT: EXPR
+   17          | IF_ELSE
+
+   18 RETURN: T_RETURN EXPR T_SEMICOLON
+
+   19 IF_ELSE: T_IF EXPR STATEMENT T_ELSE STATEMENT
+   20        | T_IF EXPR STATEMENT
+
+   21 EXPR: EXPR T_PLUS EXPR
+   22     | EXPR T_MINUS EXPR
+
+
+Grammar
+
+    0 $accept: ROOT $end
+
+    1 ROOT: PROG
+
+    2 PROG: PROG FUNC
+    3     | FUNC
+
+    4 FUNC: TYPE T_VAR T_LBRACKET PARAM T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    5     | TYPE T_VAR T_LBRACKET T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    6     | TYPE T_VAR T_LBRACKET PARAM T_RBRACKET T_SEMICOLON
+    7     | TYPE T_VAR T_LBRACKET T_RBRACKET T_SEMICOLON
+
+    8 TYPE: T_INT
+    9     | T_CHAR
+
+   10 PARAM: PARAM T_COMMA TYPE T_VAR
+   11      | TYPE T_VAR
+
+   12 SCOPE: SCOPE STATEMENT
+   13      | STATEMENT
+
+   14 STATEMENT: RETURN
+
+   15 RETURN: T_RETURN T_SEMICOLON
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    T_INT <string> (258) 8
+    T_CHAR <string> (259) 9
+    T_RETURN (260) 15
+    T_IF (261)
+    T_ELSE (262)
+    T_PLUS (263)
+    T_MINUS (264)
+    T_LBRACKET (265) 4 5 6 7
+    T_RBRACKET (266) 4 5 6 7
+    T_LCURLY (267) 4 5
+    T_RCURLY (268) 4 5
+    T_VAR <string> (269) 4 5 6 7 10 11
+    T_SEMICOLON (270) 6 7 15
+    T_COMMA (271) 10
+
+
+Nonterminals, with rules where they appear
+
+    $accept (17)
+        on left: 0
+    ROOT (18)
+        on left: 1
+        on right: 0
+    PROG <expr> (19)
+        on left: 2 3
+        on right: 1 2
+    FUNC <expr> (20)
+        on left: 4 5 6 7
+        on right: 2 3
+    TYPE <string> (21)
+        on left: 8 9
+        on right: 4 5 6 7 10 11
+    PARAM <expr> (22)
+        on left: 10 11
+        on right: 4 6 10
+    SCOPE <expr> (23)
+        on left: 12 13
+        on right: 4 5 12
+    STATEMENT <expr> (24)
+        on left: 14
+        on right: 12 13
+    RETURN <expr> (25)
+        on left: 15
+        on right: 14
+
+
+State 0
+
+    0 $accept: . ROOT $end
+
+    T_INT   shift, and go to state 1
+    T_CHAR  shift, and go to state 2
+
+    ROOT  go to state 3
+    PROG  go to state 4
+    FUNC  go to state 5
+    TYPE  go to state 6
+
+
+State 1
+
+    8 TYPE: T_INT .
+
+    $default  reduce using rule 8 (TYPE)
+
+
+State 2
+
+    9 TYPE: T_CHAR .
+
+    $default  reduce using rule 9 (TYPE)
+
+
+State 3
+
+    0 $accept: ROOT . $end
+
+    $end  shift, and go to state 7
+
+
+State 4
+
+    1 ROOT: PROG .
+    2 PROG: PROG . FUNC
+
+    T_INT   shift, and go to state 1
+    T_CHAR  shift, and go to state 2
+
+    $default  reduce using rule 1 (ROOT)
+
+    FUNC  go to state 8
+    TYPE  go to state 6
+
+
+State 5
+
+    3 PROG: FUNC .
+
+    $default  reduce using rule 3 (PROG)
+
+
+State 6
+
+    4 FUNC: TYPE . T_VAR T_LBRACKET PARAM T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    5     | TYPE . T_VAR T_LBRACKET T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    6     | TYPE . T_VAR T_LBRACKET PARAM T_RBRACKET T_SEMICOLON
+    7     | TYPE . T_VAR T_LBRACKET T_RBRACKET T_SEMICOLON
+
+    T_VAR  shift, and go to state 9
+
+
+State 7
+
+    0 $accept: ROOT $end .
+
+    $default  accept
+
+
+State 8
+
+    2 PROG: PROG FUNC .
+
+    $default  reduce using rule 2 (PROG)
+
+
+State 9
+
+    4 FUNC: TYPE T_VAR . T_LBRACKET PARAM T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    5     | TYPE T_VAR . T_LBRACKET T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    6     | TYPE T_VAR . T_LBRACKET PARAM T_RBRACKET T_SEMICOLON
+    7     | TYPE T_VAR . T_LBRACKET T_RBRACKET T_SEMICOLON
+
+    T_LBRACKET  shift, and go to state 10
+
+
+State 10
+
+    4 FUNC: TYPE T_VAR T_LBRACKET . PARAM T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    5     | TYPE T_VAR T_LBRACKET . T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    6     | TYPE T_VAR T_LBRACKET . PARAM T_RBRACKET T_SEMICOLON
+    7     | TYPE T_VAR T_LBRACKET . T_RBRACKET T_SEMICOLON
+
+    T_INT       shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_RBRACKET  shift, and go to state 11
+
+    TYPE   go to state 12
+    PARAM  go to state 13
+
+
+State 11
+
+    5 FUNC: TYPE T_VAR T_LBRACKET T_RBRACKET . T_LCURLY SCOPE T_RCURLY
+    7     | TYPE T_VAR T_LBRACKET T_RBRACKET . T_SEMICOLON
+
+    T_LCURLY     shift, and go to state 14
+    T_SEMICOLON  shift, and go to state 15
+
+
+State 12
+
+   11 PARAM: TYPE . T_VAR
+
+    T_VAR  shift, and go to state 16
+
+
+State 13
+
+    4 FUNC: TYPE T_VAR T_LBRACKET PARAM . T_RBRACKET T_LCURLY SCOPE T_RCURLY
+    6     | TYPE T_VAR T_LBRACKET PARAM . T_RBRACKET T_SEMICOLON
+   10 PARAM: PARAM . T_COMMA TYPE T_VAR
+
+    T_RBRACKET  shift, and go to state 17
+    T_COMMA     shift, and go to state 18
+
+
+State 14
+
+    5 FUNC: TYPE T_VAR T_LBRACKET T_RBRACKET T_LCURLY . SCOPE T_RCURLY
+
+    T_RETURN  shift, and go to state 19
+
+    SCOPE      go to state 20
+    STATEMENT  go to state 21
+    RETURN     go to state 22
+
+
+State 15
+
+    7 FUNC: TYPE T_VAR T_LBRACKET T_RBRACKET T_SEMICOLON .
+
+    $default  reduce using rule 7 (FUNC)
+
+
+State 16
+
+   11 PARAM: TYPE T_VAR .
+
+    $default  reduce using rule 11 (PARAM)
+
+
+State 17
+
+    4 FUNC: TYPE T_VAR T_LBRACKET PARAM T_RBRACKET . T_LCURLY SCOPE T_RCURLY
+    6     | TYPE T_VAR T_LBRACKET PARAM T_RBRACKET . T_SEMICOLON
+
+    T_LCURLY     shift, and go to state 23
+    T_SEMICOLON  shift, and go to state 24
+
+
+State 18
+
+   10 PARAM: PARAM T_COMMA . TYPE T_VAR
+
+    T_INT   shift, and go to state 1
+    T_CHAR  shift, and go to state 2
+
+    TYPE  go to state 25
+
+
+State 19
+
+   15 RETURN: T_RETURN . T_SEMICOLON
+
+    T_SEMICOLON  shift, and go to state 26
+
+
+State 20
+
+    5 FUNC: TYPE T_VAR T_LBRACKET T_RBRACKET T_LCURLY SCOPE . T_RCURLY
+   12 SCOPE: SCOPE . STATEMENT
+
+    T_RETURN  shift, and go to state 19
+    T_RCURLY  shift, and go to state 27
+
+    STATEMENT  go to state 28
+    RETURN     go to state 22
+
+
+State 21
+
+   13 SCOPE: STATEMENT .
+
+    $default  reduce using rule 13 (SCOPE)
+
+
+State 22
+
+   14 STATEMENT: RETURN .
+
+    $default  reduce using rule 14 (STATEMENT)
+
+
+State 23
+
+    4 FUNC: TYPE T_VAR T_LBRACKET PARAM T_RBRACKET T_LCURLY . SCOPE T_RCURLY
+
+    T_RETURN  shift, and go to state 19
+
+    SCOPE      go to state 29
+    STATEMENT  go to state 21
+    RETURN     go to state 22
+
+
+State 24
+
+    6 FUNC: TYPE T_VAR T_LBRACKET PARAM T_RBRACKET T_SEMICOLON .
+
+    $default  reduce using rule 6 (FUNC)
+
+
+State 25
+
+   10 PARAM: PARAM T_COMMA TYPE . T_VAR
+
+    T_VAR  shift, and go to state 30
+
+
+State 26
+
+   15 RETURN: T_RETURN T_SEMICOLON .
+
+    $default  reduce using rule 15 (RETURN)
+
+
+State 27
+
+    5 FUNC: TYPE T_VAR T_LBRACKET T_RBRACKET T_LCURLY SCOPE T_RCURLY .
+
+    $default  reduce using rule 5 (FUNC)
+
+
+State 28
+
+   12 SCOPE: SCOPE STATEMENT .
+
+    $default  reduce using rule 12 (SCOPE)
+
+
+State 29
+
+    4 FUNC: TYPE T_VAR T_LBRACKET PARAM T_RBRACKET T_LCURLY SCOPE . T_RCURLY
+   12 SCOPE: SCOPE . STATEMENT
+
+    T_RETURN  shift, and go to state 19
+    T_RCURLY  shift, and go to state 31
+
+    STATEMENT  go to state 28
+    RETURN     go to state 22
+
+
+State 30
+
+   10 PARAM: PARAM T_COMMA TYPE T_VAR .
+
+    $default  reduce using rule 10 (PARAM)
+
+
+State 31
+
+    4 FUNC: TYPE T_VAR T_LBRACKET PARAM T_RBRACKET T_LCURLY SCOPE T_RCURLY .
+
+    $default  reduce using rule 4 (FUNC)

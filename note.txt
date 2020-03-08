@@ -1,0 +1,6 @@
+- Strings are null-terminated char arrays
+- char str[6] = "Hello";
+- char str[6] = {'H', 'e', 'l', 'l', 'o', '\0'}
+
+- No negative numbers in C
+- Use unary operator
