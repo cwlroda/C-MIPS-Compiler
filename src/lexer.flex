@@ -12,18 +12,20 @@ extern FILE *yyout;
 
 %%
 
-"int"               { yylval.string=new std::string(yytext); return INT; }
-"return"            { yylval.string=new std::string(yytext); return RETURN; }
+"int"               { yylval.string=new std::string(yytext); ECHO; return INT; }
+"return"            { yylval.string=new std::string(yytext); ECHO; return RETURN; }
 
-[0-9]               { yylval.string=new std::string(yytext); return CONSTANT; }
-[a-z]+              { yylval.string=new std::string(yytext); return IDENTIFIER; }
+[0-9]+              { yylval.string=new std::string(yytext); ECHO; return CONSTANT; }
+[a-z]+              { yylval.string=new std::string(yytext); ECHO; return IDENTIFIER; }
 
-"("                 { return LB; }
-")"                 { return RB; }
-"{"                 { return LCB; }
-"}"                 { return RCB; }
-"["                 { return LSB; }
-"]"                 { return RSB; }
+"("                 { ECHO; return LB; }
+")"                 { ECHO; return RB; }
+"{"                 { ECHO; return LCB; }
+"}"                 { ECHO; return RCB; }
+"["                 { ECHO; return LSB; }
+"]"                 { ECHO; return RSB; }
+
+";"                 { ECHO; return SEMICOLON; }
 
 [ \t\r\n]+		    {;}
 
