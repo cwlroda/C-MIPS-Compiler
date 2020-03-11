@@ -4,7 +4,7 @@
     #include <cassert>
     #include <fstream>
 
-    extern FILE *yyinput;
+    extern FILE *yyin;
     extern const TranslationUnit *g_root; // A way of getting the AST out
 
     // ! This is to fix problems when generating C++
@@ -32,13 +32,11 @@
     Declarator *declr;
     DirectDeclarator *dir_declr;
     Pointer *ptr;
-    TypeQualifierList *type_qual_list;
     ParameterTypeList *param_type_list;
     ParameterList *param_list;
     ParameterDeclaration *param_decl;
     IdentifierList *iden_list;
     ConstantExpr *const_expr;
-    TypeQualifier *type_qual;
     AbstractDeclarator *abs_declr;
     DirectAbstractDeclarator *dir_abs_declr;
     ConditionalExpr *cond_expr;
@@ -70,8 +68,7 @@
     JumpStatement *jump_state;
     StorageClassSpecifier *store_spec;
     TypeSpecifier *type_spec;
-    StructUnionSpecifier *struct_union_spec;
-    StructUnion *struct_union;
+    StructSpecifier *struct_spec;
     StructDeclarationList *struct_decl_list;
     StructDeclaration *struct_decl;
     SpecifierQualifierList *spec_qual_list;
@@ -79,32 +76,33 @@
     StructDeclarator *struct_declr;
     EnumSpecifier *enum_spec;
     EnumeratorList *enum_list;
-    Enumerator *enum;
-    TypedefName *type_name;
+    Enumerator *enumr;
+
+    std::string *string;
 }
 
-%token CONSTANT STRING_LITERAL IDENTIFIER SIZEOF SEMICOLON
+%token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF SEMICOLON
 %token INCREMENT DECREMENT LSHIFT RSHIFT LE GE EQUALITY NOTEQUAL ARROW DOT
 %token LOGICAL_OR LOGICAL_AND PLUSEQUAL MULEQUAL DIVEQUAL MODEQUAL
 %token MINUSEQUAL ANDEQUAL LSHIFTEQUAL RSHIFTEQUAL
 %token EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
-%token BITWISE_OR BITWISE_AND EXCLAMATION QUESTION XOR
+%token BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
 %token TYPEDEF EXTERN STATIC AUTO REGISTER
 %token VOID CHAR SHORT INT LONG FLOAT DOUBLE SIGNED UNSIGNED CONST VOLATILE
-%token STRUCT UNION ENUM ELLIPSIS
-%token IF ELSE SWITCH CASE DEFAULT FOR DO WHILE GOTO CONTINUE BREAK RETURN TYPE_NAME
+%token STRUCT ENUM ELLIPSIS
+%token IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
 %token LB RB LSB RSB LCB RCB COLON COMMA
 
-%type <string> CONSTANT STRING_LITERAL IDENTIFIER SIZEOF SEMICOLON
+%type <string> IDENTIFIER CONSTANT STRING_LITERAL SIZEOF SEMICOLON
 %type <string> INCREMENT DECREMENT LSHIFT RSHIFT LE GE EQUALITY NOTEQUAL ARROW DOT
 %type <string> LOGICAL_OR LOGICAL_AND PLUSEQUAL MULEQUAL DIVEQUAL MODEQUAL
 %type <string> MINUSEQUAL ANDEQUAL LSHIFTEQUAL RSHIFTEQUAL
 %type <string> EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
-%type <string> BITWISE_OR BITWISE_AND EXCLAMATION QUESTION XOR
+%type <string> BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
 %type <string> TYPEDEF EXTERN STATIC AUTO REGISTER
 %type <string> VOID CHAR SHORT INT LONG FLOAT DOUBLE SIGNED UNSIGNED CONST VOLATILE
-%type <string> STRUCT UNION ENUM ELLIPSIS
-%type <string> IF ELSE SWITCH CASE DEFAULT FOR DO WHILE GOTO CONTINUE BREAK RETURN TYPE_NAME
+%type <string> STRUCT ENUM ELLIPSIS
+%type <string> IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
 %type <string> LB RB LSB RSB LCB RCB COLON COMMA
 
 %type <trans_unit> TRANSLATION_UNIT
@@ -122,20 +120,18 @@
 %type <declr> DECLARATOR
 %type <dir_declr> DIRECT_DECLARATOR
 %type <ptr> POINTER
-%type <type_qual_list> TYPE_QUALIFIER_LIST
 %type <param_type_list> PARAMETER_TYPE_LIST
 %type <param_list> PARAMETER_LIST
 %type <param_decl> PARAMETER_DECLARATION
 %type <iden_list> IDENTIFIER_LIST
 %type <const_expr> CONSTANT_EXPR
-%type <type_qual> TYPE_QUALIFIER
 %type <abs_declr> ABSTRACT_DECLARATOR
 %type <dir_abs_declr> DIRECT_ABSTRACT_DECLARATOR
 %type <cond_expr> CONDITIONAL_EXPR
 %type <log_or_expr> LOGICAL_OR_EXPR
 %type <log_and_expr> LOGICAL_AND_EXPR
 %type <incl_or_expr> INCLUSIVE_OR_EXPR
-%type <excl_or_expr> EXCLUSIVE_OR_EXPRESSION
+%type <excl_or_expr> EXCLUSIVE_OR_EXPR
 %type <and_expr> AND_EXPR
 %type <equal_expr> EQUALITY_EXPR
 %type <rel_expr> RELATIONAL_EXPR
@@ -160,8 +156,7 @@
 %type <jump_state> JUMP_STATEMENT
 %type <store_spec> STORAGE_CLASS_SPECIFIER
 %type <type_spec> TYPE_SPECIFIER
-%type <struct_union_spec> STRUCT_UNION_SPECIFIER
-%type <struct_union> STRUCT_UNION
+%type <struct_spec> STRUCT_SPECIFIER
 %type <struct_decl_list> STRUCT_DECLARATION_LIST
 %type <struct_decl> STRUCT_DECLARATION
 %type <spec_qual_list> SPECIFIER_QUALIFIER_LIST
@@ -170,7 +165,6 @@
 %type <enum_spec> ENUM_SPECIFIER
 %type <enum_list> ENUMERATOR_LIST
 %type <enum> ENUMERATOR
-%type <type_name> TYPEDEF_NAME
 
 %start ROOT
 
@@ -178,331 +172,276 @@
 
 ROOT: TRANSLATION_UNIT { g_root = $1; }
 
-TRANSLATION_UNIT: EXTERNAL_DECLARATION
-                | TRANSLATION_UNIT EXTERNAL_DECLARATION
+TRANSLATION_UNIT: EXTERNAL_DECLARATION                                                          { $$ = new TranslationUnit($1, NULL); }
+                | TRANSLATION_UNIT EXTERNAL_DECLARATION                                         { $$ = new TranslationUnit($2, $1); }
 
-EXTERNAL_DECLARATION: FUNCTION_DEFINITION
-                    | DECLARATION
+EXTERNAL_DECLARATION: FUNCTION_DEFINITION                                                       { $$ = new ExternalDeclaration($1, NULL); }
+                    | DECLARATION                                                               { $$ = new ExternalDeclaration(NULL, $1); }
 
-FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT
-                |    DECLARATION_SPECIFIER DECLARATOR COMPOUND_STATEMENT
-                |    DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT
-                |    DECLARATOR COMPOUND_STATEMENT
+FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT       { $$ = new FunctionDefinition($1, $2, $3, $4); }
+                |    DECLARATION_SPECIFIER DECLARATOR COMPOUND_STATEMENT                        { $$ = new FunctionDefinition($1, $2, NULL, $3); }
+                |    DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT                             { $$ = new FunctionDefinition(NULL, $1, $2, $3); }
+                |    DECLARATOR COMPOUND_STATEMENT                                              { $$ = new FunctionDefinition(NULL, $1, NULL, $2); }
 
-DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR_LIST
-        |    DECLARATION_SPECIFIER
+DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR_LIST                                         { $$ = new Declaration($1, $2); }
+        |    DECLARATION_SPECIFIER                                                              { $$ = new Declaration($1, NULL); }
 
-DECLARATION_SPECIFIER: STORAGE_CLASS_SPECIFIER DECLARATION_SPECIFIER
-                    |  STORAGE_CLASS_SPECIFIER
-                    |  TYPE_SPECIFIER DECLARATION_SPECIFIER
-                    |  TYPE_SPECIFIER
-                    |  TYPE_QUALIFIER DECLARATION_SPECIFIER
-                    |  TYPE_QUALIFIER
+DECLARATION_SPECIFIER: STORAGE_CLASS_SPECIFIER DECLARATION_SPECIFIER                            { $$ = new DeclarationSpecifier($1, NULL, $2); }
+                    |  STORAGE_CLASS_SPECIFIER                                                  { $$ = new DeclarationSpecifier($1, NULL, NULL); }
+                    |  TYPE_SPECIFIER DECLARATION_SPECIFIER                                     { $$ = new DeclarationSpecifier(NULL, $1, $2); }
+                    |  TYPE_SPECIFIER                                                           { $$ = new DeclarationSpecifier(NULL, $1, NULL); }
 
-DECLARATION_LIST: DECLARATION
-                | DECLARATION_LIST DECLARATION
+DECLARATION_LIST: DECLARATION                                                                   { $$ = new DeclarationList(NULL, $1); }
+                | DECLARATION_LIST DECLARATION                                                  { $$ = new DeclarationList($1, $2); }
 
-COMPOUND_STATEMENT: LCB DECLARATION_LIST STATEMENT_LIST RCB
-                |   LCB DECLARATION_LIST RCB
-                |   LCB STATEMENT_LIST RCB
-                |   LCB RCB
+COMPOUND_STATEMENT: LCB DECLARATION_LIST STATEMENT_LIST RCB                                     { $$ = new CompoundStatement($2, $3); }
+                |   LCB DECLARATION_LIST RCB                                                    { $$ = new CompoundStatement($2, NULL); }
+                |   LCB STATEMENT_LIST RCB                                                      { $$ = new CompoundStatement(NULL, $2); }
+                |   LCB RCB                                                                     { $$ = new CompoundStatement(NULL, NULL); }
 
-STATEMENT_LIST: STATEMENT
-            |   STATEMENT_LIST STATEMENT
+STATEMENT_LIST: STATEMENT                                                                       { $$ = new StatementList($1, NULL); }
+            |   STATEMENT_LIST STATEMENT                                                        { $$ = new StatementList($2, $1); }
 
-INIT_DECLARATOR_LIST: INIT_DECLARATOR
-                    | INIT_DECLARATOR_LIST COMMA INIT_DECLARATOR
+INIT_DECLARATOR_LIST: INIT_DECLARATOR                                                           { $$ = new InitDeclaratorList(NULL, $1); }
+                    | INIT_DECLARATOR_LIST COMMA INIT_DECLARATOR                                { $$ = new InitDeclaratorList($1, $3); }
 
-INIT_DECLARATOR: DECLARATOR
-            |    DECLARATOR EQUAL INITIALIZER
+INIT_DECLARATOR: DECLARATOR                                                                     { $$ = new InitDeclarator($1, NULL); }
+            |    DECLARATOR EQUAL INITIALIZER                                                   { $$ = new InitDeclarator($1, $3); }
 
-INITIALIZER: ASSIGNMENT_EXPR
-        |    LCB INITIALIZER_LIST RCB
-        |    LCB INITIALIZER_LIST COMMA RCB
+INITIALIZER: ASSIGNMENT_EXPR                                                                    { $$ = new Initializer($1, NULL); }
+        |    LCB INITIALIZER_LIST RCB                                                           { $$ = new Initializer(NULL, $2); }
+        |    LCB INITIALIZER_LIST COMMA RCB                                                     { $$ = new Initializer(NULL, $2); }
 
-INITIALIZER_LIST: INITIALIZER
-                | INITIALIZER_LIST COMMA INITIALIZER
+INITIALIZER_LIST: INITIALIZER                                                                   { $$ = new InitializerList($1, NULL); }
+                | INITIALIZER_LIST COMMA INITIALIZER                                            { $$ = new InitializerList($3, $1); }
 
-DECLARATOR: POINTER DIRECT_DECLARATOR
-        |   DIRECT_DECLARATOR
-
-DIRECT_DECLARATOR: IDENTIFIER
-                |  LB DECLARATOR RB
-                |  DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB
-                |  DIRECT_DECLARATOR LSB RSB
-                |  DIRECT_DECLARATOR LB PARAMETER_TYPE_LIST RB
-                |  DIRECT_DECLARATOR LB IDENTIFIER_LIST RB
-                |  DIRECT_DECLARATOR LB RB
-
-POINTER: ASTERISK TYPE_QUALIFIER_LIST POINTER
-    |    ASTERISK TYPE_QUALIFIER_LIST
-    |    ASTERISK POINTER
-    |    ASTERISK
-
-TYPE_QUALIFIER_LIST: TYPE_QUALIFIER
-                |    TYPE_QUALIFIER_LIST TYPE_QUALIFIER
-
-PARAMETER_TYPE_LIST: PARAMETER_LIST
-                |    PARAMETER_LIST COMMA ELLIPSIS
-
-PARAMETER_LIST: PARAMETER_DECLARATION
-            |   PARAMETER_LIST COMMA PARAMETER_DECLARATION
-
-PARAMETER_DECLARATION: DECLARATION_SPECIFIER DECLARATOR
-                    |  DECLARATION_SPECIFIER ABSTRACT_DECLARATOR
-                    |  DECLARATION_SPECIFIER
-
-IDENTIFIER_LIST: IDENTIFIER
-            |    IDENTIFIER_LIST COMMA IDENTIFIER
-
-CONSTANT_EXPR: CONDITIONAL_EXPR
-
-TYPE_QUALIFIER: CONST
-            |   VOLATILE
-
-ABSTRACT_DECLARATOR: POINTER
-                |    POINTER DIRECT_ABSTRACT_DECLARATOR
-                |    DIRECT_ABSTRACT_DECLARATOR
-
-DIRECT_ABSTRACT_DECLARATOR: LB ABSTRACT_DECLARATOR RB
-                        |   DIRECT_ABSTRACT_DECLARATOR LSB CONSTANT_EXPR RSB
-                        |   DIRECT_ABSTRACT_DECLARATOR LSB RSB
-                        |   LSB CONSTANT_EXPR RSB
-                        |   LSB RSB
-                        |   DIRECT_ABSTRACT_DECLARATOR LB PARAMETER_TYPE_LIST RB
-                        |   DIRECT_ABSTRACT_DECLARATOR LB RB
-                        |   LB PARAMETER_TYPE_LIST RB
-                        |   LB RB
-
-CONDITIONAL_EXPR: LOGICAL_OR_EXPR
-                | LOGICAL_OR_EXPR QUESTION EXPR COLON CONDITIONAL_EXPR
-
-LOGICAL_OR_EXPR: LOGICAL_AND_EXPR
-            |    LOGICAL_OR_EXPR LOGICAL_OR LOGICAL_AND_EXPR
-
-LOGICAL_AND_EXPR: INCLUSIVE_OR_EXPR
-                | LOGICAL_AND_EXPR LOGICAL_AND INCLUSIVE_OR_EXPR
-
-INCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPRESSION
-                |  INCLUSIVE_OR_EXPR BITWISE_OR EXCLUSIVE_OR_EXPRESSION
-
-EXCLUSIVE_OR_EXPRESSION: AND_EXPR
-                    |    EXCLUSIVE_OR_EXPRESSION XOR AND_EXPR
-
-AND_EXPR: EQUALITY_EXPR
-        | AND_EXPR BITWISE_AND EQUALITY_EXPR
-
-EQUALITY_EXPR: RELATIONAL_EXPR
-            |  EQUALITY_EXPR EQUALITY RELATIONAL_EXPR
-            |  EQUALITY_EXPR NOTEQUAL RELATIONAL_EXPR
-
-RELATIONAL_EXPR: SHIFT_EXPR
-            |    RELATIONAL_EXPR LT SHIFT_EXPR
-            |    RELATIONAL_EXPR GT SHIFT_EXPR
-            |    RELATIONAL_EXPR LE SHIFT_EXPR
-            |    RELATIONAL_EXPR GE SHIFT_EXPR
-
-SHIFT_EXPR: ADDITIVE_EXPR
-        |   SHIFT_EXPR LSHIFT ADDITIVE_EXPR
-        |   SHIFT_EXPR RSHIFT ADDITIVE_EXPR
-
-ADDITIVE_EXPR: MULTIPLICATIVE_EXPR
-            |  ADDITIVE_EXPR PLUS MULTIPLICATIVE_EXPR
-            |  ADDITIVE_EXPR MINUS MULTIPLICATIVE_EXPR
-
-MULTIPLICATIVE_EXPR: CAST_EXPR
-                |    MULTIPLICATIVE_EXPR ASTERISK CAST_EXPR
-                |    MULTIPLICATIVE_EXPR DIV CAST_EXPR
-                |    MULTIPLICATIVE_EXPR MOD CAST_EXPR
-
-EXPR: ASSIGNMENT_EXPR
-    | EXPR COMMA ASSIGNMENT_EXPR
-
-ASSIGNMENT_EXPR: CONDITIONAL_EXPR
-            |    UNARY_EXPR ASSIGNMENT_OPERATOR ASSIGNMENT_EXPR
-
-ASSIGNMENT_OPERATOR: EQUAL
-                |    MULEQUAL
-                |    DIVEQUAL
-                |    MODEQUAL
-                |    PLUSEQUAL
-                |    MINUSEQUAL
-                |    LSHIFTEQUAL
-                |    RSHIFTEQUAL
-                |    ANDEQUAL
-                |    XOREQUAL
-                |    OREQUAL
-
-UNARY_EXPR: POSTFIX_EXPR
-        |   INCREMENT UNARY_EXPR
-        |   DECREMENT UNARY_EXPR
-        |   UNARY_OPERATOR CAST_EXPR
-        |   SIZEOF UNARY_EXPR
-        |   SIZEOF LB TYPE_NAME RB
-
-UNARY_OPERATOR: AMPERSAND
-            |   ASTERISK
-            |   PLUS
-            |   MINUS
-            |   TILDE
-            |   EXCLAMATION
-
-POSTFIX_EXPR: PRIMARY_EXPR
-            | PRIMARY_EXPR LSB EXPR RSB
-            | POSTFIX_EXPR LB ARGUMENT_EXPR_LIST RB
-            | POSTFIX_EXPR LB RB
-            | POSTFIX_EXPR DOT IDENTIFIER
-            | POSTFIX_EXPR ARROW IDENTIFIER
-            | POSTFIX_EXPR INCREMENT
-            | POSTFIX_EXPR DECREMENT
-
-PRIMARY_EXPR: IDENTIFIER
-            | CONSTANT
-            | STRING_LITERAL
-            | LB EXPR RB
-
-ARGUMENT_EXPR_LIST: ASSIGNMENT_EXPR
-                |   ARGUMENT_EXPR_LIST COMMA ASSIGNMENT_EXPR
-
-CAST_EXPR: UNARY_EXPR
-        |  LB TYPE_NAME RB CAST_EXPR
-
-TYPE_NAME: SPECIFIER_QUALIFIER_LIST ABSTRACT_DECLARATOR
-        |  SPECIFIER_QUALIFIER_LIST
-
-STATEMENT: LABELED_STATEMENT
-        |  COMPOUND_STATEMENT
-        |  EXPR_STATEMENT
-        |  SELECTION_STATEMENT
-        |  ITERATION_STATEMENT
-        |  JUMP_STATEMENT
-
-LABELED_STATEMENT: IDENTIFIER COLON STATEMENT
-                |  CASE CONSTANT_EXPR COLON STATEMENT
-                |  DEFAULT COLON STATEMENT
-
-EXPR_STATEMENT: EXPR SEMICOLON
-            |   SEMICOLON
-
-SELECTION_STATEMENT: IF LB EXPR RB STATEMENT
-                |    IF LB EXPR RB STATEMENT ELSE STATEMENT
-                |    SWITCH LB EXPR RB STATEMENT
-
-ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT
-                |    DO STATEMENT WHILE LB EXPR RB SEMICOLON
-                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT
-                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPRESSION RB STATEMENT
-
-JUMP_STATEMENT: GOTO IDENTIFIER SEMICOLON
-            |   CONTINUE SEMICOLON
-            |   BREAK SEMICOLON
-            |   RETURN EXPR_STATEMENT
-
-STORAGE_CLASS_SPECIFIER: TYPEDEF
-                    |    EXTERN
-                    |    STATIC
-                    |    AUTO
-                    |    REGISTER
-
-TYPE_SPECIFIER: VOID
-            |   CHAR
-            |   SHORT
-            |   INT
-            |   LONG
-            |   FLOAT
-            |   DOUBLE
-            |   SIGNED
-            |   UNSIGNED
-            |   STRUCT_UNION_SPECIFIER
-            |   ENUM_SPECIFIER
-            |   TYPEDEF_NAME
-
-STRUCT_UNION_SPECIFIER: STRUCT_UNION IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB
-                    |   STRUCT_UNION LCB STRUCT_DECLARATION_LIST RCB
-                    |   STRUCT_UNION IDENTIFIER
-
-STRUCT_UNION: STRUCT
-            | UNION
-
-STRUCT_DECLARATION_LIST: STRUCT_DECLARATION
-                    |    STRUCT_DECLARATION_LIST STRUCT_DECLARATION
-
-STRUCT_DECLARATION: SPECIFIER_QUALIFIER_LIST STRUCT_DECLARATOR_LIST SEMICOLON
-
-SPECIFIER_QUALIFIER_LIST: TYPE_SPECIFIER SPECIFIER_QUALIFIER_LIST
-                        | TYPE_SPECIFIER
-                        | TYPE_QUALIFIER SPECIFIER_QUALIFIER_LIST
-                        | TYPE_QUALIFIER
-
-STRUCT_DECLARATOR_LIST: STRUCT_DECLARATOR
-                    |   STRUCT_DECLARATOR COMMA STRUCT_DECLARATOR
-
-STRUCT_DECLARATOR: DECLARATOR
-                |  DECLARATOR COLON CONSTANT_EXPR
-                |  COLON CONSTANT_EXPR
-
-ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB
-                | ENUM LCB ENUMERATOR_LIST RCB
-                | ENUM IDENTIFIER
-
-ENUMERATOR_LIST: ENUMERATOR
-        |  ENUMERATOR_LIST COMMA ENUMERATOR
-
-ENUMERATOR: ENUM_CONSTANT
-        |   ENUM_CONSTANT EQUAL CONSTANT_EXPR
-
-TYPEDEF_NAME: IDENTIFIER
-
-IDENTIFIER: NONDIGIT
-        |   IDENTIFIER NONDIGIT
-        |   IDENTIFIER DIGIT
-
-CONSTANT: FLOATING_CONSTANT
-        | INT_CONSTANT
-        | ENUM_CONSTANT
-        | CHAR_CONSTANT
-
-FLOATING_CONSTANT: FRACTIONAL_CONSTANT EXPONENT FLOATING_SUFFIX
-                |  FRACTIONAL_CONSTANT EXPONENT
-                |  FRACTIONAL_CONSTANT FLOATING_SUFFIX
-                |  FRACTIONAL_CONSTANT
-                |  DIGIT_SEQUENCE EXPONENT FLOATING_SUFFIX
-                |  DIGIT_SEQUENCE EXPONENT
-
-FRACTIONAL_CONSTANT: DIGIT_SEQUENCE DOT DIGIT_SEQUENCE
-                |    DIGIT_SEQUENCE DOT
-
-EXPONENT: E SIGN DIGIT_SEQUENCE
-        | E DIGIT_SEQUENCE
-
-DIGIT_SEQUENCE: DIGIT
-            |   DIGIT_SEQUENCE DIGIT
-
-INT_CONSTANT: DECIMAL_CONSTANT INT_SUFFIX
-            | DECIMAL_CONSTANT
-            | OCT_CONSTANT INT_SUFFIX
-            | OCT_CONSTANT
-            | HEX_CONSTANT INT_SUFFIX
-            | HEX_CONSTANT
-
-DECIMAL_CONSTANT: NONZERO_DIGIT
-                | DECIMAL_CONSTANT DIGIT
-
-OCT_CONSTANT: ZERO
-            | OCT_CONSTANT OCT_DIGIT
+DECLARATOR: POINTER DIRECT_DECLARATOR                                                           { $$ = new Declarator($1, $2); }
+        |   DIRECT_DECLARATOR                                                                   { $$ = new Declarator(NULL, $1); }
+
+DIRECT_DECLARATOR: IDENTIFIER                                                                   { $$ = new DirectDeclarator(NULL, NULL, NULL, NULL, NULL, $1, NULL); }
+                |  LB DECLARATOR RB                                                             { $$ = new DirectDeclarator($2, NULL, NULL, NULL, NULL, NULL, NULL); }
+                |  DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB                                      { $$ = new DirectDeclarator(NULL, $1, $3, NULL, NULL, NULL, NULL); }
+                |  DIRECT_DECLARATOR LSB RSB                                                    { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, NULL, $2); }
+                |  DIRECT_DECLARATOR LB PARAMETER_TYPE_LIST RB                                  { $$ = new DirectDeclarator(NULL, $1, NULL, $3, NULL, NULL, NULL); }
+                |  DIRECT_DECLARATOR LB IDENTIFIER_LIST RB                                      { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, $3, NULL, NULL); }
+                |  DIRECT_DECLARATOR LB RB                                                      { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, NULL, NULL); }
+
+POINTER: ASTERISK POINTER                                                                       
+    |    ASTERISK                                                                               
+
+PARAMETER_TYPE_LIST: PARAMETER_LIST                                                             { $$ = new ParameterTypeList($1, NULL); }
+                |    PARAMETER_LIST COMMA ELLIPSIS                                              { $$ = new ParameterTypeList($1, $3); }
+
+PARAMETER_LIST: PARAMETER_DECLARATION                                                           { $$ = new ParameterList($1, NULL); }
+            |   PARAMETER_LIST COMMA PARAMETER_DECLARATION                                      { $$ = new ParameterList($3, $1); }
+
+PARAMETER_DECLARATION: DECLARATION_SPECIFIER DECLARATOR                                         { $$ = new ParameterDeclaration($1, $2, NULL); }
+                    |  DECLARATION_SPECIFIER ABSTRACT_DECLARATOR                                { $$ = new ParameterDeclaration($1, NULL, $2); }
+                    |  DECLARATION_SPECIFIER                                                    { $$ = new ParameterDeclaration($1, NULL, NULL); }
+
+IDENTIFIER_LIST: IDENTIFIER                                                                     { $$ = new IdentifierList(NULL, $1); }
+            |    IDENTIFIER_LIST COMMA IDENTIFIER                                               { $$ = new IdentifierList($1, $3); }
+
+CONSTANT_EXPR: CONDITIONAL_EXPR                                                                 { $$ = new ConstantExpr($1); }
+
+
+ABSTRACT_DECLARATOR: POINTER                                                                    
+                |    POINTER DIRECT_ABSTRACT_DECLARATOR                                         
+                |    DIRECT_ABSTRACT_DECLARATOR                                                 
+
+DIRECT_ABSTRACT_DECLARATOR: LB ABSTRACT_DECLARATOR RB                                           
+                        |   DIRECT_ABSTRACT_DECLARATOR LSB CONSTANT_EXPR RSB                    
+                        |   DIRECT_ABSTRACT_DECLARATOR LSB RSB                                  
+                        |   LSB CONSTANT_EXPR RSB                                               
+                        |   LSB RSB                                                             
+                        |   DIRECT_ABSTRACT_DECLARATOR LB PARAMETER_TYPE_LIST RB                
+                        |   DIRECT_ABSTRACT_DECLARATOR LB RB                                    
+                        |   LB PARAMETER_TYPE_LIST RB                                           
+                        |   LB RB                                                               
+
+CONDITIONAL_EXPR: LOGICAL_OR_EXPR                                                               { $$ = new ConditionalExpr($1, NULL, NULL); }
+                | LOGICAL_OR_EXPR QUESTION EXPR COLON CONDITIONAL_EXPR                          { $$ = new ConditionalExpr($1, $3, $5); }
+
+LOGICAL_OR_EXPR: LOGICAL_AND_EXPR                                                               { $$ = new LogicalOrExpr($1, NULL); }
+            |    LOGICAL_OR_EXPR LOGICAL_OR LOGICAL_AND_EXPR                                    { $$ = new LogicalOrExpr($3, $1); }
+
+LOGICAL_AND_EXPR: INCLUSIVE_OR_EXPR                                                             { $$ = new LogicalAndExpr($1, NULL); }
+                | LOGICAL_AND_EXPR LOGICAL_AND INCLUSIVE_OR_EXPR                                { $$ = new LogicalAndExpr($3, $1); }
+
+INCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPR                                                            { $$ = new InclusiveOrExpr($1, NULL); }
+                |  INCLUSIVE_OR_EXPR BITWISE_OR EXCLUSIVE_OR_EXPR                               { $$ = new InclusiveOrExpr($3, $1); }
+
+EXCLUSIVE_OR_EXPR: AND_EXPR                                                                     { $$ = new ExclusiveOrExpr($1, NULL); }
+                |  EXCLUSIVE_OR_EXPR XOR AND_EXPR                                               { $$ = new ExclusiveOrExpr($3, $1); }
+
+AND_EXPR: EQUALITY_EXPR                                                                         { $$ = new AndExpr($1, NULL); }
+        | AND_EXPR AMPERSAND EQUALITY_EXPR                                                      { $$ = new AndExpr($3, $1); }
+
+EQUALITY_EXPR: RELATIONAL_EXPR                                                                  { $$ = new EqualityExpr($1, NULL, NULL); }
+            |  EQUALITY_EXPR EQUALITY RELATIONAL_EXPR                                           { $$ = new EqualityExpr($3, $1, $2); }
+            |  EQUALITY_EXPR NOTEQUAL RELATIONAL_EXPR                                           { $$ = new EqualityExpr($3, $1, $2); }
+
+RELATIONAL_EXPR: SHIFT_EXPR                                                                     { $$ = new RelationalExpr($1, NULL, NULL); }
+            |    RELATIONAL_EXPR LT SHIFT_EXPR                                                  { $$ = new RelationalExpr($3, $1, $2); }
+            |    RELATIONAL_EXPR GT SHIFT_EXPR                                                  { $$ = new RelationalExpr($3, $1, $2); }
+            |    RELATIONAL_EXPR LE SHIFT_EXPR                                                  { $$ = new RelationalExpr($3, $1, $2); }
+            |    RELATIONAL_EXPR GE SHIFT_EXPR                                                  { $$ = new RelationalExpr($3, $1, $2); }
+
+SHIFT_EXPR: ADDITIVE_EXPR                                                                       { $$ = new ShiftExpr($1, NULL, NULL); }
+        |   SHIFT_EXPR LSHIFT ADDITIVE_EXPR                                                     { $$ = new ShiftExpr($3, $1, $2); }
+        |   SHIFT_EXPR RSHIFT ADDITIVE_EXPR                                                     { $$ = new ShiftExpr($3, $1, $2); }
+
+ADDITIVE_EXPR: MULTIPLICATIVE_EXPR                                                              { $$ = new AdditiveExpr($1, NULL, NULL); }
+            |  ADDITIVE_EXPR PLUS MULTIPLICATIVE_EXPR                                           { $$ = new AdditiveExpr($3, $1, $2); }
+            |  ADDITIVE_EXPR MINUS MULTIPLICATIVE_EXPR                                          { $$ = new AdditiveExpr($3, $1, $2); }
+
+MULTIPLICATIVE_EXPR: CAST_EXPR                                                                  { $$ = new MultiplicativeExpr($1, NULL, NULL); }
+                |    MULTIPLICATIVE_EXPR ASTERISK CAST_EXPR                                     { $$ = new MultiplicativeExpr($3, $1, $2); }
+                |    MULTIPLICATIVE_EXPR DIV CAST_EXPR                                          { $$ = new MultiplicativeExpr($3, $1, $2); }
+                |    MULTIPLICATIVE_EXPR MOD CAST_EXPR                                          { $$ = new MultiplicativeExpr($3, $1, $2); }
+
+EXPR: ASSIGNMENT_EXPR                                                                           { $$ = new Expr($1, NULL); }
+    | EXPR COMMA ASSIGNMENT_EXPR                                                                { $$ = new Expr($3, $1); }
+
+ASSIGNMENT_EXPR: CONDITIONAL_EXPR                                                               { $$ = new AssignmentExpr($1, NULL, NULL, NULL); }
+            |    UNARY_EXPR ASSIGNMENT_OPERATOR ASSIGNMENT_EXPR                                 { $$ = new AssignmentExpr(NULL, $1, $2, $3); }
+
+ASSIGNMENT_OPERATOR: EQUAL                                                                      { $$ = new AssignmentOperator($1); }
+                |    MULEQUAL                                                                   { $$ = new AssignmentOperator($1); }
+                |    DIVEQUAL                                                                   { $$ = new AssignmentOperator($1); }
+                |    MODEQUAL                                                                   { $$ = new AssignmentOperator($1); }
+                |    PLUSEQUAL                                                                  { $$ = new AssignmentOperator($1); }
+                |    MINUSEQUAL                                                                 { $$ = new AssignmentOperator($1); }
+                |    LSHIFTEQUAL                                                                { $$ = new AssignmentOperator($1); }
+                |    RSHIFTEQUAL                                                                { $$ = new AssignmentOperator($1); }
+                |    ANDEQUAL                                                                   { $$ = new AssignmentOperator($1); }
+                |    XOREQUAL                                                                   { $$ = new AssignmentOperator($1); }
+                |    OREQUAL                                                                    { $$ = new AssignmentOperator($1); }
+
+UNARY_EXPR: POSTFIX_EXPR                                                                        { $$ = new UnaryExpr($1, NULL, NULL, NULL, NULL, NULL); }
+        |   INCREMENT UNARY_EXPR                                                                { $$ = new UnaryExpr(NULL, $2, NULL, NULL, NULL, $1); }
+        |   DECREMENT UNARY_EXPR                                                                { $$ = new UnaryExpr(NULL, $2, NULL, NULL, NULL, $1); }
+        |   UNARY_OPERATOR CAST_EXPR                                                            { $$ = new UnaryExpr(NULL, NULL, $1, $2, NULL, NULL); }
+        |   SIZEOF UNARY_EXPR                                                                   { $$ = new UnaryExpr(NULL, $2, NULL, NULL, NULL, $1); }
+        |   SIZEOF LB TYPE_NAME RB                                                              { $$ = new UnaryExpr(NULL, NULL, NULL, NULL, $3, $1); }
+
+UNARY_OPERATOR: AMPERSAND                                                                       { $$ = new UnaryOperator($1); }
+            |   ASTERISK                                                                        { $$ = new UnaryOperator($1); }
+            |   PLUS                                                                            { $$ = new UnaryOperator($1); }
+            |   MINUS                                                                           { $$ = new UnaryOperator($1); }
+            |   TILDE                                                                           { $$ = new UnaryOperator($1); }
+            |   EXCLAMATION                                                                     { $$ = new UnaryOperator($1); }
+
+POSTFIX_EXPR: PRIMARY_EXPR                                                                      { $$ = new PostfixExpr($1, NULL, NULL, NULL, NULL, NULL); }
+            | PRIMARY_EXPR LSB EXPR RSB                                                         { $$ = new PostfixExpr($1, $3, NULL, NULL, NULL, NULL); }
+            | POSTFIX_EXPR LB ARGUMENT_EXPR_LIST RB                                             { $$ = new PostfixExpr(NULL, NULL, $1, $3, NULL, NULL); }
+            | POSTFIX_EXPR LB RB                                                                { $$ = new PostfixExpr(NULL, NULL, $1, NULL, NULL, NULL); }
+            | POSTFIX_EXPR DOT IDENTIFIER                                                       { $$ = new PostfixExpr(NULL, NULL, $1, NULL, $2, $3); }
+            | POSTFIX_EXPR ARROW IDENTIFIER                                                     { $$ = new PostfixExpr(NULL, NULL, $1, NULL, $2, $3); }
+            | POSTFIX_EXPR INCREMENT                                                            { $$ = new PostfixExpr(NULL, NULL, $1, NULL, $2, NULL); }
+            | POSTFIX_EXPR DECREMENT                                                            { $$ = new PostfixExpr(NULL, NULL, $1, NULL, $2, NULL); }
+
+PRIMARY_EXPR: IDENTIFIER                                                                        { $$ = new PrimaryExpr($1, NULL, NULL, NULL); }
+            | CONSTANT                                                                          { $$ = new PrimaryExpr(NULL, $1, NULL, NULL); }
+            | STRING_LITERAL                                                                    { $$ = new PrimaryExpr(NULL, NULL, $1, NULL); }
+            | LB EXPR RB                                                                        { $$ = new PrimaryExpr(NULL, NULL, NULL, $2); }
+
+ARGUMENT_EXPR_LIST: ASSIGNMENT_EXPR                                                             { $$ = new ArgumentExprList($1, NULL); }
+                |   ARGUMENT_EXPR_LIST COMMA ASSIGNMENT_EXPR                                    { $$ = new ArgumentExprList($3, $1); }
+
+CAST_EXPR: UNARY_EXPR                                                                           { $$ = new CastExpr($1, NULL, NULL); }
+        |  LB TYPE_NAME RB CAST_EXPR                                                            { $$ = new CastExpr(NULL, $2, $4); }
+
+TYPE_NAME: SPECIFIER_QUALIFIER_LIST ABSTRACT_DECLARATOR                                         
+        |  SPECIFIER_QUALIFIER_LIST                                                             
+
+STATEMENT: LABELED_STATEMENT                                                                    { $$ = new Statement($1, NULL, NULL, NULL, NULL, NULL); }
+        |  COMPOUND_STATEMENT                                                                   { $$ = new Statement(NULL, $1, NULL, NULL, NULL, NULL); }
+        |  EXPR_STATEMENT                                                                       { $$ = new Statement(NULL, NULL, $1, NULL, NULL, NULL); }
+        |  SELECTION_STATEMENT                                                                  { $$ = new Statement(NULL, NULL, NULL, $1, NULL, NULL); }
+        |  ITERATION_STATEMENT                                                                  { $$ = new Statement(NULL, NULL, NULL, NULL, $1, NULL); }
+        |  JUMP_STATEMENT                                                                       { $$ = new Statement(NULL, NULL, NULL, NULL, NULL, $1); }
+
+LABELED_STATEMENT: IDENTIFIER COLON STATEMENT                                                   
+                |  CASE CONSTANT_EXPR COLON STATEMENT                                           
+                |  DEFAULT COLON STATEMENT                                                      
+
+EXPR_STATEMENT: EXPR SEMICOLON                                                                  { $$ = new ExprStatement($1); }
+            |   SEMICOLON                                                                       { $$ = new ExprStatement(NULL); }
+
+SELECTION_STATEMENT: IF LB EXPR RB STATEMENT                                                    
+                |    IF LB EXPR RB STATEMENT ELSE STATEMENT                                     
+                |    SWITCH LB EXPR RB STATEMENT                                                
+
+ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT                                                 
+                |    DO STATEMENT WHILE LB EXPR RB SEMICOLON                                    
+                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT                          
+                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT                     
+
+JUMP_STATEMENT: CONTINUE SEMICOLON                                                              { $$ = new JumpStatement($1, NULL); }
+            |   BREAK SEMICOLON                                                                 { $$ = new JumpStatement($1, NULL); }
+            |   RETURN EXPR                                                                     { $$ = new JumpStatement($1, $2); }
+
+STORAGE_CLASS_SPECIFIER: TYPEDEF                                                                { $$ = new StorageClassSpecifier($1); }
+                    |    EXTERN                                                                 { $$ = new StorageClassSpecifier($1); }
+                    |    STATIC                                                                 { $$ = new StorageClassSpecifier($1); }
+                    |    AUTO                                                                   { $$ = new StorageClassSpecifier($1); }
+                    |    REGISTER                                                               { $$ = new StorageClassSpecifier($1); }
+
+TYPE_SPECIFIER: VOID                                                                            
+            |   CHAR                                                                            
+            |   SHORT                                                                           
+            |   INT                                                                             
+            |   LONG                                                                            
+            |   FLOAT                                                                           
+            |   DOUBLE                                                                          
+            |   SIGNED                                                                          
+            |   UNSIGNED                                                                        
+            |   STRUCT_SPECIFIER                                                                
+            |   ENUM_SPECIFIER                                                                  
+            |   IDENTIFIER                                                                      
+
+STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB                             
+                    |   STRUCT LCB STRUCT_DECLARATION_LIST RCB                                  
+                    |   STRUCT IDENTIFIER                                                       
+
+STRUCT_DECLARATION_LIST: STRUCT_DECLARATION                                                     
+                    |    STRUCT_DECLARATION_LIST STRUCT_DECLARATION                             
+
+STRUCT_DECLARATION: SPECIFIER_QUALIFIER_LIST STRUCT_DECLARATOR_LIST SEMICOLON                   
+
+SPECIFIER_QUALIFIER_LIST: TYPE_SPECIFIER SPECIFIER_QUALIFIER_LIST                               { $$ = new SpecifierQualifierList($1, $2); }
+                        | TYPE_SPECIFIER                                                        { $$ = new SpecifierQualifierList($1, NULL); }
+
+STRUCT_DECLARATOR_LIST: STRUCT_DECLARATOR                                                       
+                    |   STRUCT_DECLARATOR COMMA STRUCT_DECLARATOR                               
+
+STRUCT_DECLARATOR: DECLARATOR                                                                   
+                |  DECLARATOR COLON CONSTANT_EXPR                                               
+                |  COLON CONSTANT_EXPR                                                          
+
+ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB                                         
+                | ENUM LCB ENUMERATOR_LIST RCB                                                  
+                | ENUM IDENTIFIER                                                               
+
+ENUMERATOR_LIST: ENUMERATOR                                                                     
+        |  ENUMERATOR_LIST COMMA ENUMERATOR                                                     
+
+ENUMERATOR: IDENTIFIER                                                                          
+        |   IDENTIFIER EQUAL CONSTANT_EXPR                                                      
 
 %%
 
 const TranslationUnit *g_root; // Definition of variable (to match declaration earlier)
 
-const TranslationUnit *parseAST(char* a, char* b){
+const TranslationUnit *parseAST(const char* file){
     g_root=0;
-    yyinput = fopen(x, "r");
+    yyin = fopen(file, "r");
 
-    if(yyinput){
+    if(yyin){
         yyparse();
     }
 
-    fclose(yyinput);
+    fclose(yyin);
     return g_root;
 }
