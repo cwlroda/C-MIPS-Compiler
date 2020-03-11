@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
         std::string arg = argv[3];
 
         if(arg == "-o"){
-            const TranslationUnit *ast = parseAST(argv[2], argv[4]);
+            const TranslationUnit *ast = parseAST(argv[2]);
             std::string outfile = argv[4];
             ast->print_py_main(outfile);
         }

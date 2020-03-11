@@ -1,4 +1,4 @@
-#include "ast.hpp"
+#include "ast_functions.hpp"
 
 #include <iostream>
 #include <fstream>
