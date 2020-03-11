@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+
 struct Context{
     bool in_func = false; // check if entering function
     bool is_init = false; // check if function/variable is initialised
@@ -17,74 +18,6 @@ struct Context{
 
     std::vector<std::string> GlobalVar; // stores global variables
 };
-
-// Declarations
-class TranslationUnit;
-class ExternalDeclaration;
-class FunctionDefinition;
-class Declaration;
-class DeclarationSpecifier;
-class DeclarationList;
-class InitDeclaratorList;
-class InitDeclarator;
-class Initializer;
-class InitializerList;
-class Declarator;
-class DirectDeclarator;
-class ParameterTypeList;
-class ParameterList;
-class ParameterDeclaration;
-class AbstractDeclarator;
-class DirectAbstractDeclarator;
-class SpecifierQualifierList;
-class StructSpecifier;
-class StructDeclarationList;
-class StructDeclaration;
-class StructDeclaratorList;
-class StructDeclarator;
-
-// Statements
-class CompoundStatement;
-class StatementList;
-class Statement;
-class LabeledStatement;
-class ExprStatement;
-class SelectionStatement;
-class IterationStatement;
-class JumpStatement;
-
-// Expressions
-class Expr;
-class ConstantExpr;
-class ConditionalExpr;
-class LogicalOrExpr;
-class LogicalAndExpr;
-class InclusiveOrExpr;
-class ExclusiveOrExpr;
-class AndExpr;
-class EqualityExpr;
-class RelationalExpr;
-class ShiftExpr;
-class AdditiveExpr;
-class MultiplicativeExpr;
-class AssignmentExpr;
-class AssignmentOperator;
-class UnaryExpr;
-class UnaryOperator;
-class PostfixExpr;
-class PrimaryExpr;
-class ArgumentExprList;
-class CastExpr;
-
-// Others
-class IdentifierList;
-class TypeSpecifier;
-class TypeName;
-class StorageClassSpecifier;
-class Pointer;
-class EnumSpecifier;
-class EnumeratorList;
-class Enumerator;
 
 /*-------------*
 | DECLARATIONS |
@@ -480,7 +413,7 @@ class SpecifierQualifierList{
         SpecifierQualifierList *spec_qual_list;
 };
 
-/*
+
 class StructSpecifier{
     public:
         void print_c(std::ofstream& out);
@@ -525,7 +458,7 @@ class StructDeclarator{
 
     private:
 };
-*/
+
 
 /*------------*
 | EXPRESSIONS |
@@ -1274,7 +1207,7 @@ class StorageClassSpecifier{
         std::string *type;
 };
 
-/*
+
 class Pointer{
     public:
         void print_c(std::ofstream& out);
@@ -1310,10 +1243,10 @@ class Enumerator{
 
     private:
 };
-*/
+
 
 extern bool preif;
-extern const TranslationUnit *parseAST(const char* file);
+extern const TranslationUnit *parseAST(char* file_one, char* file_two);
 extern Context context;
 
 #endif

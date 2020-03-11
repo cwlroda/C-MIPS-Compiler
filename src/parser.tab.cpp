@@ -2878,9 +2878,9 @@ yyreturn:
 
 const TranslationUnit *g_root; // Definition of variable (to match declaration earlier)
 
-const TranslationUnit *parseAST(const char* file){
+const TranslationUnit *parseAST(char* file_one, char* file_two){
     g_root=0;
-    yyin = fopen(file, "r");
+    yyin = fopen(file_one, "r");
 
     if(yyin){
         yyparse();
