@@ -1,10 +1,11 @@
 %option noyywrap
 
 %{
+    #include "parser.tab.hpp"
     // Avoid error "error: 'fileno' was not declared in this scope"
     extern "C"  int fileno(FILE *stream);
 
-    #include "parser.tab.hpp"
+    
 %}
 
 %%
@@ -38,11 +39,11 @@
 "%"                 { return MOD;}
 "~"                 { return TILDE;}
 "<"                 { return LT;}
-"<"                 { return GT;}
+">"                 { return GT;}
 "|="                { return OREQUAL;}
 "^="                { return XOREQUAL;}
 "|"                 { return BITWISE_OR;}
-"&"                 { return BITWISE_AND;}
+"&"                 { return AMPERSAND;}
 "!"                 { return EXCLAMATION;}
 "?"                 { return QUESTION;}
 "^"                 { return XOR;}
@@ -89,10 +90,12 @@
 \''.^[\'\\\n]\'     { return C_CHAR_SET; }
 \"'.^[\"\\\n]\"     { return S_CHAR_SET; }
 
-(-|(0[xX])|0)?[0-9]+([uU]|[Ll]|([uU][lL])|([lL][uU])|([uU][lL][lL])|([lL][lL][uU]))?                { return LITERAL_CONSTANT; }
 
--?[0-9]+(.[0-9]*)?([eE][0-9]+)?([fF]|[lL])?                                                         { return LITERAL_CONSTANT; }
+[0-9]*\.[0-9]+([eE][+-]?[0-9]+)?[fFlL]?                 { return FLOATING_CONSTANT; }
+[0-9]+\.([eE][+-]?[0-9]+)?[fFlL]?                       { return FLOATING_CONSTANT; }
+[0-9]+[eE][+-]?[0-9]+[fFlL]?                            { return FLOATING_CONSTANT; }
 
+[1-9][0-9]*(([uU][lL]?)|([lL]?[Uu])|([uU]?[lL])|([lL][uU]?)) { return INTEGER_CONSTANT; }
 
 
 .                   { fprintf(stderr, "Invalid token\n"); exit(1); }

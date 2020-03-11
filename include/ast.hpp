@@ -2,7 +2,8 @@
 #define AST_HPP
 
 #include <vector>
-
+#include <string>
+#include <fstream>
 struct Context{
     bool in_func = false; // check if entering function
     bool is_init = false; // check if function/variable is initialised
