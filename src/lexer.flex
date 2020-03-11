@@ -60,12 +60,9 @@
 "double"            { return DOUBLE;}
 "signed"            { return SIGNED;}
 "unsigned"          { return UNSIGNED;}
-"const"             { return CONST;}
-"volatile"          { return VOLATILE;}
 "struct"            { return STRUCT;}
-"union"             { return UNION;}
 "enum"              { return ENUM;}
-"ellipsis"          { return ELLIPSIS;}
+"..."               { return ELLIPSIS;}
 "if"                { return IF;}
 "else"              { return ELSE;}
 "switch"            { return SWITCH;}
@@ -74,7 +71,6 @@
 "for"               { return FOR;}
 "do"                { return DO;}
 "while"             { return WHILE;}
-"goto"              { return GOTO;}
 "continue"          { return CONTINUE;}
 "break"             { return BREAK;}
 "return"            { return RETURN;}
@@ -86,6 +82,18 @@
 "}"                 { return RCB;}
 ":"                 { return COLON;}
 ","                 { return COMMA;}
+[']                 { return QUOTE; }
+["]                 { return DOUBLE_QUOTE; }
+\\                  { return BACKSLASH; }
+\x                  { return HEX_ESCAPE; }
+\''.^[\'\\\n]\'     { return C_CHAR_SET; }
+\"'.^[\"\\\n]\"     { return S_CHAR_SET; }
+
+(-|(0[xX])|0)?[0-9]+([uU]|[Ll]|([uU][lL])|([lL][uU])|([uU][lL][lL])|([lL][lL][uU]))?                { return LITERAL_CONSTANT; }
+
+-?[0-9]+(.[0-9]*)?([eE][0-9]+)?([fF]|[lL])?                                                         { return LITERAL_CONSTANT; }
+
+
 
 .                   { fprintf(stderr, "Invalid token\n"); exit(1); }
 
