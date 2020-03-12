@@ -1,40 +1,3 @@
-%option noyywrap
-%option yylineno
-
-%{
-// Avoid error "error: `fileno' was not declared in this scope"
-extern "C" int fileno(FILE *stream);
-extern FILE *yyin;
-extern FILE *yyout;
-
-#include "parser.tab.hpp"
-%}
-
-%%
-
-"int"               { yylval.string=new std::string(yytext); return INT; }
-"return"            { yylval.string=new std::string(yytext); return RETURN; }
-
-[0-9]               { yylval.string=new std::string(yytext); return CONSTANT; }
-[a-z]+              { yylval.string=new std::string(yytext); return IDENTIFIER; }
-
-";"                 { return SEMICOLON; }
-"++"                { return INCREMENT;}
-"--"                { return DECREMENT;}
-"<<"                { return LSHIFT;}
-">>"                { return RSHIFT;}
-"<="                { return LE;}
-">="                { return GE;}
-"=="                { return EQUALITY;}
-"!="                { return NOTEQUAL;}
-"->"                { return ARROW;}
-"."                 { return DOT;}
-"||"                { return LOGICAL_OR;}
-"&&"                { return LOGICAL_AND;}
-"+="                { return PLUSEQUAL;}
-"*="                { return MULEQUAL;}
-"/="                { return DIVEQUAL;}
-"%="                { return MODEQUAL;}
 "-="                { return MINUSEQUAL;}
 "&="                { return ANDEQUAL;}
 "<<="               { return LSHIFTEQUAL;}
@@ -98,7 +61,6 @@ extern FILE *yyout;
 \''.^[\'\\\n]\'     { return C_CHAR_SET; }
 \"'.^[\"\\\n]\"     { return S_CHAR_SET; }
 
-L?\'(\\[0-7][0-7]?[0-7]?)|(\x[0-9a-fA-F]+)
 
 [0-9]*\.[0-9]+([eE][+-]?[0-9]+)?[fFlL]?                 { return FLOATING_CONSTANT; }
 [0-9]+\.([eE][+-]?[0-9]+)?[fFlL]?                       { return FLOATING_CONSTANT; }
@@ -114,15 +76,3 @@ L?\'(\\[0-7][0-7]?[0-7]?)|(\x[0-9a-fA-F]+)
 "}"                 { return RCB; }
 "["                 { return LSB; }
 "]"                 { return RSB; }
-
-[ \t\r\n]+		    {;}
-
-.                   { fprintf(stderr, "Invalid token\n"); exit(1); }
-
-%%
-
-void yyerror (char const *s)
-{
-    fprintf (stderr, "Parse error : %s\n", s);
-    exit(1);
-}

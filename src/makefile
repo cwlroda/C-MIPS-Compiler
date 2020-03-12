@@ -1,13 +1,19 @@
-all: test
+CPPFLAGS += -W -Wall -g 
 
-calc.tab.cpp calc.tab.hpp:	test.y
-	bison -d test.y
+# This avoids error: ‘fileno’ was not declared in this scope
+CPPFLAGS += -std=c++0x
 
-lex.yy.cpp: test.l test.tab.h
-	flex test.l
+# Avoid warnings about yyunput not used
+CPPFLAGS += -Wno-unused-function
 
-test: lex.yy.cpp test.tab.cpp test.tab.hpp
-	gcc -o test test.tab.cpp lex.yy.cpp
+all : test
 
-clean:
-	rm test test.tab.cpp lex.yy.cpp test.tab.hpp
+lexer2.yy.cpp : lexer2.flex
+	flex -o lexer2.yy.cpp  lexer2.flex
+
+test : lexer2.yy.o test_main.o
+	g++ $(CPPFLAGS) -o test  lexer2.yy.o test_main.o
+
+clean :
+	-rm -f test test.exe
+	-rm -f *.yy.cpp
