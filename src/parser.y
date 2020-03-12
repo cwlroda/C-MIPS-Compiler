@@ -7,6 +7,9 @@
     extern FILE *yyin;
     extern const TranslationUnit *g_root; // A way of getting the AST out
 
+    extern char *yytext;
+	#define YYDEBUG_LEXER_TEXT yytext
+
     // ! This is to fix problems when generating C++
     // We are declaring the functions provided by Flex, so
     // that Bison generated code can call them.
@@ -434,9 +437,9 @@ ENUMERATOR: IDENTIFIER
 
 const TranslationUnit *g_root; // Definition of variable (to match declaration earlier)
 
-const TranslationUnit *parseAST(char* file_one, char* file_two){
+const TranslationUnit *parseAST(const char* file){
     g_root=0;
-    yyin = fopen(file_one, "r");
+    yyin = fopen(file, "r");
 
     if(yyin){
         yyparse();
