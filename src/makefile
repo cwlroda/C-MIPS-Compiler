@@ -17,3 +17,4 @@ test : lexer2.yy.o test_main.o
 clean :
 	-rm -f test test.exe
 	-rm -f *.yy.cpp
+	-rm -f *.o
