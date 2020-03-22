@@ -89,7 +89,7 @@ L?\"([^\\\"\n]|\\\'|\\\"|\\\?|\\\?|\\\\|\\a|\\b|\\f|\\n|\\r|\\t|\\v|\\[0-7][0-7]
 "&"                 { yylval.wordValue=new std::string(yytext);  return AMPERSAND;}
 "!"                 { yylval.wordValue=new std::string(yytext);  return EXCLAMATION;}
 "?"                 { yylval.wordValue=new std::string(yytext);  return QUESTION;}
-[\^]                { yylval.wordValue=new std::string(yytext);  return XOR;}
+"\^"                { yylval.wordValue=new std::string(yytext);  return XOR;}
 "("                 { yylval.wordValue=new std::string(yytext);  return LB;}
 ")"                 { yylval.wordValue=new std::string(yytext);  return RB;}
 "["                 { yylval.wordValue=new std::string(yytext);  return LSB;}
@@ -98,10 +98,10 @@ L?\"([^\\\"\n]|\\\'|\\\"|\\\?|\\\?|\\\\|\\a|\\b|\\f|\\n|\\r|\\t|\\v|\\[0-7][0-7]
 "}"                 { yylval.wordValue=new std::string(yytext);  return RCB;}
 ":"                 { yylval.wordValue=new std::string(yytext);  return COLON;}
 ","                 { yylval.wordValue=new std::string(yytext);  return COMMA;}
-[']                 { yylval.wordValue=new std::string(yytext);  return QUOTE; }
-["]                 { yylval.wordValue=new std::string(yytext);  return DOUBLE_QUOTE; }
-\\                  { yylval.wordValue=new std::string(yytext);  return BACKSLASH; }
-\x                  { yylval.wordValue=new std::string(yytext);  return HEX_ESCAPE; }
+"\'"                { yylval.wordValue=new std::string(yytext);  return QUOTE; }
+"\""                { yylval.wordValue=new std::string(yytext);  return DOUBLE_QUOTE; }
+"\\"                { yylval.wordValue=new std::string(yytext);  return BACKSLASH; }
+"\x"                { yylval.wordValue=new std::string(yytext);  return HEX_ESCAPE; }
 
 
 

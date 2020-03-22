@@ -12,7 +12,7 @@ if [[ ! -f bin/c_compiler ]] ; then
     have_compiler=1
 fi
 
-input_dir="c_translator/formative"
+input_dir="translator_tests/tests"
 
 working="tmp/formative"
 mkdir -p ${working}
@@ -28,8 +28,8 @@ for i in ${input_dir}/*.c ; do
     REF_C_OUT=$?
     
     # Run the reference python version
-    python3 ${input_dir}/$base.py
-    REF_P_OUT=$?
+    # python3 ${input_dir}/$base.py
+    # REF_P_OUT=$?
     
     if [[ ${have_compiler} -eq 0 ]] ; then
         
