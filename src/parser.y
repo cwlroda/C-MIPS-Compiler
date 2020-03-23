@@ -391,18 +391,17 @@ STORAGE_CLASS_SPECIFIER: TYPEDEF                                                
                     |    AUTO                                                                   { $$ = new StorageClassSpecifier($1); }
                     |    REGISTER                                                               { $$ = new StorageClassSpecifier($1); }
 
-TYPE_SPECIFIER: VOID                                                                            
-            |   CHAR                                                                            
-            |   SHORT                                                                           
-            |   INT                                                                             
-            |   LONG                                                                            
-            |   FLOAT                                                                           
-            |   DOUBLE                                                                          
-            |   SIGNED                                                                          
-            |   UNSIGNED                                                                        
-            |   STRUCT_SPECIFIER                                                                
-            |   ENUM_SPECIFIER                                                                  
-            |   IDENTIFIER                                                                      
+TYPE_SPECIFIER: VOID                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   CHAR                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   SHORT                                                                           { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   INT                                                                             { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   LONG                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   FLOAT                                                                           { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   DOUBLE                                                                          { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   SIGNED                                                                          { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   UNSIGNED                                                                        { $$ = new TypeSpecifier($1, NULL, NULL); }
+            |   STRUCT_SPECIFIER                                                                { $$ = new TypeSpecifier(NULL, $1, NULL); }
+            |   ENUM_SPECIFIER                                                                  { $$ = new TypeSpecifier(NULL, NULL, $1); }                                                                    
 
 STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB                             
                     |   STRUCT LCB STRUCT_DECLARATION_LIST RCB                                  

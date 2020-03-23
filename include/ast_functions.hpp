@@ -230,7 +230,7 @@ class Declarator{
         ~Declarator(){}
 
         void print_c(std::ofstream& out);
-        void print_py(std::ofstream& out);
+        void print_py(std::ofstream& out, bool is_init, bool in_func);
         //void print_asm(std::ofstream& out, Context& context);
 
     private:
@@ -260,7 +260,7 @@ class DirectDeclarator{
         ~DirectDeclarator(){}
 
         void print_c(std::ofstream& out);
-        void print_py(std::ofstream& out);
+        void print_py(std::ofstream& out, bool is_init, bool in_func);
         //void print_asm(std::ofstream& out, Context& context);
 
     private:
@@ -931,7 +931,7 @@ class CompoundStatement{
         ~CompoundStatement(){}
 
         void print_c(std::ofstream& out);
-        void print_py(std::ofstream& out);
+        void print_py(std::ofstream& out, bool is_init, bool in_func);
         //void print_asm(std::ofstream& out, Context& context);
 
     private:
@@ -1139,9 +1139,11 @@ class IdentifierList{
 class TypeSpecifier{
     public:
         TypeSpecifier(
+            std::string *_type,
             StructSpecifier *_struct_spec,
             EnumSpecifier *_enum_spec
         ):
+            type(_type),
             struct_spec(_struct_spec),
             enum_spec(_enum_spec)
         {}
@@ -1151,6 +1153,7 @@ class TypeSpecifier{
         //void print_asm(std::ofstream& out, Context& context);
 
     private:
+        std::string *type;
         StructSpecifier *struct_spec;
         EnumSpecifier *enum_spec;
         // identifier
@@ -1193,7 +1196,6 @@ class StorageClassSpecifier{
         std::string *type;
 };
 
-/*
 class Pointer{
     public:
         void print_c(std::ofstream& out);
@@ -1229,6 +1231,5 @@ class Enumerator{
 
     private:
 };
-*/
 
 #endif

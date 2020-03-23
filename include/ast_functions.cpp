@@ -63,25 +63,26 @@ inline void ExternalDeclaration::print_py(std::ofstream& out){
 
 inline void FunctionDefinition::print_py(std::ofstream& out){
     if(declr != NULL){
-        declr->print_py(out);
+        declr->print_py(out, false, true);
 
         if(decl_list == NULL){
             out << "):" << std::endl;
 
             std::vector<std::string>::iterator itr = context.GlobalVar.begin();
             while(itr != context.GlobalVar.end()){
-                out << "\t" << "global" << *itr << std::endl;
+                out << "\t" << "global " << *itr << std::endl;
                 itr++;
             }
         }
     }
 
     if(decl_list != NULL){
+        context.func_param = true;
         decl_list->print_py(out);
     }
 
     if(comp_state != NULL){
-        comp_state->print_py(out);
+        comp_state->print_py(out, false, true);
     }
 }
 
@@ -115,14 +116,12 @@ inline void InitDeclaratorList::print_py(std::ofstream& out){
 
 inline void InitDeclarator::print_py(std::ofstream& out){
     if(init == NULL && declr != NULL){
-        context.is_init = false;
-        declr->print_py(out);
+        declr->print_py(out, false, false);
     }
 
     else{
         if(declr != NULL){
-            context.is_init = true;
-            declr->print_py(out);
+            declr->print_py(out, true, false);
         }
 
         if(init != NULL){
@@ -153,18 +152,18 @@ inline void Initializer::print_py(std::ofstream& out){
     }
 }
 
-inline void Declarator::print_py(std::ofstream& out){
+inline void Declarator::print_py(std::ofstream& out, bool is_init, bool in_func){
     if(dir_declr != NULL){
-        dir_declr->print_py(out);
+        dir_declr->print_py(out, is_init, in_func);
     }
 }
 
-inline void DirectDeclarator::print_py(std::ofstream& out){
+inline void DirectDeclarator::print_py(std::ofstream& out, bool is_init, bool in_func){
     if(dir_declr != NULL){
-        dir_declr->print_py(out);
+        dir_declr->print_py(out, is_init, in_func);
     }
 
-    if(!context.in_func){
+    if(!in_func){
         if(context.indent == 0 && !context.var_param){
             if(iden != NULL){
                 context.GlobalVar.push_back(*iden);
@@ -175,13 +174,13 @@ inline void DirectDeclarator::print_py(std::ofstream& out){
             out << "\t";
         }
 
-        if(!context.is_init && !context.var_param){
+        if(!is_init && !context.var_param){
             if(iden != NULL){
                 out << *iden << "=0" << std::endl;
             }
         }
 
-        else if(context.is_init && !context.var_param){
+        else if(!context.var_param){
             if(iden != NULL){
                 out << *iden << "=";
             }
@@ -191,9 +190,9 @@ inline void DirectDeclarator::print_py(std::ofstream& out){
             if(iden != NULL){
                 out << *iden;
             }
-        }
 
-        context.var_param = false;
+            context.var_param = false;
+        }
     }
 
     else{
@@ -202,7 +201,7 @@ inline void DirectDeclarator::print_py(std::ofstream& out){
                 context.main_func = true;
             }
 
-            out << "def" << *iden << "(";
+            out << "def " << *iden << "(";
         }
 
         if(param_type_list != NULL){
@@ -235,7 +234,7 @@ inline void ParameterList::print_py(std::ofstream& out){
 inline void ParameterDeclaration::print_py(std::ofstream& out){
     if(declr != NULL){
         context.var_param = true;
-        declr->print_py(out);
+        declr->print_py(out, false, false);
     }
 }
 
@@ -394,14 +393,14 @@ inline void UnaryExpr::print_py(std::ofstream& out){
         post_expr->print_py(out);
     }
 
-    if(un_expr != NULL){
-        out << *op;
-        un_expr->print_py(out);
-    }
+    else if(cast_expr != NULL){
+        if(op != NULL){
+            out << " " << *op << " ";
+        }
 
-    if(un_op != NULL && cast_expr != NULL){
-        un_op->print_py(out);
-        cast_expr->print_py(out);
+        else if(un_op != NULL){
+            un_op->print_py(out);
+        }
     }
 }
 
@@ -412,53 +411,47 @@ inline void UnaryOperator::print_py(std::ofstream& out){
 }
 
 inline void PostfixExpr::print_py(std::ofstream& out){
-    if(post_expr != NULL){
-        if(pri_expr != NULL){
-            pri_expr->print_py(out);
+    if(pri_expr != NULL){
+        pri_expr->print_py(out);
+
+        if(expr != NULL){
+            out << "[";
+            expr->print_py(out);
+            out << "]";
+        }
+    }
+
+    if(arg_expr_list != NULL){
+        for(int i=0; i<context.indent; i++){
+            out << "\t";
         }
 
-        if(arg_expr_list != NULL){
-            for(int i=0; i<context.indent; i++){
-                out << "\t";
-            }
+        post_expr->print_py(out);
+        out << "(";
+        arg_expr_list->print_py(out);
+        out << ")";
+        context.in_func = false;
+    }
 
-            post_expr->print_py(out);
-            out << "(";
-            arg_expr_list->print_py(out);
-            out << ")";
-            context.in_func = false;
+    if(op != NULL){
+        out << " " << *op << " ";
+
+        if(iden != NULL){
+            out << *iden << " ";
+        }
+    }
+
+    if(pri_expr == NULL && arg_expr_list == NULL && op == NULL){
+        for(int i=0; i<context.indent; i++){
+            out << "\t";
         }
 
-        if(op != NULL){
-            out << " " << *op << " ";
-
-            if(iden != NULL){
-                out << *iden << " ";
-            }
-        }
-
-        if(pri_expr == NULL && arg_expr_list == NULL && op == NULL){
-            for(int i=0; i<context.indent; i++){
-                out << "\t";
-            }
-
-            post_expr->print_py(out);
-            out << "()";
-        }
+        post_expr->print_py(out);
+        out << "()";
     }
 }
 
 inline void PrimaryExpr::print_py(std::ofstream& out){
-    if(expr != NULL){
-        out << "(";
-        context.brackets++;
-
-        expr->print_py(out);
-
-        out << ")";
-        context.brackets--;
-    }
-
     if(iden != NULL){
         out << *iden;
     }
@@ -469,6 +462,16 @@ inline void PrimaryExpr::print_py(std::ofstream& out){
 
     if(str_lit != NULL){
         out << " \"" << *str_lit << "\" ";
+    }
+
+    if(expr != NULL){
+        out << "(";
+        context.brackets++;
+
+        expr->print_py(out);
+
+        out << ")";
+        context.brackets--;
     }
 }
 
@@ -495,16 +498,8 @@ inline void CastExpr::print_py(std::ofstream& out){
 | STATEMENTS |
 *-----------*/
 
-inline void CompoundStatement::print_py(std::ofstream& out){
+inline void CompoundStatement::print_py(std::ofstream& out, bool is_init, bool in_func){
     context.indent++;
-
-    if(decl_list != NULL){
-        decl_list->print_py(out);
-    }
-
-    if(state_list != NULL){
-        state_list->print_py(out);
-    }
 
     if(decl_list == NULL && state_list == NULL){
         for(int i=0; i<context.indent; i++){
@@ -513,6 +508,21 @@ inline void CompoundStatement::print_py(std::ofstream& out){
 
         out << "pass" << std::endl;
     }
+
+    else if(decl_list != NULL && state_list == NULL){
+        decl_list->print_py(out);
+    }
+
+    else if(decl_list == NULL && state_list != NULL){
+        state_list->print_py(out);
+    }
+
+    else if(decl_list != NULL && state_list != NULL){
+        decl_list->print_py(out);
+        state_list->print_py(out);
+    }
+
+    context.indent--;
 }
 
 inline void StatementList::print_py(std::ofstream& out){
@@ -527,7 +537,7 @@ inline void StatementList::print_py(std::ofstream& out){
 
 inline void Statement::print_py(std::ofstream& out){
     if(comp_state != NULL){
-        comp_state->print_py(out);
+        comp_state->print_py(out, false, true);
     }
 
     if(expr_state != NULL){
