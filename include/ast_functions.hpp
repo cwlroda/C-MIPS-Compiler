@@ -27,7 +27,7 @@ class TranslationUnit{
         void print_c(std::ofstream& out);
         void print_py_main(std::string& filename) const;
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         ExternalDeclaration *ext_decl;
@@ -47,7 +47,7 @@ class ExternalDeclaration{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         FunctionDefinition *func_def;
@@ -71,7 +71,7 @@ class FunctionDefinition{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         DeclarationSpecifier *decl_spec;
@@ -93,7 +93,7 @@ class Declaration{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         DeclarationSpecifier *decl_spec;
@@ -114,7 +114,7 @@ class DeclarationSpecifier{
         ~DeclarationSpecifier(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         StorageClassSpecifier *storage_class_spec;
@@ -135,7 +135,7 @@ class DeclarationList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         DeclarationList *decl_list;
@@ -155,7 +155,7 @@ class InitDeclaratorList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         InitDeclaratorList *init_declr_list;
@@ -175,7 +175,7 @@ class InitDeclarator{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Declarator *declr;
@@ -195,7 +195,7 @@ class InitializerList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Initializer *init;
@@ -215,7 +215,7 @@ class Initializer{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         AssignmentExpr *assign_expr;
@@ -235,7 +235,7 @@ class Declarator{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out, bool is_init, bool in_func);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Pointer *ptr;
@@ -265,7 +265,7 @@ class DirectDeclarator{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out, bool is_init, bool in_func);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Declarator *declr;
@@ -290,7 +290,7 @@ class ParameterTypeList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         ParameterList *param_list;
@@ -310,7 +310,7 @@ class ParameterList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         ParameterDeclaration *param_decl;
@@ -332,7 +332,7 @@ class ParameterDeclaration{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         DeclarationSpecifier *decl_spec;
@@ -352,7 +352,7 @@ class AbstractDeclarator{
         ~AbstractDeclarator(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Pointer *ptr;
@@ -375,7 +375,7 @@ class DirectAbstractDeclarator{
         ~DirectAbstractDeclarator(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         AbstractDeclarator *abs_declr;
@@ -396,7 +396,7 @@ class SpecifierQualifierList{
         ~SpecifierQualifierList(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         TypeSpecifier *type_spec;
@@ -408,7 +408,7 @@ class StructSpecifier{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -417,7 +417,7 @@ class StructDeclarationList{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -426,7 +426,7 @@ class StructDeclaration{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -435,7 +435,7 @@ class StructDeclaratorList{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -444,7 +444,7 @@ class StructDeclarator{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -467,7 +467,7 @@ class Expr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         AssignmentExpr *assign_expr;
@@ -484,7 +484,7 @@ class ConstantExpr{
         ~ConstantExpr(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         ConditionalExpr *cond_expr;
@@ -505,7 +505,7 @@ class ConditionalExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         LogicalOrExpr *log_or_expr;
@@ -526,7 +526,7 @@ class LogicalOrExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         LogicalAndExpr *log_and_expr;
@@ -546,7 +546,7 @@ class LogicalAndExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         InclusiveOrExpr *incl_or_expr;
@@ -566,7 +566,7 @@ class InclusiveOrExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         ExclusiveOrExpr *excl_or_expr;
@@ -586,7 +586,7 @@ class ExclusiveOrExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         AndExpr *and_expr;
@@ -606,7 +606,7 @@ class AndExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         EqualityExpr *equal_expr;
@@ -628,7 +628,7 @@ class EqualityExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         RelationalExpr *rel_expr;
@@ -651,7 +651,7 @@ class RelationalExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         ShiftExpr *shift_expr;
@@ -674,7 +674,7 @@ class ShiftExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         AdditiveExpr *add_expr;
@@ -697,7 +697,7 @@ class AdditiveExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         MultiplicativeExpr *mul_expr;
@@ -720,7 +720,7 @@ class MultiplicativeExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         CastExpr *cast_expr;
@@ -745,7 +745,7 @@ class AssignmentExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         ConditionalExpr *cond_expr;
@@ -764,7 +764,7 @@ class AssignmentOperator{
         ~AssignmentOperator(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         std::string *type;
@@ -791,7 +791,7 @@ class UnaryExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         PostfixExpr *post_expr;
@@ -813,7 +813,7 @@ class UnaryOperator{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         std::string *op;
@@ -840,7 +840,7 @@ class PostfixExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         PrimaryExpr *pri_expr;
@@ -867,7 +867,7 @@ class PrimaryExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         std::string *iden;
@@ -889,7 +889,7 @@ class ArgumentExprList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         AssignmentExpr *ass_expr;
@@ -911,7 +911,7 @@ class CastExpr{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         UnaryExpr *un_expr;
@@ -936,7 +936,7 @@ class CompoundStatement{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out, bool is_init, bool in_func);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         DeclarationList *decl_list;
@@ -956,7 +956,7 @@ class StatementList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Statement *state;
@@ -984,7 +984,7 @@ class Statement{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
         CompoundStatement* get_comp_state();
 
@@ -1009,7 +1009,7 @@ class LabeledStatement{
         ~LabeledStatement(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Statement *state;
@@ -1028,7 +1028,7 @@ class ExprStatement{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Expr *expr;
@@ -1055,7 +1055,7 @@ class SelectionStatement{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Expr *expr;
@@ -1087,7 +1087,7 @@ class IterationStatement{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         Expr *expr;
@@ -1111,7 +1111,7 @@ class JumpStatement{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         std::string *type;
@@ -1135,7 +1135,7 @@ class IdentifierList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         IdentifierList *iden_list;
@@ -1156,7 +1156,7 @@ class TypeSpecifier{
         ~TypeSpecifier(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         std::string *type;
@@ -1178,7 +1178,7 @@ class TypeName{
         ~TypeName(){}
 
         void print_c(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         SpecifierQualifierList *spec_qual_list;
@@ -1196,7 +1196,7 @@ class StorageClassSpecifier{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
         std::string *type;
@@ -1206,7 +1206,7 @@ class Pointer{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -1215,7 +1215,7 @@ class EnumSpecifier{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -1224,7 +1224,7 @@ class EnumeratorList{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
@@ -1233,7 +1233,7 @@ class Enumerator{
     public:
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        //void print_asm(std::ofstream& out, Context& context);
+        //void print_asm(std::ofstream& out);
 
     private:
 };
