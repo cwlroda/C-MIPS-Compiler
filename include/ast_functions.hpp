@@ -982,6 +982,8 @@ class Statement{
         void print_py(std::ofstream& out);
         //void print_asm(std::ofstream& out, Context& context);
 
+        CompoundStatement* get_comp_state();
+
     private:
         LabeledStatement *label_state;
         CompoundStatement *comp_state;

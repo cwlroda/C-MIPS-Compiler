@@ -175,8 +175,8 @@
 
 ROOT: TRANSLATION_UNIT { g_root = $1; }
 
-TRANSLATION_UNIT: EXTERNAL_DECLARATION                                                          { $$ = new TranslationUnit($1, NULL); }
-                | TRANSLATION_UNIT EXTERNAL_DECLARATION                                         { $$ = new TranslationUnit($2, $1); }
+TRANSLATION_UNIT: TRANSLATION_UNIT EXTERNAL_DECLARATION                                         { $$ = new TranslationUnit($2, $1); }
+                | EXTERNAL_DECLARATION                                                          { $$ = new TranslationUnit($1, NULL); }
 
 EXTERNAL_DECLARATION: FUNCTION_DEFINITION                                                       { $$ = new ExternalDeclaration($1, NULL); }
                     | DECLARATION                                                               { $$ = new ExternalDeclaration(NULL, $1); }
@@ -186,8 +186,8 @@ FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST COMPOUND_
                 |    DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT                             { $$ = new FunctionDefinition(NULL, $1, $2, $3); }
                 |    DECLARATOR COMPOUND_STATEMENT                                              { $$ = new FunctionDefinition(NULL, $1, NULL, $2); }
 
-DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR_LIST                                         { $$ = new Declaration($1, $2); }
-        |    DECLARATION_SPECIFIER                                                              { $$ = new Declaration($1, NULL); }
+DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR_LIST SEMICOLON                               { $$ = new Declaration($1, $2); }
+        |    DECLARATION_SPECIFIER SEMICOLON                                                    { $$ = new Declaration($1, NULL); }
 
 DECLARATION_SPECIFIER: STORAGE_CLASS_SPECIFIER DECLARATION_SPECIFIER                            { $$ = new DeclarationSpecifier($1, NULL, $2); }
                     |  STORAGE_CLASS_SPECIFIER                                                  { $$ = new DeclarationSpecifier($1, NULL, NULL); }
@@ -401,7 +401,7 @@ TYPE_SPECIFIER: VOID                                                            
             |   SIGNED                                                                          { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   UNSIGNED                                                                        { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   STRUCT_SPECIFIER                                                                { $$ = new TypeSpecifier(NULL, $1, NULL); }
-            |   ENUM_SPECIFIER                                                                  { $$ = new TypeSpecifier(NULL, NULL, $1); }                                                                    
+            |   ENUM_SPECIFIER                                                                  { $$ = new TypeSpecifier(NULL, NULL, $1); }
 
 STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB                             
                     |   STRUCT LCB STRUCT_DECLARATION_LIST RCB                                  
