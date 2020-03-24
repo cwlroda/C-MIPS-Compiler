@@ -1,3 +1,26 @@
+"int"               {return INT; }
+"return"            { return RETURN; }
+
+[0-9]               { return CONSTANT; }
+[a-z]+              { return IDENTIFIER; }
+
+";"                 { return SEMICOLON; }
+"++"                { return INCREMENT;}
+"--"                { return DECREMENT;}
+"<<"                { return LSHIFT;}
+">>"                { return RSHIFT;}
+"<="                { return LE;}
+">="                { return GE;}
+"=="                { return EQUALITY;}
+"!="                { return NOTEQUAL;}
+"->"                { return ARROW;}
+"."                 { return DOT;}
+"||"                { return LOGICAL_OR;}
+"&&"                { return LOGICAL_AND;}
+"+="                { return PLUSEQUAL;}
+"*="                { return MULEQUAL;}
+"/="                { return DIVEQUAL;}
+"%="                { return MODEQUAL;}
 "-="                { return MINUSEQUAL;}
 "&="                { return ANDEQUAL;}
 "<<="               { return LSHIFTEQUAL;}
