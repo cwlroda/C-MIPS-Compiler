@@ -55,8 +55,10 @@ inline void ExternalDeclaration::print_py(std::ofstream& out){
     if(func_def != NULL){
         context.in_func = true;
         out << std::endl;
+
         func_def->print_py(out);
         out << std::endl;
+
         context.in_func = false;
     }
 }
@@ -525,6 +527,10 @@ inline void CompoundStatement::print_py(std::ofstream& out, bool is_init, bool i
     context.indent--;
 }
 
+inline CompoundStatement* Statement::get_comp_state(){
+    return comp_state;
+}
+
 inline void StatementList::print_py(std::ofstream& out){
     if(state_list != NULL){
         state_list->print_py(out);
@@ -561,29 +567,47 @@ inline void ExprStatement::print_py(std::ofstream& out){
     if(expr != NULL){
         expr->print_py(out);
     }
+
+    out << std::endl;
 }
 
 inline void SelectionStatement::print_py(std::ofstream& out){
-    
+    if(IF != NULL){
+        if(ELSE == NULL){
+            
+        }
+    }
 }
 
 inline void IterationStatement::print_py(std::ofstream& out){
-    if(*type == "while"){
-        out << std::endl;
-        context.in_while = true;
+    out << std::endl;
+    context.in_while = true;
 
-        for(int i=0; i<context.indent; i++){
-            out << "\t";
-        }
-
-        out << "while(";
-        expr->print_py(out);
-        out << "):" << std::endl;
-
-
-
-        context.in_while = false;
+    for(int i=0; i<context.indent; i++){
+        out << "\t";
     }
+
+    out << "while(";
+    expr->print_py(out);
+    out << "):" << std::endl;
+
+    if(state == NULL){
+        out << "pass" << std::endl;
+    }
+
+    else if(state->get_comp_state() == NULL){
+        context.indent++;
+        state->print_py(out);
+        out << std::endl;
+        context.indent--;
+    }
+
+    else{
+        state->print_py(out);
+        out << std::endl;
+    }
+
+    context.in_while = false;
 }
 
 inline void JumpStatement::print_py(std::ofstream& out){

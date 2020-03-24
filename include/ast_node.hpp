@@ -10,6 +10,7 @@ struct Context{
     bool main_func = false; // check for main function
     bool func_param = false; // check if function has parameters
     bool var_param = false; // check if variable has parameters
+    bool elif_block = false; // check for more else-if blocks
 
     int indent = 0; // stores indentation level
     int brackets = 0; // stores parentheses nesting level
