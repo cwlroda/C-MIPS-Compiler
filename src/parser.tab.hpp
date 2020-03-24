@@ -50,13 +50,16 @@ extern int yydebug;
     extern FILE *yyin;
     extern const TranslationUnit *g_root; // A way of getting the AST out
 
+    extern char *yytext;
+	#define YYDEBUG_LEXER_TEXT yytext
+
     // ! This is to fix problems when generating C++
     // We are declaring the functions provided by Flex, so
     // that Bison generated code can call them.
     int yylex(void);
     void yyerror(const char *);
 
-#line 60 "src/parser.tab.hpp" /* yacc.c:1909  */
+#line 63 "src/parser.tab.hpp" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -150,7 +153,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 19 "src/parser.y" /* yacc.c:1909  */
+#line 22 "src/parser.y" /* yacc.c:1909  */
 
     TranslationUnit *trans_unit;
     ExternalDeclaration *ext_decl;
@@ -215,7 +218,7 @@ union YYSTYPE
 
     std::string *string;
 
-#line 219 "src/parser.tab.hpp" /* yacc.c:1909  */
+#line 222 "src/parser.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

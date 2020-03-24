@@ -2,6 +2,10 @@
 #define AST_FUNCTIONS_HPP
 
 #include "ast_node.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
 
 static Context context;
 
