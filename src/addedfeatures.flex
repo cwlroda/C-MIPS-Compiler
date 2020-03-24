@@ -36,7 +36,7 @@
 "&"                 { yylval.wordValue=new std::string(yytext);  return AMPERSAND;}
 "!"                 { yylval.wordValue=new std::string(yytext);  return EXCLAMATION;}
 "?"                 { yylval.wordValue=new std::string(yytext);  return QUESTION;}
-\^                 { yylval.wordValue=new std::string(yytext);  return XOR;}
+[\^]                 { yylval.wordValue=new std::string(yytext);  return XOR;}
 "typedef"           { yylval.wordValue=new std::string(yytext);  return TYPEEDEF;}
 "extern"            { yylval.wordValue=new std::string(yytext);  return EXTERN;}
 "static"            { yylval.wordValue=new std::string(yytext);  return STATIC;}
