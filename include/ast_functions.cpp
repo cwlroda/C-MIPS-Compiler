@@ -1120,7 +1120,8 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         else{
             out << "\tmove\t\t$2,$0" << std::endl;
         }
-        
+        context.is_return = false;
+        context.returnNum = 0;
     }
     //DO SOMETHING ABOUT TYPE
     
