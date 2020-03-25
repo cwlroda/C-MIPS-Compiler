@@ -886,3 +886,56 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         out << *constant;
     }
 }
+
+inline void ConditionalExpr::print_asm(std::ofstream& out){
+    log_or_expr -> print_asm(out);
+
+    // if(expr != NULL){
+    //     expr->print_asm(out);
+    //     cond_expr->print_asm(out);
+    // }
+}
+
+inline void LogicalOrExpr::print_asm(std::ofstream& out){
+    log_and_expr -> print_asm(out);
+}
+
+inline void LogicalAndExpr::print_asm(std::ofstream& out){
+    incl_or_expr -> print_asm(out);
+}
+
+inline void InclusiveOrExpr::print_asm(std::ofstream& out){
+    excl_or_expr -> print_asm(out);
+}
+
+inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
+    and_expr -> print_asm(out);
+}
+
+inline void AndExpr::print_asm(std::ofstream& out){
+    equal_expr -> print_asm(out);
+}
+
+inline void EqualityExpr::print_asm(std::ofstream& out){
+    rel_expr -> print_asm(out);
+}
+
+inline void RelationalExpr::print_asm(std::ofstream& out){
+    shift_expr -> print_asm(out);
+}
+
+inline void ShiftExpr::print_asm(std::ofstream& out){
+    add_expr -> print_asm(out);
+}
+
+inline void AdditiveExpr::print_asm(std::ofstream& out){
+    mul_expr -> print_asm(out);
+}
+
+inline void MultiplicativeExpr::print_asm(std::ofstream& out){
+    cast_expr -> print_asm(out);
+}
+
+inline void CastExpr::print_asm(std::ofstream& out){
+    un_expr -> print_asm(out);
+}

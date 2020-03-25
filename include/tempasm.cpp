@@ -49,6 +49,7 @@ inline void TranslationUnit::print_asm(std::ofstream& out){
 inline void ExternalDeclaration::print_asm(std::ofstream& out){
     if(decl != NULL){
         out<< std::endl;
+        std::cout << "hi1";
         decl->print_asm(out);
         out<< std::endl;
     }
@@ -59,7 +60,8 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
-    decl_spec -> print_asm(out);
+    /* decl_spec -> print_asm(out); */
+    std::cout << "hi2";
     if(init_declr != NULL){
         init_declr->print_asm(out);
     }
@@ -71,7 +73,7 @@ inline void InitDeclarator::print_asm(std::ofstream& out){
     }
     else{
         declr->print_asm(out);
-        init->print_asm(out);
+        /* init->print_asm(out); */
     }
     out << std::endl;
 }
@@ -86,10 +88,10 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     if(dir_declr != NULL){
         dir_declr->print_asm(out);
     }
-    out <<*iden << std::endl;
+    out << *iden << ":" << std::endl;
 }
 
-inline void Initializer::print_asm(std::ofstream& out){
+ inline void Initializer::print_asm(std::ofstream& out){
     if(init_list != NULL){
         init_list -> print_asm(out);
     }
@@ -113,11 +115,11 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         cond_expr->print_asm(out);
     }
     
-    if(un_expr != NULL){
-        un_expr -> print_asm(out);
-        ass_op -> print_asm(out);
-        ass_expr -> print_asm(out);
-    }
+    // if(un_expr != NULL){
+    //     un_expr -> print_asm(out);
+    //     ass_op -> print_asm(out);
+    //     ass_expr -> print_asm(out);
+    // }
     
 }
 
@@ -151,4 +153,57 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
     if(constant != NULL){
         out << *constant;
     }
+}
+
+inline void ConditionalExpr::print_asm(std::ofstream& out){
+    log_or_expr -> print_asm(out);
+
+    // if(expr != NULL){
+    //     expr->print_asm(out);
+    //     cond_expr->print_asm(out);
+    // }
+}
+
+inline void LogicalOrExpr::print_asm(std::ofstream& out){
+    log_and_expr -> print_asm(out);
+}
+
+inline void LogicalAndExpr::print_asm(std::ofstream& out){
+    incl_or_expr -> print_asm(out);
+}
+
+inline void InclusiveOrExpr::print_asm(std::ofstream& out){
+    excl_or_expr -> print_asm(out);
+}
+
+inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
+    and_expr -> print_asm(out);
+}
+
+inline void AndExpr::print_asm(std::ofstream& out){
+    equal_expr -> print_asm(out);
+}
+
+inline void EqualityExpr::print_asm(std::ofstream& out){
+    rel_expr -> print_asm(out);
+}
+
+inline void RelationalExpr::print_asm(std::ofstream& out){
+    shift_expr -> print_asm(out);
+}
+
+inline void ShiftExpr::print_asm(std::ofstream& out){
+    add_expr -> print_asm(out);
+}
+
+inline void AdditiveExpr::print_asm(std::ofstream& out){
+    mul_expr -> print_asm(out);
+}
+
+inline void MultiplicativeExpr::print_asm(std::ofstream& out){
+    cast_expr -> print_asm(out);
+}
+
+inline void CastExpr::print_asm(std::ofstream& out){
+    un_expr -> print_asm(out);
 }
