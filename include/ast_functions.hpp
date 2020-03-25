@@ -1169,6 +1169,7 @@ class Pointer{
         void print_asm(std::ofstream& out);
 
     private:
+    
 };
 
 class EnumSpecifier{

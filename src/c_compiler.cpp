@@ -21,7 +21,13 @@ int main(int argc, char* argv[]){
     }
 
     else if(mode == "-S"){
-        
+        std::string arg = argv[3];
+
+        if(arg == "-o"){
+            const TranslationUnit *ast = parseAST(argv[2]);
+            std::string outfile = argv[4];
+            ast->print_asm_main(outfile);
+        }
     }
 
     else{
