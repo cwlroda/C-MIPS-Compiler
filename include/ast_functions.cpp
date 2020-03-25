@@ -818,10 +818,8 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     if(decl_spec != NULL){
         decl_spec->print_asm(out);
     }
+    declr->print_asm(out);
 
-    if(declr != NULL){
-        declr->print_asm(out);
-    }
     out << "\t.text" << std::endl;
     out << "\t.align\t2" << std::endl;
     out << "\t.globl\t" << context.FuncName << std::endl;
@@ -838,11 +836,11 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tmove $fp,$sp" << std::endl;
 
 
-    /* if(decl_list != NULL){
+    if(decl_list != NULL){
         decl_list->print_asm(out);
-    } */
+    }
 
-    /* Compound statement */
+    comp_state -> print_asm(out);
 
     out << "\tmove\t$sp,$fp" << std::endl;
     out << "\tlw\t$31,44($sp)" << std::endl;
@@ -851,6 +849,13 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tj\t$31" << std::endl;
     out << "\tnop" << std::endl;
 
+}
+
+inline void DeclarationList::print_asm(std::ofstream& out){
+    if(decl_list!=NULL){
+        decl_list->print_asm(out);
+    }
+    decl->print_asm(out);
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
@@ -965,6 +970,9 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         if(context.is_GlobalVar == true){
             context.GlobalVarNum = stoi(*constant);
         }
+        if(context.is_return == true){
+            context.returnNum = stoi(*constant);
+        }
     }
 }
 
@@ -1019,4 +1027,101 @@ inline void MultiplicativeExpr::print_asm(std::ofstream& out){
 
 inline void CastExpr::print_asm(std::ofstream& out){
     un_expr -> print_asm(out);
+}
+
+inline void CompoundStatement::print_asm(std::ofstream& out){
+    if(decl_list != NULL){
+        decl_list -> print_asm(out);
+    }
+    if(state_list != NULL){
+        state_list -> print_asm(out);
+    }
+}
+
+inline void StatementList::print_asm(std::ofstream& out){
+    if(state_list != NULL){
+        state_list -> print_asm(out);
+    }
+    state -> print_asm(out);
+}
+
+inline void Statement::print_asm(std::ofstream& out){
+    if(label_state != NULL){
+        label_state -> print_asm(out);
+    }
+    if(comp_state != NULL){
+        comp_state -> print_asm(out);
+    }
+    if(expr_state != NULL){
+        expr_state -> print_asm(out);
+    }
+    if(select_state != NULL){
+        select_state -> print_asm(out);
+    }
+    if(it_state != NULL){
+        it_state -> print_asm(out);
+    }
+    if(jump_state != NULL){
+        jump_state -> print_asm(out);
+    }
+}
+
+inline void LabeledStatement::print_asm(std::ofstream& out){
+
+}
+
+inline void ExprStatement::print_asm(std::ofstream& out){
+    if(expr != NULL){
+        expr -> print_asm(out);
+    }
+}
+
+inline void SelectionStatement::print_asm(std::ofstream& out){
+    expr -> print_asm(out);
+    if_state -> print_asm(out);
+    if(else_state != NULL){
+        else_state -> print_asm(out);
+    }
+    if(IF != NULL){
+        /*DO SOMETHING HERE */
+    }
+    if(ELSE != NULL){
+        /*DO SOMETHING HERE */
+    }
+    if(IF != NULL){
+        /*DO SOMETHING HERE */
+    }
+}
+
+inline void IterationStatement::print_asm(std::ofstream& out){
+    if(expr != NULL){
+        expr -> print_asm(out);
+    }
+    state -> print_asm(out);
+    if(for_first != NULL){
+        for_first -> print_asm(out);
+    }
+    if(for_second != NULL){
+        for_second -> print_asm(out);
+    }
+    //DO SOMETHING ABOUT TYPE
+    if(add_type != NULL){
+        //DO SOMETHING ABOUT ADD_TYPE
+    }
+}
+
+inline void JumpStatement::print_asm(std::ofstream& out){
+    if(*type == "return"){
+        context.is_return = true;
+        expr -> print_asm(out);
+        out << "\tli\t\t$2," << context.returnNum << std::endl;
+    }
+    //DO SOMETHING ABOUT TYPE
+    
+}
+
+inline void Expr::print_asm(std::ofstream& out){
+    assign_expr -> print_asm(out);
+}
+
 }
