@@ -714,10 +714,6 @@ inline void JumpStatement::print_py(std::ofstream& out){
     }
 }
 
-/*-------*
-| OTHERS |
-*-------*/
-
 /*-----*
 | MISC |
 *-----*/
@@ -776,8 +772,22 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
     if(decl != NULL){
         context.is_GlobalVar = true;
 
-        out<< std::endl;
+        out << std::endl;
         decl->print_asm(out);
+        out << "\t.data" << std::endl;
+        out << "\t.globl\t" << context.GlobalDirectDeclarator << std::endl;
+        out << "\t.align\t2" << std::endl;
+        out << "\t.type\t" << context.GlobalDirectDeclarator << ", @object" << std::endl;
+        out << "\t.size\t" << context.GlobalDirectDeclarator << ", ";
+
+        if(context.what_typeSpec == "char"){
+            out << "1";
+        }
+        else{
+            out << "4";
+        }
+        out << std::endl;
+
         out << context.GlobalDirectDeclarator << ":" << std::endl;
         if(context.what_typeSpec == "char"){
             out << "\t.byte\t";
@@ -788,26 +798,50 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         out << context.GlobalVarNum << std::endl;
     }
 
-    if(func_def != NULL){
-        
-    } 
+    else if(func_def != NULL){
+        context.in_func = true;
+        out << std::endl;
+        func_def->print_asm(out);
+        out << "\t.text" << std::endl;
+        out << "\t.align\t2" << std::endl;
+        out << "\t.globl\t" << context.FuncName << std::endl;
+        out << "\t.set\tnomips16" << std::endl;
+        out << "\t/set\tnomicromips" << std::endl;
+        out << "\t.ent\t" << context.FuncName << std::endl;
+        out << "\t.type\t" << context.FuncName << ", @function" << std::endl;
+
+        out << context.FuncName << ":" << std::endl;
+
+        context.in_func = false;
+    }
+}
+
+inline void FunctionDefinition::print_asm(std::ofstream& out){
+    if(decl_spec != NULL){
+        decl_spec->print_asm(out);
+    }
+
+    if(declr != NULL){
+        declr->print_asm(out);
+    }
+
+    /* if(decl_list != NULL){
+        decl_list->print_asm(out);
+    } */
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
     decl_spec -> print_asm(out);
-    std::cout << "hi2";
     if(init_declr != NULL){
         init_declr->print_asm(out);
     }
 }
 
 inline void DeclarationSpecifier::print_asm(std::ofstream& out){
-
     type_spec -> print_asm(out);
     if(decl_spec!=NULL){
         decl_spec->print_asm(out);
-    }     
-    
+    }
 }
 
 inline void TypeSpecifier::print_asm(std::ofstream& out){
@@ -823,12 +857,10 @@ inline void TypeSpecifier::print_asm(std::ofstream& out){
 }
 
 inline void InitDeclarator::print_asm(std::ofstream& out){
-    if(init == NULL){
-        declr->print_asm(out);
-    }
-    else{
-        declr->print_asm(out);
-        /* init->print_asm(out); */
+    declr->print_asm(out);
+
+    if(init != NULL){
+        init->print_asm(out);
     }
     out << std::endl;
 }
@@ -843,12 +875,17 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     if(dir_declr != NULL){
         dir_declr->print_asm(out);
     }
+
     if(context.is_GlobalVar == true){
-        *iden = context.GlobalDirectDeclarator;
+        context.GlobalDirectDeclarator = *iden;
+    }
+
+    if(context.in_func == true && iden != NULL){
+        context.FuncName = *iden;
     }
 }
 
- inline void Initializer::print_asm(std::ofstream& out){
+inline void Initializer::print_asm(std::ofstream& out){
     if(init_list != NULL){
         init_list -> print_asm(out);
     }
@@ -877,7 +914,6 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
     //     ass_op -> print_asm(out);
     //     ass_expr -> print_asm(out);
     // }
-    
 }
 
 inline void UnaryExpr::print_asm(std::ofstream& out){
@@ -897,12 +933,7 @@ inline void UnaryExpr::print_asm(std::ofstream& out){
 
 inline void PostfixExpr::print_asm(std::ofstream& out){
     if(pri_expr != NULL){
-        if(expr == NULL){
-            pri_expr->print_asm(out);
-        }
-        else{
-
-        }
+        pri_expr->print_asm(out);
     }
 }
 
