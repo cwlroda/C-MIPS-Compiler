@@ -810,6 +810,8 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         context.FuncName = "0";
         context.in_func = false;
     }
+
+    out << std::endl;
 }
 
 inline void FunctionDefinition::print_asm(std::ofstream& out){
@@ -824,7 +826,7 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\t.align\t2" << std::endl;
     out << "\t.globl\t" << context.FuncName << std::endl;
     out << "\t.set\tnomips16" << std::endl;
-    out << "\t/set\tnomicromips" << std::endl;
+    out << "\t.set\tnomicromips" << std::endl;
     out << "\t.ent\t" << context.FuncName << std::endl;
     out << "\t.type\t" << context.FuncName << ", @function" << std::endl;
 
