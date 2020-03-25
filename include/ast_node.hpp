@@ -22,6 +22,13 @@ struct Context{
     int indent = 0; // stores indentation level
     int brackets = 0; // stores parentheses nesting level
 
+    bool is_return = false;
+    int returnNum = 0;
+
+
+
+
+
     std::vector<std::string> GlobalVar; // stores global variables
 };
 
