@@ -796,22 +796,18 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
             out << "\t.word\t";
         }
         out << context.GlobalVarNum << std::endl;
+
+        context.is_GlobalVar = false;
+        context.what_typeSpec = "0";
+        context.GlobalDirectDeclarator = "0";
     }
 
     else if(func_def != NULL){
         context.in_func = true;
         out << std::endl;
         func_def->print_asm(out);
-        out << "\t.text" << std::endl;
-        out << "\t.align\t2" << std::endl;
-        out << "\t.globl\t" << context.FuncName << std::endl;
-        out << "\t.set\tnomips16" << std::endl;
-        out << "\t/set\tnomicromips" << std::endl;
-        out << "\t.ent\t" << context.FuncName << std::endl;
-        out << "\t.type\t" << context.FuncName << ", @function" << std::endl;
-
-        out << context.FuncName << ":" << std::endl;
-
+        
+        context.FuncName = "0";
         context.in_func = false;
     }
 }
@@ -824,10 +820,35 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     if(declr != NULL){
         declr->print_asm(out);
     }
+    out << "\t.text" << std::endl;
+    out << "\t.align\t2" << std::endl;
+    out << "\t.globl\t" << context.FuncName << std::endl;
+    out << "\t.set\tnomips16" << std::endl;
+    out << "\t/set\tnomicromips" << std::endl;
+    out << "\t.ent\t" << context.FuncName << std::endl;
+    out << "\t.type\t" << context.FuncName << ", @function" << std::endl;
+
+    out << context.FuncName << ":" << std::endl;
+
+    out << "\taddiu\t$sp,$sp,-48" << std::endl;
+    out << "\tsw\t$31,44($sp)" << std::endl;
+    out << "\tsw\t$fp,40($sp)" << std::endl;
+    out << "\tmove $fp,$sp" << std::endl;
+
 
     /* if(decl_list != NULL){
         decl_list->print_asm(out);
     } */
+
+    /* Compound statement */
+
+    out << "\tmove\t$sp,$fp" << std::endl;
+    out << "\tlw\t$31,44($sp)" << std::endl;
+    out << "\tlw\t$fp,40($sp)" << std::endl;
+    out << "\taddiu\t$sp,$sp,48" << std::endl;
+    out << "\tj\t$31" << std::endl;
+    out << "\tnop" << std::endl;
+
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
