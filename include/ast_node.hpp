@@ -15,7 +15,9 @@ struct Context{
     bool elif_block = false; // check for more else-if blocks
     //bool func_decl = false; // check if it is a function declaration or a global variable
     bool is_GlobalVar = false; // check if it is a global variable
-    std::string what_typeSpec = "";
+    std::string what_typeSpec = "0";
+    std::string GlobalDirectDeclarator = "0";
+    int GlobalVarNum = 0;
     int indent = 0; // stores indentation level
     int brackets = 0; // stores parentheses nesting level
 
