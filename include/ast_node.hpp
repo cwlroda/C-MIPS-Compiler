@@ -14,7 +14,8 @@ struct Context{
     bool var_param = false; // check if variable has parameters
     bool elif_block = false; // check for more else-if blocks
     //bool func_decl = false; // check if it is a function declaration or a global variable
-
+    bool is_GlobalVar = false; // check if it is a global variable
+    std::string what_typeSpec = "";
     int indent = 0; // stores indentation level
     int brackets = 0; // stores parentheses nesting level
 

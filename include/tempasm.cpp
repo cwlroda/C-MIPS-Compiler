@@ -48,8 +48,10 @@ inline void TranslationUnit::print_asm(std::ofstream& out){
 
 inline void ExternalDeclaration::print_asm(std::ofstream& out){
     if(decl != NULL){
+        context.is_GlobalVar = true;
+
         out<< std::endl;
-        std::cout << "hi1";
+        
         decl->print_asm(out);
         out<< std::endl;
     }
@@ -60,10 +62,34 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
-    /* decl_spec -> print_asm(out); */
+    decl_spec -> print_asm(out);
     std::cout << "hi2";
     if(init_declr != NULL){
         init_declr->print_asm(out);
+    }
+}
+
+inline void DeclarationSpecifier::print_asm(std::ofstream& out){
+    if(storage_class_spec != NULL){
+
+    }
+    else{
+        type_spec -> print_asm(out);
+        if(decl_spec!=NULL){
+            decl_spec->print_asm(out);
+        }     
+    }
+}
+
+inline void TypeSpecifier::print_asm(std::ofstream& out){
+    if(struct_spec != NULL){
+        struct_spec -> print_asm(out);
+    }
+    else if(enum_spec != NULL){
+        enum_spec -> print_asm(out);
+    }
+    else{
+        context.what_typeSpec = *type;
     }
 }
 
