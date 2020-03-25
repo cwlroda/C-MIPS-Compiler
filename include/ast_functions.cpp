@@ -718,12 +718,6 @@ inline void JumpStatement::print_py(std::ofstream& out){
 | OTHERS |
 *-------*/
 
-inline void StorageClassSpecifier::print_py(std::ofstream& out){
-    if(type != NULL){
-        out << *type << " ";
-    }
-}
-
 /*-----*
 | MISC |
 *-----*/
@@ -780,10 +774,18 @@ inline void TranslationUnit::print_asm(std::ofstream& out){
 
 inline void ExternalDeclaration::print_asm(std::ofstream& out){
     if(decl != NULL){
+        context.is_GlobalVar = true;
+
         out<< std::endl;
-        std::cout << "hi1";
         decl->print_asm(out);
-        out<< std::endl;
+        out << context.GlobalDirectDeclarator << ":" << std::endl;
+        if(context.what_typeSpec == "char"){
+            out << "\t.byte\t";
+        }
+        else{
+            out << "\t.word\t";
+        }
+        out << context.GlobalVarNum << std::endl;
     }
 
     if(func_def != NULL){
@@ -792,11 +794,32 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
-    /* decl_spec -> print_asm(out); */
+    decl_spec -> print_asm(out);
     std::cout << "hi2";
     if(init_declr != NULL){
         init_declr->print_asm(out);
     }
+}
+
+inline void DeclarationSpecifier::print_asm(std::ofstream& out){
+
+    type_spec -> print_asm(out);
+    if(decl_spec!=NULL){
+        decl_spec->print_asm(out);
+    }     
+    
+}
+
+inline void TypeSpecifier::print_asm(std::ofstream& out){
+    // if(struct_spec != NULL){
+    //     struct_spec -> print_asm(out);
+    // }
+    // else if(enum_spec != NULL){
+    //     enum_spec -> print_asm(out);
+    // }
+    // else{
+        context.what_typeSpec = *type;
+    //}
 }
 
 inline void InitDeclarator::print_asm(std::ofstream& out){
@@ -820,7 +843,9 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     if(dir_declr != NULL){
         dir_declr->print_asm(out);
     }
-    out << *iden << ":" << std::endl;
+    if(context.is_GlobalVar == true){
+        *iden = context.GlobalDirectDeclarator;
+    }
 }
 
  inline void Initializer::print_asm(std::ofstream& out){
@@ -847,11 +872,11 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         cond_expr->print_asm(out);
     }
     
-    if(un_expr != NULL){
-        un_expr -> print_asm(out);
-        ass_op -> print_asm(out);
-        ass_expr -> print_asm(out);
-    }
+    // if(un_expr != NULL){
+    //     un_expr -> print_asm(out);
+    //     ass_op -> print_asm(out);
+    //     ass_expr -> print_asm(out);
+    // }
     
 }
 
@@ -883,7 +908,9 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){
     if(constant != NULL){
-        out << *constant;
+        if(context.is_GlobalVar == true){
+            context.GlobalVarNum = stoi(*constant);
+        }
     }
 }
 

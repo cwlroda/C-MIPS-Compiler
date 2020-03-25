@@ -51,9 +51,15 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         context.is_GlobalVar = true;
 
         out<< std::endl;
-        
         decl->print_asm(out);
-        out<< std::endl;
+        out << context.GlobalDirectDeclarator << ":" << std::endl;
+        if(context.what_typeSpec == "char"){
+            out << "\t.byte\t";
+        }
+        else{
+            out << "\t.word\t";
+        }
+        out << context.GlobalVarNum << std::endl;
     }
 
     if(func_def != NULL){
@@ -70,27 +76,27 @@ inline void Declaration::print_asm(std::ofstream& out){
 }
 
 inline void DeclarationSpecifier::print_asm(std::ofstream& out){
-    if(storage_class_spec != NULL){
+    // if(storage_class_spec != NULL){
 
-    }
-    else{
+    // }
+    // else{
         type_spec -> print_asm(out);
         if(decl_spec!=NULL){
             decl_spec->print_asm(out);
         }     
-    }
+    //}
 }
 
 inline void TypeSpecifier::print_asm(std::ofstream& out){
-    if(struct_spec != NULL){
-        struct_spec -> print_asm(out);
-    }
-    else if(enum_spec != NULL){
-        enum_spec -> print_asm(out);
-    }
-    else{
+    // if(struct_spec != NULL){
+    //     struct_spec -> print_asm(out);
+    // }
+    // else if(enum_spec != NULL){
+    //     enum_spec -> print_asm(out);
+    // }
+    // else{
         context.what_typeSpec = *type;
-    }
+    //}
 }
 
 inline void InitDeclarator::print_asm(std::ofstream& out){
@@ -114,7 +120,9 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     if(dir_declr != NULL){
         dir_declr->print_asm(out);
     }
-    out << *iden << ":" << std::endl;
+    if(context.is_GlobalVar == true){
+        *iden = context.GlobalDirectDeclarator;
+    }
 }
 
  inline void Initializer::print_asm(std::ofstream& out){
@@ -177,7 +185,9 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){
     if(constant != NULL){
-        out << *constant;
+        if(context.is_GlobalVar == true){
+            context.GlobalVarNum = stoi(*constant);
+        }
     }
 }
 
