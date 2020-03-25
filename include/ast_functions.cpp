@@ -92,8 +92,8 @@ inline void FunctionDefinition::print_py(std::ofstream& out){
 }
 
 inline void Declaration::print_py(std::ofstream& out){
-    if(init_declr_list != NULL){
-        init_declr_list->print_py(out);
+    if(init_declr != NULL){
+        init_declr->print_py(out);
     }
 }
 
@@ -106,16 +106,6 @@ inline void DeclarationList::print_py(std::ofstream& out){
 
     if(decl != NULL){
         decl->print_py(out);
-    }
-}
-
-inline void InitDeclaratorList::print_py(std::ofstream& out){
-    if(init_declr_list != NULL){
-        init_declr_list->print_py(out);
-    }
-
-    if(init_declr != NULL){
-        init_declr->print_py(out);
     }
 }
 
@@ -209,10 +199,6 @@ inline void DirectDeclarator::print_py(std::ofstream& out, bool is_init, bool in
 
         if(param_type_list != NULL){
             param_type_list->print_py(out);
-        }
-
-        if(iden_list != NULL){
-            iden_list->print_py(out);
         }
     }
 }
@@ -731,17 +717,6 @@ inline void JumpStatement::print_py(std::ofstream& out){
 /*-------*
 | OTHERS |
 *-------*/
-
-inline void IdentifierList::print_py(std::ofstream& out){
-    if(iden_list != NULL){
-        iden_list->print_py(out);
-        out << ",";
-    }
-
-    if(iden != NULL){
-        out << *iden;
-    }
-}
 
 inline void StorageClassSpecifier::print_py(std::ofstream& out){
     if(type != NULL){

@@ -2,10 +2,6 @@
 #define AST_FUNCTIONS_HPP
 
 #include "ast_node.hpp"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
 
 #include <iostream>
 #include <fstream>
@@ -88,10 +84,10 @@ class Declaration{
     public:
         Declaration(
             DeclarationSpecifier *_decl_spec,
-            InitDeclaratorList *_init_decl_list
+            InitDeclarator *_init_declr
         ):
             decl_spec(_decl_spec),
-            init_declr_list(_init_decl_list)
+            init_declr(_init_declr)
         {}
         ~Declaration(){}
 
@@ -101,7 +97,7 @@ class Declaration{
 
     private:
         DeclarationSpecifier *decl_spec;
-        InitDeclaratorList *init_declr_list;
+        InitDeclarator *init_declr;
 };
 
 class DeclarationSpecifier{
@@ -144,26 +140,6 @@ class DeclarationList{
     private:
         DeclarationList *decl_list;
         Declaration *decl;
-};
-
-class InitDeclaratorList{
-    public:
-        InitDeclaratorList(
-            InitDeclaratorList *_init_declr_list,
-            InitDeclarator *_init_declr
-        ):
-            init_declr_list(_init_declr_list),
-            init_declr(_init_declr)
-        {}
-        ~InitDeclaratorList(){}
-
-        void print_c(std::ofstream& out);
-        void print_py(std::ofstream& out);
-        void print_asm(std::ofstream& out);
-
-    private:
-        InitDeclaratorList *init_declr_list;
-        InitDeclarator *init_declr;
 };
 
 class InitDeclarator{
@@ -253,7 +229,6 @@ class DirectDeclarator{
             DirectDeclarator *_dir_declr,
             ConstantExpr *_const_expr,
             ParameterTypeList *_param_type_list,
-            IdentifierList *_iden_list,
             std::string *_iden,
             std::string *_brac_type
         ):
@@ -261,7 +236,6 @@ class DirectDeclarator{
             dir_declr(_dir_declr),
             const_expr(_const_expr),
             param_type_list(_param_type_list),
-            iden_list(_iden_list),
             iden(_iden),
             brac_type(_brac_type)
         {}
@@ -276,7 +250,6 @@ class DirectDeclarator{
         DirectDeclarator *dir_declr;
         ConstantExpr *const_expr;
         ParameterTypeList *param_type_list;
-        IdentifierList *iden_list;
         std::string *iden;
         std::string *brac_type;
 };
@@ -1128,26 +1101,6 @@ class JumpStatement{
 /*-------*
 | OTHERS |
 *-------*/
-
-class IdentifierList{
-    public:
-        IdentifierList(
-            IdentifierList *_iden_list,
-            std::string *_iden
-        ):
-            iden_list(_iden_list),
-            iden(_iden)
-        {}
-        ~IdentifierList(){}
-
-        void print_c(std::ofstream& out);
-        void print_py(std::ofstream& out);
-        void print_asm(std::ofstream& out);
-
-    private:
-        IdentifierList *iden_list;
-        std::string *iden;
-};
 
 class TypeSpecifier{
     public:
