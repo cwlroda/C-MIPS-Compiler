@@ -781,7 +781,6 @@ inline void TranslationUnit::print_asm(std::ofstream& out){
 inline void ExternalDeclaration::print_asm(std::ofstream& out){
     if(decl != NULL){
         out<< std::endl;
-        std::cout << "hi1";
         decl->print_asm(out);
         out<< std::endl;
     }
@@ -792,8 +791,7 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
-    /* decl_spec -> print_asm(out); */
-    std::cout << "hi2";
+    decl_spec -> print_asm(out);
     if(init_declr != NULL){
         init_declr->print_asm(out);
     }
@@ -805,7 +803,7 @@ inline void InitDeclarator::print_asm(std::ofstream& out){
     }
     else{
         declr->print_asm(out);
-        /* init->print_asm(out); */
+        init->print_asm(out);
     }
     out << std::endl;
 }
@@ -820,14 +818,69 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     if(dir_declr != NULL){
         dir_declr->print_asm(out);
     }
-    out << *iden << ":" << std::endl;
+    out <<*iden << std::endl;
 }
 
-/* inline void Initializer::print_asm(std::ofstream& out){
+inline void Initializer::print_asm(std::ofstream& out){
     if(init_list != NULL){
         init_list -> print_asm(out);
     }
     if(assign_expr != NULL){
         assign_expr -> print_asm(out);
     }
-} */
+}
+
+inline void InitializerList::print_asm(std::ofstream& out){
+    if(init_list != NULL){
+        init_list->print_py(out);
+    }
+
+    if(init != NULL){
+        init->print_py(out);
+    }
+}
+
+inline void AssignmentExpr::print_asm(std::ofstream& out){
+    if(cond_expr != NULL){
+        cond_expr->print_asm(out);
+    }
+    
+    if(un_expr != NULL){
+        un_expr -> print_asm(out);
+        ass_op -> print_asm(out);
+        ass_expr -> print_asm(out);
+    }
+    
+}
+
+inline void UnaryExpr::print_asm(std::ofstream& out){
+    if(post_expr != NULL){
+        post_expr->print_asm(out);
+    }
+    // else{
+    //     if(un_op != NULL){
+    //         std::string type = un_op->print_asm(out);
+    //         cast_expr->print_asm(out);
+    //     }
+    //     if(type_name != NULL){
+    //         // type_name->print_asm(out);
+    //     }
+    // }
+}
+
+inline void PostfixExpr::print_asm(std::ofstream& out){
+    if(pri_expr != NULL){
+        if(expr == NULL){
+            pri_expr->print_asm(out);
+        }
+        else{
+
+        }
+    }
+}
+
+inline void PrimaryExpr::print_asm(std::ofstream& out){
+    if(constant != NULL){
+        out << *constant;
+    }
+}
