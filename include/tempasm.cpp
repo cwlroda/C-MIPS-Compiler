@@ -98,3 +98,57 @@ inline void Initializer::print_asm(std::ofstream& out){
     }
 }
 
+inline void InitializerList::print_asm(std::ofstream& out){
+    if(init_list != NULL){
+        init_list->print_py(out);
+    }
+
+    if(init != NULL){
+        init->print_py(out);
+    }
+}
+
+inline void AssignmentExpr::print_asm(std::ofstream& out){
+    if(cond_expr != NULL){
+        cond_expr->print_asm(out);
+    }
+    
+    if(un_expr != NULL){
+        un_expr -> print_asm(out);
+        ass_op -> print_asm(out);
+        ass_expr -> print_asm(out);
+    }
+    
+}
+
+inline void UnaryExpr::print_asm(std::ofstream& out){
+    if(post_expr != NULL){
+        post_expr->print_asm(out);
+    }
+    // else{
+    //     if(un_op != NULL){
+    //         std::string type = un_op->print_asm(out);
+    //         cast_expr->print_asm(out);
+    //     }
+    //     if(type_name != NULL){
+    //         // type_name->print_asm(out);
+    //     }
+    // }
+}
+
+inline void PostfixExpr::print_asm(std::ofstream& out){
+    if(pri_expr != NULL){
+        if(expr == NULL){
+            pri_expr->print_asm(out);
+        }
+        else{
+
+        }
+    }
+}
+
+inline void PrimaryExpr::print_asm(std::ofstream& out){
+    if(constant != NULL){
+        out << *constant;
+    }
+}

@@ -820,7 +820,7 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     if(dir_declr != NULL){
         dir_declr->print_asm(out);
     }
-    out << *iden << std::endl;
+    out << *iden << ":" << std::endl;
 }
 
 /* inline void Initializer::print_asm(std::ofstream& out){
