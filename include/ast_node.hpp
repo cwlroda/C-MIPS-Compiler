@@ -13,6 +13,7 @@ struct Context{
     bool func_param = false; // check if function has parameters
     bool var_param = false; // check if variable has parameters
     bool elif_block = false; // check for more else-if blocks
+    //bool func_decl = false; // check if it is a function declaration or a global variable
 
     int indent = 0; // stores indentation level
     int brackets = 0; // stores parentheses nesting level

@@ -47,9 +47,54 @@ inline void TranslationUnit::print_asm(std::ofstream& out){
 }
 
 inline void ExternalDeclaration::print_asm(std::ofstream& out){
+    if(decl != NULL){
+        out<< std::endl;
+        decl->print_asm(out);
+        out<< std::endl;
+    }
 
-
-
-
-    
+    if(func_def != NULL){
+        
+    } 
 }
+
+inline void Declaration::print_asm(std::ofstream& out){
+    decl_spec -> print_asm(out);
+    if(init_declr != NULL){
+        init_declr->print_asm(out);
+    }
+}
+
+inline void InitDeclarator::print_asm(std::ofstream& out){
+    if(init == NULL){
+        declr->print_asm(out);
+    }
+    else{
+        declr->print_asm(out);
+        init->print_asm(out);
+    }
+    out << std::endl;
+}
+
+inline void Declarator::print_asm(std::ofstream& out){
+    if(dir_declr != NULL){
+        dir_declr->print_asm(out);
+    }
+}
+
+inline void DirectDeclarator::print_asm(std::ofstream& out){
+    if(dir_declr != NULL){
+        dir_declr->print_asm(out);
+    }
+    out <<*iden << std::endl;
+}
+
+inline void Initializer::print_asm(std::ofstream& out){
+    if(init_list != NULL){
+        init_list -> print_asm(out);
+    }
+    if(assign_expr != NULL){
+        assign_expr -> print_asm(out);
+    }
+}
+
