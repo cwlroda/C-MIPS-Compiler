@@ -103,13 +103,13 @@ class Declaration{
 class DeclarationSpecifier{
     public:
         DeclarationSpecifier(
-            StorageClassSpecifier *_storage_class_spec,
             TypeSpecifier *_type_spec,
-            DeclarationSpecifier *_decl_spec
+            DeclarationSpecifier *_decl_spec,
+            std::string *_typed
         ):
-            storage_class_spec(_storage_class_spec),
             type_spec(_type_spec),
-            decl_spec(_decl_spec)
+            decl_spec(_decl_spec),
+            typed(_typed)
         {}
         ~DeclarationSpecifier(){}
 
@@ -117,9 +117,9 @@ class DeclarationSpecifier{
         void print_asm(std::ofstream& out);
 
     private:
-        StorageClassSpecifier *storage_class_spec;
         TypeSpecifier *type_spec;
         DeclarationSpecifier *decl_spec;
+        std::string *typed;
 };
 
 class DeclarationList{
@@ -1143,23 +1143,6 @@ class TypeName{
     private:
         SpecifierQualifierList *spec_qual_list;
         AbstractDeclarator *abs_declr;
-};
-
-class StorageClassSpecifier{
-    public:
-        StorageClassSpecifier(
-            std::string *_type
-        ):
-            type(_type)
-        {}
-        ~StorageClassSpecifier(){}
-
-        void print_c(std::ofstream& out);
-        void print_py(std::ofstream& out);
-        void print_asm(std::ofstream& out);
-
-    private:
-        std::string *type;
 };
 
 class Pointer{

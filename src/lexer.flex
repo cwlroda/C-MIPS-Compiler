@@ -11,18 +11,10 @@ extern FILE *yyin;
 %%
 
 "typedef"           { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return TYPEDEF; }
-"extern"            { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return EXTERN; }
-"static"            { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return STATIC; }
-"auto"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return AUTO; }
-"register"          { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return REGISTER; }
 "int"               { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return INT; }
-"void"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return VOID; }
 "char"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return CHAR; }
-"short"             { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return SHORT; }
-"long"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return LONG; }
 "float"             { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return FLOAT; }
 "double"            { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return DOUBLE; }
-"signed"            { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return SIGNED; }
 "unsigned"          { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return UNSIGNED; }
 "struct"            { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return STRUCT; }
 "enum"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return ENUM; }

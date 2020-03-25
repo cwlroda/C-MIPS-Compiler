@@ -67,7 +67,6 @@
     SelectionStatement *select_state;
     IterationStatement *it_state;
     JumpStatement *jump_state;
-    StorageClassSpecifier *store_spec;
     TypeSpecifier *type_spec;
     StructSpecifier *struct_spec;
     StructDeclarationList *struct_decl_list;
@@ -88,8 +87,7 @@
 %token MINUSEQUAL ANDEQUAL LSHIFTEQUAL RSHIFTEQUAL
 %token EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
 %token BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
-%token TYPEDEF EXTERN STATIC AUTO REGISTER
-%token VOID CHAR SHORT INT LONG FLOAT DOUBLE SIGNED UNSIGNED CONST VOLATILE
+%token CHAR INT FLOAT DOUBLE UNSIGNED TYPEDEF
 %token STRUCT ENUM ELLIPSIS
 %token IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
 %token LB RB LSB RSB LCB RCB COLON COMMA
@@ -100,8 +98,7 @@
 %type <str> MINUSEQUAL ANDEQUAL LSHIFTEQUAL RSHIFTEQUAL
 %type <str> EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
 %type <str> BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
-%type <str> TYPEDEF EXTERN STATIC AUTO REGISTER
-%type <str> VOID CHAR SHORT INT LONG FLOAT DOUBLE SIGNED UNSIGNED CONST VOLATILE
+%type <str> CHAR INT FLOAT DOUBLE UNSIGNED TYPEDEF
 %type <str> STRUCT ENUM ELLIPSIS
 %type <str> IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
 %type <str> LB RB LSB RSB LCB RCB COLON COMMA
@@ -153,7 +150,6 @@
 %type <select_state> SELECTION_STATEMENT
 %type <it_state> ITERATION_STATEMENT
 %type <jump_state> JUMP_STATEMENT
-%type <store_spec> STORAGE_CLASS_SPECIFIER
 %type <type_spec> TYPE_SPECIFIER
 %type <struct_spec> STRUCT_SPECIFIER
 %type <struct_decl_list> STRUCT_DECLARATION_LIST
@@ -188,10 +184,10 @@ FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST COMPOUND_
 DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR SEMICOLON                               { $$ = new Declaration($1, $2); }
         |    DECLARATION_SPECIFIER SEMICOLON                                                    { $$ = new Declaration($1, NULL); }
 
-DECLARATION_SPECIFIER: STORAGE_CLASS_SPECIFIER DECLARATION_SPECIFIER                            { $$ = new DeclarationSpecifier($1, NULL, $2); }
-                    |  STORAGE_CLASS_SPECIFIER                                                  { $$ = new DeclarationSpecifier($1, NULL, NULL); }
-                    |  TYPE_SPECIFIER DECLARATION_SPECIFIER                                     { $$ = new DeclarationSpecifier(NULL, $1, $2); }
-                    |  TYPE_SPECIFIER                                                           { $$ = new DeclarationSpecifier(NULL, $1, NULL); }
+DECLARATION_SPECIFIER: TYPEDEF DECLARATION_SPECIFIER                                            { $$ = new DeclarationSpecifier(NULL, $2, $1); }
+                    |  TYPEDEF                                                                  { $$ = new DeclarationSpecifier(NULL, NULL, $1); }
+                    |  TYPE_SPECIFIER DECLARATION_SPECIFIER                                     { $$ = new DeclarationSpecifier($1, $2, NULL); }
+                    |  TYPE_SPECIFIER                                                           { $$ = new DeclarationSpecifier($1, NULL, NULL); }
 
 DECLARATION_LIST: DECLARATION                                                                   { $$ = new DeclarationList(NULL, $1); }
                 | DECLARATION_LIST DECLARATION                                                  { $$ = new DeclarationList($1, $2); }
@@ -376,26 +372,17 @@ JUMP_STATEMENT: CONTINUE SEMICOLON                                              
             |   BREAK SEMICOLON                                                                 { $$ = new JumpStatement($1, NULL); }
             |   RETURN EXPR SEMICOLON                                                                    { $$ = new JumpStatement($1, $2); }
 
-STORAGE_CLASS_SPECIFIER: TYPEDEF                                                                { $$ = new StorageClassSpecifier($1); }
-                    |    EXTERN                                                                 { $$ = new StorageClassSpecifier($1); }
-                    |    STATIC                                                                 { $$ = new StorageClassSpecifier($1); }
-                    |    AUTO                                                                   { $$ = new StorageClassSpecifier($1); }
-
-TYPE_SPECIFIER: VOID                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
-            |   CHAR                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
-            |   SHORT                                                                           { $$ = new TypeSpecifier($1, NULL, NULL); }
+TYPE_SPECIFIER: CHAR                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   INT                                                                             { $$ = new TypeSpecifier($1, NULL, NULL); }
-            |   LONG                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   FLOAT                                                                           { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   DOUBLE                                                                          { $$ = new TypeSpecifier($1, NULL, NULL); }
-            |   SIGNED                                                                          { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   UNSIGNED                                                                        { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   STRUCT_SPECIFIER                                                                { $$ = new TypeSpecifier(NULL, $1, NULL); }
             |   ENUM_SPECIFIER                                                                  { $$ = new TypeSpecifier(NULL, NULL, $1); }
 
 STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB                             
-                    |   STRUCT LCB STRUCT_DECLARATION_LIST RCB                                  
-                    |   STRUCT IDENTIFIER                                                       
+                | STRUCT LCB STRUCT_DECLARATION_LIST RCB                                        
+                | STRUCT IDENTIFIER                                                             
 
 STRUCT_DECLARATION_LIST: STRUCT_DECLARATION                                                     
                     |    STRUCT_DECLARATION_LIST STRUCT_DECLARATION                             
