@@ -1114,7 +1114,13 @@ inline void JumpStatement::print_asm(std::ofstream& out){
     if(*type == "return"){
         context.is_return = true;
         expr -> print_asm(out);
-        out << "\tli\t\t$2," << context.returnNum << std::endl;
+        if(context.returnNum != 0){
+            out << "\tli\t\t$2," << context.returnNum << std::endl;
+        }
+        else{
+            out << "\tmove\t\t$2,$0" << std::endl;
+        }
+        
     }
     //DO SOMETHING ABOUT TYPE
     
