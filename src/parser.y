@@ -28,7 +28,6 @@
     DeclarationList *decl_list;
     CompoundStatement *comp_state;
     StatementList *state_list;
-    InitDeclaratorList *init_declr_list;
     InitDeclarator *init_declr;
     Initializer *init;
     InitializerList *init_list;
@@ -38,7 +37,6 @@
     ParameterTypeList *param_type_list;
     ParameterList *param_list;
     ParameterDeclaration *param_decl;
-    IdentifierList *iden_list;
     ConstantExpr *const_expr;
     AbstractDeclarator *abs_declr;
     DirectAbstractDeclarator *dir_abs_declr;
@@ -116,7 +114,6 @@
 %type <decl_list> DECLARATION_LIST
 %type <comp_state> COMPOUND_STATEMENT
 %type <state_list> STATEMENT_LIST
-%type <init_declr_list> INIT_DECLARATOR_LIST
 %type <init_declr> INIT_DECLARATOR
 %type <init> INITIALIZER
 %type <init_list> INITIALIZER_LIST
@@ -126,7 +123,6 @@
 %type <param_type_list> PARAMETER_TYPE_LIST
 %type <param_list> PARAMETER_LIST
 %type <param_decl> PARAMETER_DECLARATION
-%type <iden_list> IDENTIFIER_LIST
 %type <const_expr> CONSTANT_EXPR
 %type <abs_declr> ABSTRACT_DECLARATOR
 %type <dir_abs_declr> DIRECT_ABSTRACT_DECLARATOR
@@ -189,7 +185,7 @@ FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST COMPOUND_
                 |    DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT                             { $$ = new FunctionDefinition(NULL, $1, $2, $3); }
                 |    DECLARATOR COMPOUND_STATEMENT                                              { $$ = new FunctionDefinition(NULL, $1, NULL, $2); }
 
-DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR_LIST SEMICOLON                               { $$ = new Declaration($1, $2); }
+DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR SEMICOLON                               { $$ = new Declaration($1, $2); }
         |    DECLARATION_SPECIFIER SEMICOLON                                                    { $$ = new Declaration($1, NULL); }
 
 DECLARATION_SPECIFIER: STORAGE_CLASS_SPECIFIER DECLARATION_SPECIFIER                            { $$ = new DeclarationSpecifier($1, NULL, $2); }
@@ -208,9 +204,6 @@ COMPOUND_STATEMENT: LCB DECLARATION_LIST STATEMENT_LIST RCB                     
 STATEMENT_LIST: STATEMENT                                                                       { $$ = new StatementList($1, NULL); }
             |   STATEMENT_LIST STATEMENT                                                        { $$ = new StatementList($2, $1); }
 
-INIT_DECLARATOR_LIST: INIT_DECLARATOR                                                           { $$ = new InitDeclaratorList(NULL, $1); }
-                    | INIT_DECLARATOR_LIST COMMA INIT_DECLARATOR                                { $$ = new InitDeclaratorList($1, $3); }
-
 INIT_DECLARATOR: DECLARATOR                                                                     { $$ = new InitDeclarator($1, NULL); }
             |    DECLARATOR EQUAL INITIALIZER                                                   { $$ = new InitDeclarator($1, $3); }
 
@@ -224,13 +217,12 @@ INITIALIZER_LIST: INITIALIZER                                                   
 DECLARATOR: POINTER DIRECT_DECLARATOR                                                           { $$ = new Declarator($1, $2); }
         |   DIRECT_DECLARATOR                                                                   { $$ = new Declarator(NULL, $1); }
 
-DIRECT_DECLARATOR: IDENTIFIER                                                                   { $$ = new DirectDeclarator(NULL, NULL, NULL, NULL, NULL, $1, NULL); }
-                |  LB DECLARATOR RB                                                             { $$ = new DirectDeclarator($2, NULL, NULL, NULL, NULL, NULL, NULL); }
-                |  DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB                                      { $$ = new DirectDeclarator(NULL, $1, $3, NULL, NULL, NULL, NULL); }
-                |  DIRECT_DECLARATOR LSB RSB                                                    { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, NULL, $2); }
-                |  DIRECT_DECLARATOR LB PARAMETER_TYPE_LIST RB                                  { $$ = new DirectDeclarator(NULL, $1, NULL, $3, NULL, NULL, NULL); }
-                |  DIRECT_DECLARATOR LB IDENTIFIER_LIST RB                                      { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, $3, NULL, NULL); }
-                |  DIRECT_DECLARATOR LB RB                                                      { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, NULL, NULL); }
+DIRECT_DECLARATOR: IDENTIFIER                                                                   { $$ = new DirectDeclarator(NULL, NULL, NULL, NULL, $1, NULL); }
+                |  LB DECLARATOR RB                                                             { $$ = new DirectDeclarator($2, NULL, NULL, NULL, NULL, NULL); }
+                |  DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB                                      { $$ = new DirectDeclarator(NULL, $1, $3, NULL, NULL, NULL); }
+                |  DIRECT_DECLARATOR LSB RSB                                                    { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, $2); }
+                |  DIRECT_DECLARATOR LB PARAMETER_TYPE_LIST RB                                  { $$ = new DirectDeclarator(NULL, $1, NULL, $3, NULL, NULL); }
+                |  DIRECT_DECLARATOR LB RB                                                      { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, NULL); }
 
 POINTER: ASTERISK POINTER                                                                       
     |    ASTERISK                                                                               
@@ -244,9 +236,6 @@ PARAMETER_LIST: PARAMETER_DECLARATION                                           
 PARAMETER_DECLARATION: DECLARATION_SPECIFIER DECLARATOR                                         { $$ = new ParameterDeclaration($1, $2, NULL); }
                     |  DECLARATION_SPECIFIER ABSTRACT_DECLARATOR                                { $$ = new ParameterDeclaration($1, NULL, $2); }
                     |  DECLARATION_SPECIFIER                                                    { $$ = new ParameterDeclaration($1, NULL, NULL); }
-
-IDENTIFIER_LIST: IDENTIFIER                                                                     { $$ = new IdentifierList(NULL, $1); }
-            |    IDENTIFIER_LIST COMMA IDENTIFIER                                               { $$ = new IdentifierList($1, $3); }
 
 CONSTANT_EXPR: CONDITIONAL_EXPR                                                                 { $$ = new ConstantExpr($1); }
 
@@ -391,7 +380,6 @@ STORAGE_CLASS_SPECIFIER: TYPEDEF                                                
                     |    EXTERN                                                                 { $$ = new StorageClassSpecifier($1); }
                     |    STATIC                                                                 { $$ = new StorageClassSpecifier($1); }
                     |    AUTO                                                                   { $$ = new StorageClassSpecifier($1); }
-                    |    REGISTER                                                               { $$ = new StorageClassSpecifier($1); }
 
 TYPE_SPECIFIER: VOID                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
             |   CHAR                                                                            { $$ = new TypeSpecifier($1, NULL, NULL); }
