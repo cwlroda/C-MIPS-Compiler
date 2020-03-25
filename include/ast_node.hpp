@@ -2,6 +2,7 @@
 #define AST_NODE_HPP
 
 #include <vector>
+#include <string>
 
 struct Context{
     bool in_func = false; // check if entering function

@@ -81,7 +81,7 @@
     EnumeratorList *enum_list;
     Enumerator *enumr;
 
-    std::string *string;
+    std::string *str;
 }
 
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF SEMICOLON
@@ -96,17 +96,17 @@
 %token IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
 %token LB RB LSB RSB LCB RCB COLON COMMA
 
-%type <string> IDENTIFIER CONSTANT STRING_LITERAL SIZEOF SEMICOLON
-%type <string> INCREMENT DECREMENT LSHIFT RSHIFT LE GE EQUALITY NOTEQUAL ARROW DOT
-%type <string> LOGICAL_OR LOGICAL_AND PLUSEQUAL MULEQUAL DIVEQUAL MODEQUAL
-%type <string> MINUSEQUAL ANDEQUAL LSHIFTEQUAL RSHIFTEQUAL
-%type <string> EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
-%type <string> BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
-%type <string> TYPEDEF EXTERN STATIC AUTO REGISTER
-%type <string> VOID CHAR SHORT INT LONG FLOAT DOUBLE SIGNED UNSIGNED CONST VOLATILE
-%type <string> STRUCT ENUM ELLIPSIS
-%type <string> IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
-%type <string> LB RB LSB RSB LCB RCB COLON COMMA
+%type <str> IDENTIFIER CONSTANT STRING_LITERAL SIZEOF SEMICOLON
+%type <str> INCREMENT DECREMENT LSHIFT RSHIFT LE GE EQUALITY NOTEQUAL ARROW DOT
+%type <str> LOGICAL_OR LOGICAL_AND PLUSEQUAL MULEQUAL DIVEQUAL MODEQUAL
+%type <str> MINUSEQUAL ANDEQUAL LSHIFTEQUAL RSHIFTEQUAL
+%type <str> EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
+%type <str> BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
+%type <str> TYPEDEF EXTERN STATIC AUTO REGISTER
+%type <str> VOID CHAR SHORT INT LONG FLOAT DOUBLE SIGNED UNSIGNED CONST VOLATILE
+%type <str> STRUCT ENUM ELLIPSIS
+%type <str> IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
+%type <str> LB RB LSB RSB LCB RCB COLON COMMA
 
 %type <trans_unit> TRANSLATION_UNIT
 %type <ext_decl> EXTERNAL_DECLARATION
@@ -168,6 +168,9 @@
 %type <enum_spec> ENUM_SPECIFIER
 %type <enum_list> ENUMERATOR_LIST
 %type <enum> ENUMERATOR
+
+%nonassoc IF
+%nonassoc ELSE
 
 %start ROOT
 
@@ -246,7 +249,6 @@ IDENTIFIER_LIST: IDENTIFIER                                                     
             |    IDENTIFIER_LIST COMMA IDENTIFIER                                               { $$ = new IdentifierList($1, $3); }
 
 CONSTANT_EXPR: CONDITIONAL_EXPR                                                                 { $$ = new ConstantExpr($1); }
-
 
 ABSTRACT_DECLARATOR: POINTER                                                                    
                 |    POINTER DIRECT_ABSTRACT_DECLARATOR                                         
@@ -372,18 +374,18 @@ LABELED_STATEMENT: IDENTIFIER COLON STATEMENT
 EXPR_STATEMENT: EXPR SEMICOLON                                                                  { $$ = new ExprStatement($1); }
             |   SEMICOLON                                                                       { $$ = new ExprStatement(NULL); }
 
-SELECTION_STATEMENT: IF LB EXPR RB STATEMENT                                                    
-                |    IF LB EXPR RB STATEMENT ELSE STATEMENT                                     
-                |    SWITCH LB EXPR RB STATEMENT                                                
+SELECTION_STATEMENT: IF LB EXPR RB STATEMENT                                                    { $$ = new SelectionStatement($3, $5, NULL, $1, NULL, NULL); }
+                |    IF LB EXPR RB STATEMENT ELSE STATEMENT                                     { $$ = new SelectionStatement($3, $5, $7, $1, $6, NULL); }
+                |    SWITCH LB EXPR RB STATEMENT                                                { $$ = new SelectionStatement($3, $5, NULL, NULL, NULL, $1); }
 
-ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT                                                 
-                |    DO STATEMENT WHILE LB EXPR RB SEMICOLON                                    
-                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT                          
-                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT                     
+ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT                                                 { $$ = new IterationStatement($3, $5, NULL, NULL, $1, NULL); }
+                |    DO STATEMENT WHILE LB EXPR RB SEMICOLON                                    { $$ = new IterationStatement($5, $2, NULL, NULL, $3, $1); }
+                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT                          { $$ = new IterationStatement(NULL, $6, $3, $4, $1, NULL); }
+                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT                     { $$ = new IterationStatement($5, $7, $3, $4, $1, NULL); }
 
 JUMP_STATEMENT: CONTINUE SEMICOLON                                                              { $$ = new JumpStatement($1, NULL); }
             |   BREAK SEMICOLON                                                                 { $$ = new JumpStatement($1, NULL); }
-            |   RETURN EXPR                                                                     { $$ = new JumpStatement($1, $2); }
+            |   RETURN EXPR SEMICOLON                                                                    { $$ = new JumpStatement($1, $2); }
 
 STORAGE_CLASS_SPECIFIER: TYPEDEF                                                                { $$ = new StorageClassSpecifier($1); }
                     |    EXTERN                                                                 { $$ = new StorageClassSpecifier($1); }

@@ -1,7 +1,10 @@
 #include "ast_functions.hpp"
 
-#include <iostream>
-#include <fstream>
+inline void Tab(std::ofstream& out);
+
+/*-------*
+| PYTHON |
+*--------*/
 
 /*-------------*
 | DECLARATIONS |
@@ -172,9 +175,7 @@ inline void DirectDeclarator::print_py(std::ofstream& out, bool is_init, bool in
             }
         }
 
-        for(int i=0; i<context.indent; i++){
-            out << "\t";
-        }
+        Tab(out);
 
         if(!is_init && !context.var_param){
             if(iden != NULL){
@@ -377,9 +378,7 @@ inline void AssignmentExpr::print_py(std::ofstream& out){
     }
 
     if(un_expr != NULL){
-        for(int i=0; i<context.indent; i++){
-            out << "\t";
-        }
+        Tab(out);
 
         un_expr->print_py(out);
         out << "=";
@@ -387,6 +386,10 @@ inline void AssignmentExpr::print_py(std::ofstream& out){
 
     if(ass_expr != NULL){
         ass_expr->print_py(out);
+    }
+
+    if(!context.in_func && !context.in_if && !context.in_while && context.brackets == 0){
+        out << std::endl;
     }
 }
 
@@ -403,6 +406,8 @@ inline void UnaryExpr::print_py(std::ofstream& out){
         else if(un_op != NULL){
             un_op->print_py(out);
         }
+
+        cast_expr->print_py(out);
     }
 }
 
@@ -424,9 +429,7 @@ inline void PostfixExpr::print_py(std::ofstream& out){
     }
 
     if(arg_expr_list != NULL){
-        for(int i=0; i<context.indent; i++){
-            out << "\t";
-        }
+        Tab(out);
 
         post_expr->print_py(out);
         out << "(";
@@ -444,9 +447,7 @@ inline void PostfixExpr::print_py(std::ofstream& out){
     }
 
     if(pri_expr == NULL && arg_expr_list == NULL && op == NULL){
-        for(int i=0; i<context.indent; i++){
-            out << "\t";
-        }
+        Tab(out);
 
         post_expr->print_py(out);
         out << "()";
@@ -504,10 +505,7 @@ inline void CompoundStatement::print_py(std::ofstream& out, bool is_init, bool i
     context.indent++;
 
     if(decl_list == NULL && state_list == NULL){
-        for(int i=0; i<context.indent; i++){
-            out << "\t";
-        }
-
+        Tab(out);
         out << "pass" << std::endl;
     }
 
@@ -525,10 +523,6 @@ inline void CompoundStatement::print_py(std::ofstream& out, bool is_init, bool i
     }
 
     context.indent--;
-}
-
-inline CompoundStatement* Statement::get_comp_state(){
-    return comp_state;
 }
 
 inline void StatementList::print_py(std::ofstream& out){
@@ -572,9 +566,120 @@ inline void ExprStatement::print_py(std::ofstream& out){
 }
 
 inline void SelectionStatement::print_py(std::ofstream& out){
-    if(IF != NULL){
-        if(ELSE == NULL){
-            
+    if(ELSE == NULL){
+        if(!context.elif_block){
+            Tab(out);
+            out << "if(";
+
+            context.in_if = true;
+            expr->print_py(out);
+            context.in_if = false;
+
+            out << "):" << std::endl;
+        }
+
+        if(if_state == NULL){
+            context.elif_block = false;
+            out << "pass" << std::endl;
+        }
+
+        if(if_state->get_comp_state() == NULL){
+            context.indent++;
+            context.elif_block = false;
+            if_state->print_py(out);
+            out << std::endl;
+            context.indent--;
+        }
+
+        else{
+            context.elif_block = false;
+            if_state->print_py(out);
+            out << std::endl;
+        }
+    }
+
+    else{
+        if(!context.elif_block){
+            Tab(out);
+            out << "if(";
+
+            context.in_if = true;
+            expr->print_py(out);
+            context.in_if = false;
+
+            out << "):" << std::endl;
+
+            if(if_state == NULL){
+                context.elif_block = false;
+                out << "pass" << std::endl;
+            }
+
+            if(if_state->get_comp_state() == NULL){
+                context.indent++;
+                context.elif_block = false;
+                if_state->print_py(out);
+                out << std::endl;
+                context.indent--;
+            }
+
+            else{
+                context.elif_block = false;
+                if_state->print_py(out);
+                out << std::endl;
+            }
+        }
+
+        if(context.elif_block){
+            if(if_state == NULL){
+                context.elif_block = false;
+                out << "pass" << std::endl;
+            }
+
+            if(if_state->get_comp_state() == NULL){
+                context.indent++;
+                context.elif_block = false;
+                if_state->print_py(out);
+                out << std::endl;
+                context.indent--;
+            }
+
+            else{
+                context.elif_block = false;
+                if_state->print_py(out);
+                out << std::endl;
+            }
+        }
+
+        if(else_state->get_select_state() != NULL){
+            context.elif_block = true;
+        }
+
+        if(!context.elif_block){
+            Tab(out);
+            out << "else:" << std::endl;
+
+            context.in_if = true;
+
+            if(else_state == NULL){
+                context.elif_block = false;
+                out << "pass" << std::endl;
+            }
+
+            if(else_state->get_comp_state() == NULL){
+                context.indent++;
+                context.elif_block = false;
+                else_state->print_py(out);
+                out << std::endl;
+                context.indent--;
+            }
+
+            else{
+                context.elif_block = false;
+                else_state->print_py(out);
+                out << std::endl;
+            }
+
+            context.in_if = false;
         }
     }
 }
@@ -583,26 +688,27 @@ inline void IterationStatement::print_py(std::ofstream& out){
     out << std::endl;
     context.in_while = true;
 
-    for(int i=0; i<context.indent; i++){
-        out << "\t";
-    }
+    Tab(out);
 
     out << "while(";
     expr->print_py(out);
     out << "):" << std::endl;
 
     if(state == NULL){
+        context.elif_block = false;
         out << "pass" << std::endl;
     }
 
-    else if(state->get_comp_state() == NULL){
+    if(state->get_comp_state() == NULL){
         context.indent++;
+        context.elif_block = false;
         state->print_py(out);
         out << std::endl;
         context.indent--;
     }
 
     else{
+        context.elif_block = false;
         state->print_py(out);
         out << std::endl;
     }
@@ -611,9 +717,7 @@ inline void IterationStatement::print_py(std::ofstream& out){
 }
 
 inline void JumpStatement::print_py(std::ofstream& out){
-    for(int i=0; i<context.indent; i++){
-        out << "\t";
-    }
+    Tab(out);
 
     if(type != NULL){
         out << *type << " ";
@@ -643,4 +747,50 @@ inline void StorageClassSpecifier::print_py(std::ofstream& out){
     if(type != NULL){
         out << *type << " ";
     }
+}
+
+/*-----*
+| MISC |
+*-----*/
+
+inline void Tab(std::ofstream& out){
+    for(int i=0; i<context.indent; i++){
+        out << "\t";
+    }
+}
+
+/*-----*
+| MIPS |
+*-----*/
+
+/*-------------*
+| DECLARATIONS |
+*-------------*/
+
+inline void TranslationUnit::print_asm_main(std::string& filename) const{
+    std::ofstream outfile;
+    outfile.open(filename.c_str());
+
+    if(!outfile.is_open()){
+        std::cerr << "Error opening " << filename << "!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    outfile << "\t.file\t1 " << "\"" << filename << "\"" << std::endl;
+    outfile << "\t.section .mdebug.abi32" << std::endl;
+    outfile << "\t.previous" << std::endl;
+    outfile << "\t.nan\tlegacy" << std::endl;
+    outfile << "\t.module fp=xx" << std::endl;
+    outfile << "\t.module nooddspreg" << std::endl;
+    outfile << "\t.abicalls" << std::endl;
+
+    if(trans_unit != NULL){
+        trans_unit->print_asm(outfile);
+    }
+
+    if(ext_decl != NULL){
+        ext_decl->print_asm(outfile);
+    }
+
+    outfile.close();
 }
