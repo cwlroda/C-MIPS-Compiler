@@ -1123,5 +1123,3 @@ inline void JumpStatement::print_asm(std::ofstream& out){
 inline void Expr::print_asm(std::ofstream& out){
     assign_expr -> print_asm(out);
 }
-
-}
