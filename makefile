@@ -18,3 +18,4 @@ clean :
 	rm src/*.tab.cpp
 	rm src/*.yy.cpp
 	rm src/*.output
+	rm tmp/formative/*
