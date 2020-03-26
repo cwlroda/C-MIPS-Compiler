@@ -1,9 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
-   Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,9 +30,6 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
-
 #ifndef YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
 # define YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
 /* Debug traces.  */
@@ -44,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "src/parser.y"
+#line 1 "src/parser.y" /* yacc.c:1909  */
 
     #include "../include/ast.hpp"
 
@@ -63,7 +59,7 @@ extern int yydebug;
     int yylex(void);
     void yyerror(const char *);
 
-#line 67 "src/parser.tab.hpp"
+#line 63 "src/parser.tab.hpp" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -111,52 +107,43 @@ extern int yydebug;
     EXCLAMATION = 296,
     QUESTION = 297,
     XOR = 298,
-    TYPEDEF = 299,
-    EXTERN = 300,
-    STATIC = 301,
-    AUTO = 302,
-    REGISTER = 303,
-    VOID = 304,
-    CHAR = 305,
-    SHORT = 306,
-    INT = 307,
-    LONG = 308,
-    FLOAT = 309,
-    DOUBLE = 310,
-    SIGNED = 311,
-    UNSIGNED = 312,
-    CONST = 313,
-    VOLATILE = 314,
-    STRUCT = 315,
-    ENUM = 316,
-    ELLIPSIS = 317,
-    IF = 318,
-    ELSE = 319,
-    SWITCH = 320,
-    CASE = 321,
-    DEFAULT = 322,
-    FOR = 323,
-    DO = 324,
-    WHILE = 325,
-    CONTINUE = 326,
-    BREAK = 327,
-    RETURN = 328,
-    LB = 329,
-    RB = 330,
-    LSB = 331,
-    RSB = 332,
-    LCB = 333,
-    RCB = 334,
-    COLON = 335,
-    COMMA = 336
+    CHAR = 299,
+    INT = 300,
+    FLOAT = 301,
+    DOUBLE = 302,
+    UNSIGNED = 303,
+    TYPEDEF = 304,
+    STRUCT = 305,
+    ENUM = 306,
+    ELLIPSIS = 307,
+    IF = 308,
+    ELSE = 309,
+    SWITCH = 310,
+    CASE = 311,
+    DEFAULT = 312,
+    FOR = 313,
+    DO = 314,
+    WHILE = 315,
+    CONTINUE = 316,
+    BREAK = 317,
+    RETURN = 318,
+    LB = 319,
+    RB = 320,
+    LSB = 321,
+    RSB = 322,
+    LCB = 323,
+    RCB = 324,
+    COLON = 325,
+    COMMA = 326
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+
 union YYSTYPE
 {
-#line 22 "src/parser.y"
+#line 22 "src/parser.y" /* yacc.c:1909  */
 
     TranslationUnit *trans_unit;
     ExternalDeclaration *ext_decl;
@@ -172,7 +159,6 @@ union YYSTYPE
     Declarator *declr;
     DirectDeclarator *dir_declr;
     Pointer *ptr;
-    ParameterTypeList *param_type_list;
     ParameterList *param_list;
     ParameterDeclaration *param_decl;
     ConstantExpr *const_expr;
@@ -205,7 +191,6 @@ union YYSTYPE
     SelectionStatement *select_state;
     IterationStatement *it_state;
     JumpStatement *jump_state;
-    StorageClassSpecifier *store_spec;
     TypeSpecifier *type_spec;
     StructSpecifier *struct_spec;
     StructDeclarationList *struct_decl_list;
@@ -219,9 +204,9 @@ union YYSTYPE
 
     std::string *str;
 
-#line 223 "src/parser.tab.hpp"
-
+#line 208 "src/parser.tab.hpp" /* yacc.c:1909  */
 };
+
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
