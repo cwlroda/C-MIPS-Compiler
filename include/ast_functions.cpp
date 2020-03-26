@@ -813,7 +813,8 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 
     out << std::endl;
 }
-int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
+inline int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
+
     if(mv.size() == 0){
         return 8;
     }
@@ -848,8 +849,6 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
 
     out << context.FuncName << ":" << std::endl;
 
-    
-
 
     if(decl_list != NULL){
         decl_list->print_asm(out);
@@ -876,8 +875,13 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
 }
 
 inline void CompoundStatement::alloc_mem(std::vector<int>& mv){
-    decl_list->alloc_mem(mv);
-    state_list->alloc_mem(mv);
+    if(decl_list != NULL){
+        decl_list->alloc_mem(mv);
+    }
+
+    if(state_list != NULL){
+        state_list->alloc_mem(mv);
+    }
 }
 inline void StatementList::alloc_mem(std::vector<int>& mv){
     if(state_list != NULL){
@@ -894,6 +898,7 @@ inline void DeclarationList::alloc_mem(std::vector<int>& mv){
     if(decl_list!=NULL){
         decl_list->alloc_mem(mv);
     }
+
     decl->alloc_mem(mv);
 }
 inline void Declaration::alloc_mem(std::vector<int>& mv){
