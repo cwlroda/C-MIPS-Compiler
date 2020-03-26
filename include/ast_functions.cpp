@@ -1163,13 +1163,19 @@ inline void UnaryExpr::print_asm(std::ofstream& out){
 }
 
 inline void PostfixExpr::print_asm(std::ofstream& out){
+    if(op != NULL){
+        context.is_solving = true;
+    }
+
     if(pri_expr != NULL){
         pri_expr->print_asm(out);
     }
-    if(*op == "++"){
-        context.is_solving = true;
+
+    if(post_expr != NULL){
         post_expr -> print_asm(out);
-        context.is_solving = false;
+    }
+
+    if(*op == "++"){
         out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
         out << "\tnop" << std::endl;
         out << "\taddiu\t$2,$2,1"<<std::endl;
@@ -1177,14 +1183,15 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
         context.solving_out = NULL;
     }
     if(*op == "--"){
-        context.is_solving = true;
-        post_expr -> print_asm(out);
-        context.is_solving = false;
         out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
         out << "\tnop" << std::endl;
         out << "\taddiu\t$2,$2,-1"<<std::endl;
         out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
         context.solving_out = NULL;
+    }
+
+    if(op != NULL){
+        context.is_solving = false;
     }
 }
 
@@ -1197,9 +1204,15 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
             context.returnNum = stoi(*constant);
         }
     }
+
     if(iden != NULL){
         if(context.is_solving == true){
-            context.solving_out = context.LocalVar.find(*iden);
+            std::unordered_map<std::string, Bindings*>::iterator it;
+            it = context.LocalVar.find(*iden);
+
+            if(it != context.LocalVar.end()){
+                context.solving_out = it->second;
+            }
         }
     }
 }
