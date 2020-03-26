@@ -927,8 +927,6 @@ inline void Expr::alloc_mem(std::vector<int>& mv){
                 mv.push_back(1);
             }
         }
-
-        std::cout << iterations << std::endl;
     }
 }
 inline void AssignmentExpr::alloc_mem(int& iterations){
@@ -1012,7 +1010,6 @@ inline void ArgumentExprList::alloc_mem(int& iterations){
     }
 
     if( ass_expr != NULL){
-        std::cout << "hi" << std::endl;
         iterations ++;
         ass_expr -> alloc_mem(iterations);
     }

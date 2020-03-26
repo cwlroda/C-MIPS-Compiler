@@ -1,0 +1,5435 @@
+Terminals unused in grammar
+
+   ELLIPSIS
+
+
+State 298 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: ROOT $end
+
+    1 ROOT: TRANSLATION_UNIT
+
+    2 TRANSLATION_UNIT: TRANSLATION_UNIT EXTERNAL_DECLARATION
+    3                 | EXTERNAL_DECLARATION
+
+    4 EXTERNAL_DECLARATION: FUNCTION_DEFINITION
+    5                     | DECLARATION
+
+    6 FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT
+    7                    | DECLARATION_SPECIFIER DECLARATOR COMPOUND_STATEMENT
+    8                    | DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT
+    9                    | DECLARATOR COMPOUND_STATEMENT
+
+   10 DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR SEMICOLON
+   11            | DECLARATION_SPECIFIER SEMICOLON
+
+   12 DECLARATION_SPECIFIER: TYPEDEF DECLARATION_SPECIFIER
+   13                      | TYPEDEF
+   14                      | TYPE_SPECIFIER DECLARATION_SPECIFIER
+   15                      | TYPE_SPECIFIER
+
+   16 DECLARATION_LIST: DECLARATION
+   17                 | DECLARATION_LIST DECLARATION
+
+   18 COMPOUND_STATEMENT: LCB DECLARATION_LIST STATEMENT_LIST RCB
+   19                   | LCB DECLARATION_LIST RCB
+   20                   | LCB STATEMENT_LIST RCB
+   21                   | LCB RCB
+
+   22 STATEMENT_LIST: STATEMENT
+   23               | STATEMENT_LIST STATEMENT
+
+   24 INIT_DECLARATOR: DECLARATOR
+   25                | DECLARATOR EQUAL INITIALIZER
+
+   26 INITIALIZER: ASSIGNMENT_EXPR
+   27            | LCB INITIALIZER_LIST RCB
+   28            | LCB INITIALIZER_LIST COMMA RCB
+
+   29 INITIALIZER_LIST: INITIALIZER
+   30                 | INITIALIZER_LIST COMMA INITIALIZER
+
+   31 DECLARATOR: POINTER DIRECT_DECLARATOR
+   32           | DIRECT_DECLARATOR
+
+   33 DIRECT_DECLARATOR: IDENTIFIER
+   34                  | LB DECLARATOR RB
+   35                  | DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB
+   36                  | DIRECT_DECLARATOR LSB RSB
+   37                  | DIRECT_DECLARATOR LB PARAMETER_LIST RB
+   38                  | DIRECT_DECLARATOR LB RB
+
+   39 POINTER: ASTERISK POINTER
+   40        | ASTERISK
+
+   41 PARAMETER_LIST: PARAMETER_DECLARATION
+   42               | PARAMETER_LIST COMMA PARAMETER_DECLARATION
+
+   43 PARAMETER_DECLARATION: DECLARATION_SPECIFIER DECLARATOR
+   44                      | DECLARATION_SPECIFIER ABSTRACT_DECLARATOR
+   45                      | DECLARATION_SPECIFIER
+
+   46 CONSTANT_EXPR: CONDITIONAL_EXPR
+
+   47 ABSTRACT_DECLARATOR: POINTER
+   48                    | POINTER DIRECT_ABSTRACT_DECLARATOR
+   49                    | DIRECT_ABSTRACT_DECLARATOR
+
+   50 DIRECT_ABSTRACT_DECLARATOR: LB ABSTRACT_DECLARATOR RB
+   51                           | DIRECT_ABSTRACT_DECLARATOR LSB CONSTANT_EXPR RSB
+   52                           | DIRECT_ABSTRACT_DECLARATOR LSB RSB
+   53                           | LSB CONSTANT_EXPR RSB
+   54                           | LSB RSB
+   55                           | DIRECT_ABSTRACT_DECLARATOR LB PARAMETER_LIST RB
+   56                           | DIRECT_ABSTRACT_DECLARATOR LB RB
+   57                           | LB PARAMETER_LIST RB
+   58                           | LB RB
+
+   59 CONDITIONAL_EXPR: LOGICAL_OR_EXPR
+   60                 | LOGICAL_OR_EXPR QUESTION EXPR COLON CONDITIONAL_EXPR
+
+   61 LOGICAL_OR_EXPR: LOGICAL_AND_EXPR
+   62                | LOGICAL_OR_EXPR LOGICAL_OR LOGICAL_AND_EXPR
+
+   63 LOGICAL_AND_EXPR: INCLUSIVE_OR_EXPR
+   64                 | LOGICAL_AND_EXPR LOGICAL_AND INCLUSIVE_OR_EXPR
+
+   65 INCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPR
+   66                  | INCLUSIVE_OR_EXPR BITWISE_OR EXCLUSIVE_OR_EXPR
+
+   67 EXCLUSIVE_OR_EXPR: AND_EXPR
+   68                  | EXCLUSIVE_OR_EXPR XOR AND_EXPR
+
+   69 AND_EXPR: EQUALITY_EXPR
+   70         | AND_EXPR AMPERSAND EQUALITY_EXPR
+
+   71 EQUALITY_EXPR: RELATIONAL_EXPR
+   72              | EQUALITY_EXPR EQUALITY RELATIONAL_EXPR
+   73              | EQUALITY_EXPR NOTEQUAL RELATIONAL_EXPR
+
+   74 RELATIONAL_EXPR: SHIFT_EXPR
+   75                | RELATIONAL_EXPR LT SHIFT_EXPR
+   76                | RELATIONAL_EXPR GT SHIFT_EXPR
+   77                | RELATIONAL_EXPR LE SHIFT_EXPR
+   78                | RELATIONAL_EXPR GE SHIFT_EXPR
+
+   79 SHIFT_EXPR: ADDITIVE_EXPR
+   80           | SHIFT_EXPR LSHIFT ADDITIVE_EXPR
+   81           | SHIFT_EXPR RSHIFT ADDITIVE_EXPR
+
+   82 ADDITIVE_EXPR: MULTIPLICATIVE_EXPR
+   83              | ADDITIVE_EXPR PLUS MULTIPLICATIVE_EXPR
+   84              | ADDITIVE_EXPR MINUS MULTIPLICATIVE_EXPR
+
+   85 MULTIPLICATIVE_EXPR: CAST_EXPR
+   86                    | MULTIPLICATIVE_EXPR ASTERISK CAST_EXPR
+   87                    | MULTIPLICATIVE_EXPR DIV CAST_EXPR
+   88                    | MULTIPLICATIVE_EXPR MOD CAST_EXPR
+
+   89 EXPR: ASSIGNMENT_EXPR
+   90     | EXPR COMMA ASSIGNMENT_EXPR
+
+   91 ASSIGNMENT_EXPR: CONDITIONAL_EXPR
+   92                | UNARY_EXPR ASSIGNMENT_OPERATOR ASSIGNMENT_EXPR
+
+   93 ASSIGNMENT_OPERATOR: EQUAL
+   94                    | MULEQUAL
+   95                    | DIVEQUAL
+   96                    | MODEQUAL
+   97                    | PLUSEQUAL
+   98                    | MINUSEQUAL
+   99                    | LSHIFTEQUAL
+  100                    | RSHIFTEQUAL
+  101                    | ANDEQUAL
+  102                    | XOREQUAL
+  103                    | OREQUAL
+
+  104 UNARY_EXPR: POSTFIX_EXPR
+  105           | INCREMENT UNARY_EXPR
+  106           | DECREMENT UNARY_EXPR
+  107           | UNARY_OPERATOR CAST_EXPR
+  108           | SIZEOF UNARY_EXPR
+  109           | SIZEOF LB TYPE_NAME RB
+
+  110 UNARY_OPERATOR: AMPERSAND
+  111               | ASTERISK
+  112               | PLUS
+  113               | MINUS
+  114               | TILDE
+  115               | EXCLAMATION
+
+  116 POSTFIX_EXPR: PRIMARY_EXPR
+  117             | PRIMARY_EXPR LSB EXPR RSB
+  118             | POSTFIX_EXPR LB ARGUMENT_EXPR_LIST RB
+  119             | POSTFIX_EXPR LB RB
+  120             | POSTFIX_EXPR DOT IDENTIFIER
+  121             | POSTFIX_EXPR ARROW IDENTIFIER
+  122             | POSTFIX_EXPR INCREMENT
+  123             | POSTFIX_EXPR DECREMENT
+
+  124 PRIMARY_EXPR: IDENTIFIER
+  125             | CONSTANT
+  126             | STRING_LITERAL
+  127             | LB EXPR RB
+
+  128 ARGUMENT_EXPR_LIST: ASSIGNMENT_EXPR
+  129                   | ARGUMENT_EXPR_LIST COMMA ASSIGNMENT_EXPR
+
+  130 CAST_EXPR: UNARY_EXPR
+  131          | LB TYPE_NAME RB CAST_EXPR
+
+  132 TYPE_NAME: SPECIFIER_QUALIFIER_LIST ABSTRACT_DECLARATOR
+  133          | SPECIFIER_QUALIFIER_LIST
+
+  134 STATEMENT: LABELED_STATEMENT
+  135          | COMPOUND_STATEMENT
+  136          | EXPR_STATEMENT
+  137          | SELECTION_STATEMENT
+  138          | ITERATION_STATEMENT
+  139          | JUMP_STATEMENT
+
+  140 LABELED_STATEMENT: IDENTIFIER COLON STATEMENT
+  141                  | CASE CONSTANT_EXPR COLON STATEMENT
+  142                  | DEFAULT COLON STATEMENT
+
+  143 EXPR_STATEMENT: EXPR SEMICOLON
+  144               | SEMICOLON
+
+  145 SELECTION_STATEMENT: IF LB EXPR RB STATEMENT
+  146                    | IF LB EXPR RB STATEMENT ELSE STATEMENT
+  147                    | SWITCH LB EXPR RB STATEMENT
+
+  148 ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT
+  149                    | DO STATEMENT WHILE LB EXPR RB SEMICOLON
+  150                    | FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT
+  151                    | FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT
+
+  152 JUMP_STATEMENT: CONTINUE SEMICOLON
+  153               | BREAK SEMICOLON
+  154               | RETURN EXPR SEMICOLON
+
+  155 TYPE_SPECIFIER: CHAR
+  156               | INT
+  157               | FLOAT
+  158               | DOUBLE
+  159               | UNSIGNED
+  160               | STRUCT_SPECIFIER
+  161               | ENUM_SPECIFIER
+
+  162 STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB
+  163                 | STRUCT LCB STRUCT_DECLARATION_LIST RCB
+  164                 | STRUCT IDENTIFIER
+
+  165 STRUCT_DECLARATION_LIST: STRUCT_DECLARATION
+  166                        | STRUCT_DECLARATION_LIST STRUCT_DECLARATION
+
+  167 STRUCT_DECLARATION: SPECIFIER_QUALIFIER_LIST STRUCT_DECLARATOR_LIST SEMICOLON
+
+  168 SPECIFIER_QUALIFIER_LIST: TYPE_SPECIFIER SPECIFIER_QUALIFIER_LIST
+  169                         | TYPE_SPECIFIER
+
+  170 STRUCT_DECLARATOR_LIST: STRUCT_DECLARATOR
+  171                       | STRUCT_DECLARATOR COMMA STRUCT_DECLARATOR
+
+  172 STRUCT_DECLARATOR: DECLARATOR
+  173                  | DECLARATOR COLON CONSTANT_EXPR
+  174                  | COLON CONSTANT_EXPR
+
+  175 ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB
+  176               | ENUM LCB ENUMERATOR_LIST RCB
+  177               | ENUM IDENTIFIER
+
+  178 ENUMERATOR_LIST: ENUMERATOR
+  179                | ENUMERATOR_LIST COMMA ENUMERATOR
+
+  180 ENUMERATOR: IDENTIFIER
+  181           | IDENTIFIER EQUAL CONSTANT_EXPR
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+IDENTIFIER (258) 33 120 121 124 140 162 164 175 177 180 181
+CONSTANT (259) 125
+STRING_LITERAL (260) 126
+SIZEOF (261) 108 109
+SEMICOLON (262) 10 11 143 144 149 152 153 154 167
+INCREMENT (263) 105 122
+DECREMENT (264) 106 123
+LSHIFT (265) 80
+RSHIFT (266) 81
+LE (267) 77
+GE (268) 78
+EQUALITY (269) 72
+NOTEQUAL (270) 73
+ARROW (271) 121
+DOT (272) 120
+LOGICAL_OR (273) 62
+LOGICAL_AND (274) 64
+PLUSEQUAL (275) 97
+MULEQUAL (276) 94
+DIVEQUAL (277) 95
+MODEQUAL (278) 96
+MINUSEQUAL (279) 98
+ANDEQUAL (280) 101
+LSHIFTEQUAL (281) 99
+RSHIFTEQUAL (282) 100
+EQUAL (283) 25 93 181
+PLUS (284) 83 112
+MINUS (285) 84 113
+ASTERISK (286) 39 40 86 111
+DIV (287) 87
+MOD (288) 88
+TILDE (289) 114
+LT (290) 75
+GT (291) 76
+OREQUAL (292) 103
+XOREQUAL (293) 102
+BITWISE_OR (294) 66
+AMPERSAND (295) 70 110
+EXCLAMATION (296) 115
+QUESTION (297) 60
+XOR (298) 68
+CHAR (299) 155
+INT (300) 156
+FLOAT (301) 157
+DOUBLE (302) 158
+UNSIGNED (303) 159
+TYPEDEF (304) 12 13
+STRUCT (305) 162 163 164
+ENUM (306) 175 176 177
+ELLIPSIS (307)
+IF (308) 145 146
+ELSE (309) 146
+SWITCH (310) 147
+CASE (311) 141
+DEFAULT (312) 142
+FOR (313) 150 151
+DO (314) 149
+WHILE (315) 148 149
+CONTINUE (316) 152
+BREAK (317) 153
+RETURN (318) 154
+LB (319) 34 37 38 50 55 56 57 58 109 118 119 127 131 145 146 147 148
+    149 150 151
+RB (320) 34 37 38 50 55 56 57 58 109 118 119 127 131 145 146 147 148
+    149 150 151
+LSB (321) 35 36 51 52 53 54 117
+RSB (322) 35 36 51 52 53 54 117
+LCB (323) 18 19 20 21 27 28 162 163 175 176
+RCB (324) 18 19 20 21 27 28 162 163 175 176
+COLON (325) 60 140 141 142 173 174
+COMMA (326) 28 30 42 90 129 171 179
+
+
+Nonterminals, with rules where they appear
+
+$accept (72)
+    on left: 0
+ROOT (73)
+    on left: 1, on right: 0
+TRANSLATION_UNIT (74)
+    on left: 2 3, on right: 1 2
+EXTERNAL_DECLARATION (75)
+    on left: 4 5, on right: 2 3
+FUNCTION_DEFINITION (76)
+    on left: 6 7 8 9, on right: 4
+DECLARATION (77)
+    on left: 10 11, on right: 5 16 17
+DECLARATION_SPECIFIER (78)
+    on left: 12 13 14 15, on right: 6 7 10 11 12 14 43 44 45
+DECLARATION_LIST (79)
+    on left: 16 17, on right: 6 8 17 18 19
+COMPOUND_STATEMENT (80)
+    on left: 18 19 20 21, on right: 6 7 8 9 135
+STATEMENT_LIST (81)
+    on left: 22 23, on right: 18 20 23
+INIT_DECLARATOR (82)
+    on left: 24 25, on right: 10
+INITIALIZER (83)
+    on left: 26 27 28, on right: 25 29 30
+INITIALIZER_LIST (84)
+    on left: 29 30, on right: 27 28 30
+DECLARATOR (85)
+    on left: 31 32, on right: 6 7 8 9 24 25 34 43 172 173
+DIRECT_DECLARATOR (86)
+    on left: 33 34 35 36 37 38, on right: 31 32 35 36 37 38
+POINTER (87)
+    on left: 39 40, on right: 31 39 47 48
+PARAMETER_LIST (88)
+    on left: 41 42, on right: 37 42 55 57
+PARAMETER_DECLARATION (89)
+    on left: 43 44 45, on right: 41 42
+CONSTANT_EXPR (90)
+    on left: 46, on right: 35 51 53 141 173 174 181
+ABSTRACT_DECLARATOR (91)
+    on left: 47 48 49, on right: 44 50 132
+DIRECT_ABSTRACT_DECLARATOR (92)
+    on left: 50 51 52 53 54 55 56 57 58, on right: 48 49 51 52 55 56
+CONDITIONAL_EXPR (93)
+    on left: 59 60, on right: 46 60 91
+LOGICAL_OR_EXPR (94)
+    on left: 61 62, on right: 59 60 62
+LOGICAL_AND_EXPR (95)
+    on left: 63 64, on right: 61 62 64
+INCLUSIVE_OR_EXPR (96)
+    on left: 65 66, on right: 63 64 66
+EXCLUSIVE_OR_EXPR (97)
+    on left: 67 68, on right: 65 66 68
+AND_EXPR (98)
+    on left: 69 70, on right: 67 68 70
+EQUALITY_EXPR (99)
+    on left: 71 72 73, on right: 69 70 72 73
+RELATIONAL_EXPR (100)
+    on left: 74 75 76 77 78, on right: 71 72 73 75 76 77 78
+SHIFT_EXPR (101)
+    on left: 79 80 81, on right: 74 75 76 77 78 80 81
+ADDITIVE_EXPR (102)
+    on left: 82 83 84, on right: 79 80 81 83 84
+MULTIPLICATIVE_EXPR (103)
+    on left: 85 86 87 88, on right: 82 83 84 86 87 88
+EXPR (104)
+    on left: 89 90, on right: 60 90 117 127 143 145 146 147 148 149
+    151 154
+ASSIGNMENT_EXPR (105)
+    on left: 91 92, on right: 26 89 90 92 128 129
+ASSIGNMENT_OPERATOR (106)
+    on left: 93 94 95 96 97 98 99 100 101 102 103, on right: 92
+UNARY_EXPR (107)
+    on left: 104 105 106 107 108 109, on right: 92 105 106 108 130
+UNARY_OPERATOR (108)
+    on left: 110 111 112 113 114 115, on right: 107
+POSTFIX_EXPR (109)
+    on left: 116 117 118 119 120 121 122 123, on right: 104 118 119
+    120 121 122 123
+PRIMARY_EXPR (110)
+    on left: 124 125 126 127, on right: 116 117
+ARGUMENT_EXPR_LIST (111)
+    on left: 128 129, on right: 118 129
+CAST_EXPR (112)
+    on left: 130 131, on right: 85 86 87 88 107 131
+TYPE_NAME (113)
+    on left: 132 133, on right: 109 131
+STATEMENT (114)
+    on left: 134 135 136 137 138 139, on right: 22 23 140 141 142 145
+    146 147 148 149 150 151
+LABELED_STATEMENT (115)
+    on left: 140 141 142, on right: 134
+EXPR_STATEMENT (116)
+    on left: 143 144, on right: 136 150 151
+SELECTION_STATEMENT (117)
+    on left: 145 146 147, on right: 137
+ITERATION_STATEMENT (118)
+    on left: 148 149 150 151, on right: 138
+JUMP_STATEMENT (119)
+    on left: 152 153 154, on right: 139
+TYPE_SPECIFIER (120)
+    on left: 155 156 157 158 159 160 161, on right: 14 15 168 169
+STRUCT_SPECIFIER (121)
+    on left: 162 163 164, on right: 160
+STRUCT_DECLARATION_LIST (122)
+    on left: 165 166, on right: 162 163 166
+STRUCT_DECLARATION (123)
+    on left: 167, on right: 165 166
+SPECIFIER_QUALIFIER_LIST (124)
+    on left: 168 169, on right: 132 133 167 168
+STRUCT_DECLARATOR_LIST (125)
+    on left: 170 171, on right: 167
+STRUCT_DECLARATOR (126)
+    on left: 172 173 174, on right: 170 171
+ENUM_SPECIFIER (127)
+    on left: 175 176 177, on right: 161
+ENUMERATOR_LIST (128)
+    on left: 178 179, on right: 175 176 179
+ENUMERATOR (129)
+    on left: 180 181, on right: 178 179
+
+
+State 0
+
+    0 $accept: . ROOT $end
+
+    IDENTIFIER  shift, and go to state 1
+    ASTERISK    shift, and go to state 2
+    CHAR        shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    UNSIGNED    shift, and go to state 7
+    TYPEDEF     shift, and go to state 8
+    STRUCT      shift, and go to state 9
+    ENUM        shift, and go to state 10
+    LB          shift, and go to state 11
+
+    ROOT                   go to state 12
+    TRANSLATION_UNIT       go to state 13
+    EXTERNAL_DECLARATION   go to state 14
+    FUNCTION_DEFINITION    go to state 15
+    DECLARATION            go to state 16
+    DECLARATION_SPECIFIER  go to state 17
+    DECLARATOR             go to state 18
+    DIRECT_DECLARATOR      go to state 19
+    POINTER                go to state 20
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 1
+
+   33 DIRECT_DECLARATOR: IDENTIFIER .
+
+    $default  reduce using rule 33 (DIRECT_DECLARATOR)
+
+
+State 2
+
+   39 POINTER: ASTERISK . POINTER
+   40        | ASTERISK .
+
+    ASTERISK  shift, and go to state 2
+
+    $default  reduce using rule 40 (POINTER)
+
+    POINTER  go to state 24
+
+
+State 3
+
+  155 TYPE_SPECIFIER: CHAR .
+
+    $default  reduce using rule 155 (TYPE_SPECIFIER)
+
+
+State 4
+
+  156 TYPE_SPECIFIER: INT .
+
+    $default  reduce using rule 156 (TYPE_SPECIFIER)
+
+
+State 5
+
+  157 TYPE_SPECIFIER: FLOAT .
+
+    $default  reduce using rule 157 (TYPE_SPECIFIER)
+
+
+State 6
+
+  158 TYPE_SPECIFIER: DOUBLE .
+
+    $default  reduce using rule 158 (TYPE_SPECIFIER)
+
+
+State 7
+
+  159 TYPE_SPECIFIER: UNSIGNED .
+
+    $default  reduce using rule 159 (TYPE_SPECIFIER)
+
+
+State 8
+
+   12 DECLARATION_SPECIFIER: TYPEDEF . DECLARATION_SPECIFIER
+   13                      | TYPEDEF .
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+
+    $default  reduce using rule 13 (DECLARATION_SPECIFIER)
+
+    DECLARATION_SPECIFIER  go to state 25
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 9
+
+  162 STRUCT_SPECIFIER: STRUCT . IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB
+  163                 | STRUCT . LCB STRUCT_DECLARATION_LIST RCB
+  164                 | STRUCT . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 26
+    LCB         shift, and go to state 27
+
+
+State 10
+
+  175 ENUM_SPECIFIER: ENUM . IDENTIFIER LCB ENUMERATOR_LIST RCB
+  176               | ENUM . LCB ENUMERATOR_LIST RCB
+  177               | ENUM . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 28
+    LCB         shift, and go to state 29
+
+
+State 11
+
+   34 DIRECT_DECLARATOR: LB . DECLARATOR RB
+
+    IDENTIFIER  shift, and go to state 1
+    ASTERISK    shift, and go to state 2
+    LB          shift, and go to state 11
+
+    DECLARATOR         go to state 30
+    DIRECT_DECLARATOR  go to state 19
+    POINTER            go to state 20
+
+
+State 12
+
+    0 $accept: ROOT . $end
+
+    $end  shift, and go to state 31
+
+
+State 13
+
+    1 ROOT: TRANSLATION_UNIT .
+    2 TRANSLATION_UNIT: TRANSLATION_UNIT . EXTERNAL_DECLARATION
+
+    IDENTIFIER  shift, and go to state 1
+    ASTERISK    shift, and go to state 2
+    CHAR        shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    UNSIGNED    shift, and go to state 7
+    TYPEDEF     shift, and go to state 8
+    STRUCT      shift, and go to state 9
+    ENUM        shift, and go to state 10
+    LB          shift, and go to state 11
+
+    $default  reduce using rule 1 (ROOT)
+
+    EXTERNAL_DECLARATION   go to state 32
+    FUNCTION_DEFINITION    go to state 15
+    DECLARATION            go to state 16
+    DECLARATION_SPECIFIER  go to state 17
+    DECLARATOR             go to state 18
+    DIRECT_DECLARATOR      go to state 19
+    POINTER                go to state 20
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 14
+
+    3 TRANSLATION_UNIT: EXTERNAL_DECLARATION .
+
+    $default  reduce using rule 3 (TRANSLATION_UNIT)
+
+
+State 15
+
+    4 EXTERNAL_DECLARATION: FUNCTION_DEFINITION .
+
+    $default  reduce using rule 4 (EXTERNAL_DECLARATION)
+
+
+State 16
+
+    5 EXTERNAL_DECLARATION: DECLARATION .
+
+    $default  reduce using rule 5 (EXTERNAL_DECLARATION)
+
+
+State 17
+
+    6 FUNCTION_DEFINITION: DECLARATION_SPECIFIER . DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT
+    7                    | DECLARATION_SPECIFIER . DECLARATOR COMPOUND_STATEMENT
+   10 DECLARATION: DECLARATION_SPECIFIER . INIT_DECLARATOR SEMICOLON
+   11            | DECLARATION_SPECIFIER . SEMICOLON
+
+    IDENTIFIER  shift, and go to state 1
+    SEMICOLON   shift, and go to state 33
+    ASTERISK    shift, and go to state 2
+    LB          shift, and go to state 11
+
+    INIT_DECLARATOR    go to state 34
+    DECLARATOR         go to state 35
+    DIRECT_DECLARATOR  go to state 19
+    POINTER            go to state 20
+
+
+State 18
+
+    8 FUNCTION_DEFINITION: DECLARATOR . DECLARATION_LIST COMPOUND_STATEMENT
+    9                    | DECLARATOR . COMPOUND_STATEMENT
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    LCB       shift, and go to state 36
+
+    DECLARATION            go to state 37
+    DECLARATION_SPECIFIER  go to state 38
+    DECLARATION_LIST       go to state 39
+    COMPOUND_STATEMENT     go to state 40
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 19
+
+   32 DECLARATOR: DIRECT_DECLARATOR .
+   35 DIRECT_DECLARATOR: DIRECT_DECLARATOR . LSB CONSTANT_EXPR RSB
+   36                  | DIRECT_DECLARATOR . LSB RSB
+   37                  | DIRECT_DECLARATOR . LB PARAMETER_LIST RB
+   38                  | DIRECT_DECLARATOR . LB RB
+
+    LB   shift, and go to state 41
+    LSB  shift, and go to state 42
+
+    $default  reduce using rule 32 (DECLARATOR)
+
+
+State 20
+
+   31 DECLARATOR: POINTER . DIRECT_DECLARATOR
+
+    IDENTIFIER  shift, and go to state 1
+    LB          shift, and go to state 11
+
+    DIRECT_DECLARATOR  go to state 43
+
+
+State 21
+
+   14 DECLARATION_SPECIFIER: TYPE_SPECIFIER . DECLARATION_SPECIFIER
+   15                      | TYPE_SPECIFIER .
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+
+    $default  reduce using rule 15 (DECLARATION_SPECIFIER)
+
+    DECLARATION_SPECIFIER  go to state 44
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 22
+
+  160 TYPE_SPECIFIER: STRUCT_SPECIFIER .
+
+    $default  reduce using rule 160 (TYPE_SPECIFIER)
+
+
+State 23
+
+  161 TYPE_SPECIFIER: ENUM_SPECIFIER .
+
+    $default  reduce using rule 161 (TYPE_SPECIFIER)
+
+
+State 24
+
+   39 POINTER: ASTERISK POINTER .
+
+    $default  reduce using rule 39 (POINTER)
+
+
+State 25
+
+   12 DECLARATION_SPECIFIER: TYPEDEF DECLARATION_SPECIFIER .
+
+    $default  reduce using rule 12 (DECLARATION_SPECIFIER)
+
+
+State 26
+
+  162 STRUCT_SPECIFIER: STRUCT IDENTIFIER . LCB STRUCT_DECLARATION_LIST RCB
+  164                 | STRUCT IDENTIFIER .
+
+    LCB  shift, and go to state 45
+
+    $default  reduce using rule 164 (STRUCT_SPECIFIER)
+
+
+State 27
+
+  163 STRUCT_SPECIFIER: STRUCT LCB . STRUCT_DECLARATION_LIST RCB
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+
+    TYPE_SPECIFIER            go to state 46
+    STRUCT_SPECIFIER          go to state 22
+    STRUCT_DECLARATION_LIST   go to state 47
+    STRUCT_DECLARATION        go to state 48
+    SPECIFIER_QUALIFIER_LIST  go to state 49
+    ENUM_SPECIFIER            go to state 23
+
+
+State 28
+
+  175 ENUM_SPECIFIER: ENUM IDENTIFIER . LCB ENUMERATOR_LIST RCB
+  177               | ENUM IDENTIFIER .
+
+    LCB  shift, and go to state 50
+
+    $default  reduce using rule 177 (ENUM_SPECIFIER)
+
+
+State 29
+
+  176 ENUM_SPECIFIER: ENUM LCB . ENUMERATOR_LIST RCB
+
+    IDENTIFIER  shift, and go to state 51
+
+    ENUMERATOR_LIST  go to state 52
+    ENUMERATOR       go to state 53
+
+
+State 30
+
+   34 DIRECT_DECLARATOR: LB DECLARATOR . RB
+
+    RB  shift, and go to state 54
+
+
+State 31
+
+    0 $accept: ROOT $end .
+
+    $default  accept
+
+
+State 32
+
+    2 TRANSLATION_UNIT: TRANSLATION_UNIT EXTERNAL_DECLARATION .
+
+    $default  reduce using rule 2 (TRANSLATION_UNIT)
+
+
+State 33
+
+   11 DECLARATION: DECLARATION_SPECIFIER SEMICOLON .
+
+    $default  reduce using rule 11 (DECLARATION)
+
+
+State 34
+
+   10 DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR . SEMICOLON
+
+    SEMICOLON  shift, and go to state 55
+
+
+State 35
+
+    6 FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR . DECLARATION_LIST COMPOUND_STATEMENT
+    7                    | DECLARATION_SPECIFIER DECLARATOR . COMPOUND_STATEMENT
+   24 INIT_DECLARATOR: DECLARATOR .
+   25                | DECLARATOR . EQUAL INITIALIZER
+
+    EQUAL     shift, and go to state 56
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    LCB       shift, and go to state 36
+
+    $default  reduce using rule 24 (INIT_DECLARATOR)
+
+    DECLARATION            go to state 37
+    DECLARATION_SPECIFIER  go to state 38
+    DECLARATION_LIST       go to state 57
+    COMPOUND_STATEMENT     go to state 58
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 36
+
+   18 COMPOUND_STATEMENT: LCB . DECLARATION_LIST STATEMENT_LIST RCB
+   19                   | LCB . DECLARATION_LIST RCB
+   20                   | LCB . STATEMENT_LIST RCB
+   21                   | LCB . RCB
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    CHAR            shift, and go to state 3
+    INT             shift, and go to state 4
+    FLOAT           shift, and go to state 5
+    DOUBLE          shift, and go to state 6
+    UNSIGNED        shift, and go to state 7
+    TYPEDEF         shift, and go to state 8
+    STRUCT          shift, and go to state 9
+    ENUM            shift, and go to state 10
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+    RCB             shift, and go to state 83
+
+    DECLARATION            go to state 37
+    DECLARATION_SPECIFIER  go to state 38
+    DECLARATION_LIST       go to state 84
+    COMPOUND_STATEMENT     go to state 85
+    STATEMENT_LIST         go to state 86
+    CONDITIONAL_EXPR       go to state 87
+    LOGICAL_OR_EXPR        go to state 88
+    LOGICAL_AND_EXPR       go to state 89
+    INCLUSIVE_OR_EXPR      go to state 90
+    EXCLUSIVE_OR_EXPR      go to state 91
+    AND_EXPR               go to state 92
+    EQUALITY_EXPR          go to state 93
+    RELATIONAL_EXPR        go to state 94
+    SHIFT_EXPR             go to state 95
+    ADDITIVE_EXPR          go to state 96
+    MULTIPLICATIVE_EXPR    go to state 97
+    EXPR                   go to state 98
+    ASSIGNMENT_EXPR        go to state 99
+    UNARY_EXPR             go to state 100
+    UNARY_OPERATOR         go to state 101
+    POSTFIX_EXPR           go to state 102
+    PRIMARY_EXPR           go to state 103
+    CAST_EXPR              go to state 104
+    STATEMENT              go to state 105
+    LABELED_STATEMENT      go to state 106
+    EXPR_STATEMENT         go to state 107
+    SELECTION_STATEMENT    go to state 108
+    ITERATION_STATEMENT    go to state 109
+    JUMP_STATEMENT         go to state 110
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 37
+
+   16 DECLARATION_LIST: DECLARATION .
+
+    $default  reduce using rule 16 (DECLARATION_LIST)
+
+
+State 38
+
+   10 DECLARATION: DECLARATION_SPECIFIER . INIT_DECLARATOR SEMICOLON
+   11            | DECLARATION_SPECIFIER . SEMICOLON
+
+    IDENTIFIER  shift, and go to state 1
+    SEMICOLON   shift, and go to state 33
+    ASTERISK    shift, and go to state 2
+    LB          shift, and go to state 11
+
+    INIT_DECLARATOR    go to state 34
+    DECLARATOR         go to state 111
+    DIRECT_DECLARATOR  go to state 19
+    POINTER            go to state 20
+
+
+State 39
+
+    8 FUNCTION_DEFINITION: DECLARATOR DECLARATION_LIST . COMPOUND_STATEMENT
+   17 DECLARATION_LIST: DECLARATION_LIST . DECLARATION
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    LCB       shift, and go to state 36
+
+    DECLARATION            go to state 112
+    DECLARATION_SPECIFIER  go to state 38
+    COMPOUND_STATEMENT     go to state 113
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 40
+
+    9 FUNCTION_DEFINITION: DECLARATOR COMPOUND_STATEMENT .
+
+    $default  reduce using rule 9 (FUNCTION_DEFINITION)
+
+
+State 41
+
+   37 DIRECT_DECLARATOR: DIRECT_DECLARATOR LB . PARAMETER_LIST RB
+   38                  | DIRECT_DECLARATOR LB . RB
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    RB        shift, and go to state 114
+
+    DECLARATION_SPECIFIER  go to state 115
+    PARAMETER_LIST         go to state 116
+    PARAMETER_DECLARATION  go to state 117
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 42
+
+   35 DIRECT_DECLARATOR: DIRECT_DECLARATOR LSB . CONSTANT_EXPR RSB
+   36                  | DIRECT_DECLARATOR LSB . RSB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    RSB             shift, and go to state 119
+
+    CONSTANT_EXPR        go to state 120
+    CONDITIONAL_EXPR     go to state 121
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 43
+
+   31 DECLARATOR: POINTER DIRECT_DECLARATOR .
+   35 DIRECT_DECLARATOR: DIRECT_DECLARATOR . LSB CONSTANT_EXPR RSB
+   36                  | DIRECT_DECLARATOR . LSB RSB
+   37                  | DIRECT_DECLARATOR . LB PARAMETER_LIST RB
+   38                  | DIRECT_DECLARATOR . LB RB
+
+    LB   shift, and go to state 41
+    LSB  shift, and go to state 42
+
+    $default  reduce using rule 31 (DECLARATOR)
+
+
+State 44
+
+   14 DECLARATION_SPECIFIER: TYPE_SPECIFIER DECLARATION_SPECIFIER .
+
+    $default  reduce using rule 14 (DECLARATION_SPECIFIER)
+
+
+State 45
+
+  162 STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB . STRUCT_DECLARATION_LIST RCB
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+
+    TYPE_SPECIFIER            go to state 46
+    STRUCT_SPECIFIER          go to state 22
+    STRUCT_DECLARATION_LIST   go to state 123
+    STRUCT_DECLARATION        go to state 48
+    SPECIFIER_QUALIFIER_LIST  go to state 49
+    ENUM_SPECIFIER            go to state 23
+
+
+State 46
+
+  168 SPECIFIER_QUALIFIER_LIST: TYPE_SPECIFIER . SPECIFIER_QUALIFIER_LIST
+  169                         | TYPE_SPECIFIER .
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+
+    $default  reduce using rule 169 (SPECIFIER_QUALIFIER_LIST)
+
+    TYPE_SPECIFIER            go to state 46
+    STRUCT_SPECIFIER          go to state 22
+    SPECIFIER_QUALIFIER_LIST  go to state 124
+    ENUM_SPECIFIER            go to state 23
+
+
+State 47
+
+  163 STRUCT_SPECIFIER: STRUCT LCB STRUCT_DECLARATION_LIST . RCB
+  166 STRUCT_DECLARATION_LIST: STRUCT_DECLARATION_LIST . STRUCT_DECLARATION
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    RCB       shift, and go to state 125
+
+    TYPE_SPECIFIER            go to state 46
+    STRUCT_SPECIFIER          go to state 22
+    STRUCT_DECLARATION        go to state 126
+    SPECIFIER_QUALIFIER_LIST  go to state 49
+    ENUM_SPECIFIER            go to state 23
+
+
+State 48
+
+  165 STRUCT_DECLARATION_LIST: STRUCT_DECLARATION .
+
+    $default  reduce using rule 165 (STRUCT_DECLARATION_LIST)
+
+
+State 49
+
+  167 STRUCT_DECLARATION: SPECIFIER_QUALIFIER_LIST . STRUCT_DECLARATOR_LIST SEMICOLON
+
+    IDENTIFIER  shift, and go to state 1
+    ASTERISK    shift, and go to state 2
+    LB          shift, and go to state 11
+    COLON       shift, and go to state 127
+
+    DECLARATOR              go to state 128
+    DIRECT_DECLARATOR       go to state 19
+    POINTER                 go to state 20
+    STRUCT_DECLARATOR_LIST  go to state 129
+    STRUCT_DECLARATOR       go to state 130
+
+
+State 50
+
+  175 ENUM_SPECIFIER: ENUM IDENTIFIER LCB . ENUMERATOR_LIST RCB
+
+    IDENTIFIER  shift, and go to state 51
+
+    ENUMERATOR_LIST  go to state 131
+    ENUMERATOR       go to state 53
+
+
+State 51
+
+  180 ENUMERATOR: IDENTIFIER .
+  181           | IDENTIFIER . EQUAL CONSTANT_EXPR
+
+    EQUAL  shift, and go to state 132
+
+    $default  reduce using rule 180 (ENUMERATOR)
+
+
+State 52
+
+  176 ENUM_SPECIFIER: ENUM LCB ENUMERATOR_LIST . RCB
+  179 ENUMERATOR_LIST: ENUMERATOR_LIST . COMMA ENUMERATOR
+
+    RCB    shift, and go to state 133
+    COMMA  shift, and go to state 134
+
+
+State 53
+
+  178 ENUMERATOR_LIST: ENUMERATOR .
+
+    $default  reduce using rule 178 (ENUMERATOR_LIST)
+
+
+State 54
+
+   34 DIRECT_DECLARATOR: LB DECLARATOR RB .
+
+    $default  reduce using rule 34 (DIRECT_DECLARATOR)
+
+
+State 55
+
+   10 DECLARATION: DECLARATION_SPECIFIER INIT_DECLARATOR SEMICOLON .
+
+    $default  reduce using rule 10 (DECLARATION)
+
+
+State 56
+
+   25 INIT_DECLARATOR: DECLARATOR EQUAL . INITIALIZER
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 135
+
+    INITIALIZER          go to state 136
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    ASSIGNMENT_EXPR      go to state 137
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 57
+
+    6 FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST . COMPOUND_STATEMENT
+   17 DECLARATION_LIST: DECLARATION_LIST . DECLARATION
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    LCB       shift, and go to state 36
+
+    DECLARATION            go to state 112
+    DECLARATION_SPECIFIER  go to state 38
+    COMPOUND_STATEMENT     go to state 138
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 58
+
+    7 FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR COMPOUND_STATEMENT .
+
+    $default  reduce using rule 7 (FUNCTION_DEFINITION)
+
+
+State 59
+
+  124 PRIMARY_EXPR: IDENTIFIER .
+  140 LABELED_STATEMENT: IDENTIFIER . COLON STATEMENT
+
+    COLON  shift, and go to state 139
+
+    $default  reduce using rule 124 (PRIMARY_EXPR)
+
+
+State 60
+
+  125 PRIMARY_EXPR: CONSTANT .
+
+    $default  reduce using rule 125 (PRIMARY_EXPR)
+
+
+State 61
+
+  126 PRIMARY_EXPR: STRING_LITERAL .
+
+    $default  reduce using rule 126 (PRIMARY_EXPR)
+
+
+State 62
+
+  108 UNARY_EXPR: SIZEOF . UNARY_EXPR
+  109           | SIZEOF . LB TYPE_NAME RB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 140
+
+    UNARY_EXPR      go to state 141
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+
+
+State 63
+
+  144 EXPR_STATEMENT: SEMICOLON .
+
+    $default  reduce using rule 144 (EXPR_STATEMENT)
+
+
+State 64
+
+  105 UNARY_EXPR: INCREMENT . UNARY_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 142
+
+    UNARY_EXPR      go to state 143
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+
+
+State 65
+
+  106 UNARY_EXPR: DECREMENT . UNARY_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 142
+
+    UNARY_EXPR      go to state 144
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+
+
+State 66
+
+  112 UNARY_OPERATOR: PLUS .
+
+    $default  reduce using rule 112 (UNARY_OPERATOR)
+
+
+State 67
+
+  113 UNARY_OPERATOR: MINUS .
+
+    $default  reduce using rule 113 (UNARY_OPERATOR)
+
+
+State 68
+
+  111 UNARY_OPERATOR: ASTERISK .
+
+    $default  reduce using rule 111 (UNARY_OPERATOR)
+
+
+State 69
+
+  114 UNARY_OPERATOR: TILDE .
+
+    $default  reduce using rule 114 (UNARY_OPERATOR)
+
+
+State 70
+
+  110 UNARY_OPERATOR: AMPERSAND .
+
+    $default  reduce using rule 110 (UNARY_OPERATOR)
+
+
+State 71
+
+  115 UNARY_OPERATOR: EXCLAMATION .
+
+    $default  reduce using rule 115 (UNARY_OPERATOR)
+
+
+State 72
+
+  145 SELECTION_STATEMENT: IF . LB EXPR RB STATEMENT
+  146                    | IF . LB EXPR RB STATEMENT ELSE STATEMENT
+
+    LB  shift, and go to state 145
+
+
+State 73
+
+  147 SELECTION_STATEMENT: SWITCH . LB EXPR RB STATEMENT
+
+    LB  shift, and go to state 146
+
+
+State 74
+
+  141 LABELED_STATEMENT: CASE . CONSTANT_EXPR COLON STATEMENT
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONSTANT_EXPR        go to state 147
+    CONDITIONAL_EXPR     go to state 121
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 75
+
+  142 LABELED_STATEMENT: DEFAULT . COLON STATEMENT
+
+    COLON  shift, and go to state 148
+
+
+State 76
+
+  150 ITERATION_STATEMENT: FOR . LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT
+  151                    | FOR . LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT
+
+    LB  shift, and go to state 149
+
+
+State 77
+
+  149 ITERATION_STATEMENT: DO . STATEMENT WHILE LB EXPR RB SEMICOLON
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 150
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 78
+
+  148 ITERATION_STATEMENT: WHILE . LB EXPR RB STATEMENT
+
+    LB  shift, and go to state 151
+
+
+State 79
+
+  152 JUMP_STATEMENT: CONTINUE . SEMICOLON
+
+    SEMICOLON  shift, and go to state 152
+
+
+State 80
+
+  153 JUMP_STATEMENT: BREAK . SEMICOLON
+
+    SEMICOLON  shift, and go to state 153
+
+
+State 81
+
+  154 JUMP_STATEMENT: RETURN . EXPR SEMICOLON
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 154
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 82
+
+  127 PRIMARY_EXPR: LB . EXPR RB
+  131 CAST_EXPR: LB . TYPE_NAME RB CAST_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    CHAR            shift, and go to state 3
+    INT             shift, and go to state 4
+    FLOAT           shift, and go to state 5
+    DOUBLE          shift, and go to state 6
+    UNSIGNED        shift, and go to state 7
+    STRUCT          shift, and go to state 9
+    ENUM            shift, and go to state 10
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR          go to state 87
+    LOGICAL_OR_EXPR           go to state 88
+    LOGICAL_AND_EXPR          go to state 89
+    INCLUSIVE_OR_EXPR         go to state 90
+    EXCLUSIVE_OR_EXPR         go to state 91
+    AND_EXPR                  go to state 92
+    EQUALITY_EXPR             go to state 93
+    RELATIONAL_EXPR           go to state 94
+    SHIFT_EXPR                go to state 95
+    ADDITIVE_EXPR             go to state 96
+    MULTIPLICATIVE_EXPR       go to state 97
+    EXPR                      go to state 155
+    ASSIGNMENT_EXPR           go to state 99
+    UNARY_EXPR                go to state 100
+    UNARY_OPERATOR            go to state 101
+    POSTFIX_EXPR              go to state 102
+    PRIMARY_EXPR              go to state 103
+    CAST_EXPR                 go to state 104
+    TYPE_NAME                 go to state 156
+    TYPE_SPECIFIER            go to state 46
+    STRUCT_SPECIFIER          go to state 22
+    SPECIFIER_QUALIFIER_LIST  go to state 157
+    ENUM_SPECIFIER            go to state 23
+
+
+State 83
+
+   21 COMPOUND_STATEMENT: LCB RCB .
+
+    $default  reduce using rule 21 (COMPOUND_STATEMENT)
+
+
+State 84
+
+   17 DECLARATION_LIST: DECLARATION_LIST . DECLARATION
+   18 COMPOUND_STATEMENT: LCB DECLARATION_LIST . STATEMENT_LIST RCB
+   19                   | LCB DECLARATION_LIST . RCB
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    CHAR            shift, and go to state 3
+    INT             shift, and go to state 4
+    FLOAT           shift, and go to state 5
+    DOUBLE          shift, and go to state 6
+    UNSIGNED        shift, and go to state 7
+    TYPEDEF         shift, and go to state 8
+    STRUCT          shift, and go to state 9
+    ENUM            shift, and go to state 10
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+    RCB             shift, and go to state 158
+
+    DECLARATION            go to state 112
+    DECLARATION_SPECIFIER  go to state 38
+    COMPOUND_STATEMENT     go to state 85
+    STATEMENT_LIST         go to state 159
+    CONDITIONAL_EXPR       go to state 87
+    LOGICAL_OR_EXPR        go to state 88
+    LOGICAL_AND_EXPR       go to state 89
+    INCLUSIVE_OR_EXPR      go to state 90
+    EXCLUSIVE_OR_EXPR      go to state 91
+    AND_EXPR               go to state 92
+    EQUALITY_EXPR          go to state 93
+    RELATIONAL_EXPR        go to state 94
+    SHIFT_EXPR             go to state 95
+    ADDITIVE_EXPR          go to state 96
+    MULTIPLICATIVE_EXPR    go to state 97
+    EXPR                   go to state 98
+    ASSIGNMENT_EXPR        go to state 99
+    UNARY_EXPR             go to state 100
+    UNARY_OPERATOR         go to state 101
+    POSTFIX_EXPR           go to state 102
+    PRIMARY_EXPR           go to state 103
+    CAST_EXPR              go to state 104
+    STATEMENT              go to state 105
+    LABELED_STATEMENT      go to state 106
+    EXPR_STATEMENT         go to state 107
+    SELECTION_STATEMENT    go to state 108
+    ITERATION_STATEMENT    go to state 109
+    JUMP_STATEMENT         go to state 110
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 85
+
+  135 STATEMENT: COMPOUND_STATEMENT .
+
+    $default  reduce using rule 135 (STATEMENT)
+
+
+State 86
+
+   20 COMPOUND_STATEMENT: LCB STATEMENT_LIST . RCB
+   23 STATEMENT_LIST: STATEMENT_LIST . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+    RCB             shift, and go to state 160
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 161
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 87
+
+   91 ASSIGNMENT_EXPR: CONDITIONAL_EXPR .
+
+    $default  reduce using rule 91 (ASSIGNMENT_EXPR)
+
+
+State 88
+
+   59 CONDITIONAL_EXPR: LOGICAL_OR_EXPR .
+   60                 | LOGICAL_OR_EXPR . QUESTION EXPR COLON CONDITIONAL_EXPR
+   62 LOGICAL_OR_EXPR: LOGICAL_OR_EXPR . LOGICAL_OR LOGICAL_AND_EXPR
+
+    LOGICAL_OR  shift, and go to state 162
+    QUESTION    shift, and go to state 163
+
+    $default  reduce using rule 59 (CONDITIONAL_EXPR)
+
+
+State 89
+
+   61 LOGICAL_OR_EXPR: LOGICAL_AND_EXPR .
+   64 LOGICAL_AND_EXPR: LOGICAL_AND_EXPR . LOGICAL_AND INCLUSIVE_OR_EXPR
+
+    LOGICAL_AND  shift, and go to state 164
+
+    $default  reduce using rule 61 (LOGICAL_OR_EXPR)
+
+
+State 90
+
+   63 LOGICAL_AND_EXPR: INCLUSIVE_OR_EXPR .
+   66 INCLUSIVE_OR_EXPR: INCLUSIVE_OR_EXPR . BITWISE_OR EXCLUSIVE_OR_EXPR
+
+    BITWISE_OR  shift, and go to state 165
+
+    $default  reduce using rule 63 (LOGICAL_AND_EXPR)
+
+
+State 91
+
+   65 INCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPR .
+   68 EXCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPR . XOR AND_EXPR
+
+    XOR  shift, and go to state 166
+
+    $default  reduce using rule 65 (INCLUSIVE_OR_EXPR)
+
+
+State 92
+
+   67 EXCLUSIVE_OR_EXPR: AND_EXPR .
+   70 AND_EXPR: AND_EXPR . AMPERSAND EQUALITY_EXPR
+
+    AMPERSAND  shift, and go to state 167
+
+    $default  reduce using rule 67 (EXCLUSIVE_OR_EXPR)
+
+
+State 93
+
+   69 AND_EXPR: EQUALITY_EXPR .
+   72 EQUALITY_EXPR: EQUALITY_EXPR . EQUALITY RELATIONAL_EXPR
+   73              | EQUALITY_EXPR . NOTEQUAL RELATIONAL_EXPR
+
+    EQUALITY  shift, and go to state 168
+    NOTEQUAL  shift, and go to state 169
+
+    $default  reduce using rule 69 (AND_EXPR)
+
+
+State 94
+
+   71 EQUALITY_EXPR: RELATIONAL_EXPR .
+   75 RELATIONAL_EXPR: RELATIONAL_EXPR . LT SHIFT_EXPR
+   76                | RELATIONAL_EXPR . GT SHIFT_EXPR
+   77                | RELATIONAL_EXPR . LE SHIFT_EXPR
+   78                | RELATIONAL_EXPR . GE SHIFT_EXPR
+
+    LE  shift, and go to state 170
+    GE  shift, and go to state 171
+    LT  shift, and go to state 172
+    GT  shift, and go to state 173
+
+    $default  reduce using rule 71 (EQUALITY_EXPR)
+
+
+State 95
+
+   74 RELATIONAL_EXPR: SHIFT_EXPR .
+   80 SHIFT_EXPR: SHIFT_EXPR . LSHIFT ADDITIVE_EXPR
+   81           | SHIFT_EXPR . RSHIFT ADDITIVE_EXPR
+
+    LSHIFT  shift, and go to state 174
+    RSHIFT  shift, and go to state 175
+
+    $default  reduce using rule 74 (RELATIONAL_EXPR)
+
+
+State 96
+
+   79 SHIFT_EXPR: ADDITIVE_EXPR .
+   83 ADDITIVE_EXPR: ADDITIVE_EXPR . PLUS MULTIPLICATIVE_EXPR
+   84              | ADDITIVE_EXPR . MINUS MULTIPLICATIVE_EXPR
+
+    PLUS   shift, and go to state 176
+    MINUS  shift, and go to state 177
+
+    $default  reduce using rule 79 (SHIFT_EXPR)
+
+
+State 97
+
+   82 ADDITIVE_EXPR: MULTIPLICATIVE_EXPR .
+   86 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR . ASTERISK CAST_EXPR
+   87                    | MULTIPLICATIVE_EXPR . DIV CAST_EXPR
+   88                    | MULTIPLICATIVE_EXPR . MOD CAST_EXPR
+
+    ASTERISK  shift, and go to state 178
+    DIV       shift, and go to state 179
+    MOD       shift, and go to state 180
+
+    $default  reduce using rule 82 (ADDITIVE_EXPR)
+
+
+State 98
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  143 EXPR_STATEMENT: EXPR . SEMICOLON
+
+    SEMICOLON  shift, and go to state 181
+    COMMA      shift, and go to state 182
+
+
+State 99
+
+   89 EXPR: ASSIGNMENT_EXPR .
+
+    $default  reduce using rule 89 (EXPR)
+
+
+State 100
+
+   92 ASSIGNMENT_EXPR: UNARY_EXPR . ASSIGNMENT_OPERATOR ASSIGNMENT_EXPR
+  130 CAST_EXPR: UNARY_EXPR .
+
+    PLUSEQUAL    shift, and go to state 183
+    MULEQUAL     shift, and go to state 184
+    DIVEQUAL     shift, and go to state 185
+    MODEQUAL     shift, and go to state 186
+    MINUSEQUAL   shift, and go to state 187
+    ANDEQUAL     shift, and go to state 188
+    LSHIFTEQUAL  shift, and go to state 189
+    RSHIFTEQUAL  shift, and go to state 190
+    EQUAL        shift, and go to state 191
+    OREQUAL      shift, and go to state 192
+    XOREQUAL     shift, and go to state 193
+
+    $default  reduce using rule 130 (CAST_EXPR)
+
+    ASSIGNMENT_OPERATOR  go to state 194
+
+
+State 101
+
+  107 UNARY_EXPR: UNARY_OPERATOR . CAST_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    UNARY_EXPR      go to state 122
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+    CAST_EXPR       go to state 195
+
+
+State 102
+
+  104 UNARY_EXPR: POSTFIX_EXPR .
+  118 POSTFIX_EXPR: POSTFIX_EXPR . LB ARGUMENT_EXPR_LIST RB
+  119             | POSTFIX_EXPR . LB RB
+  120             | POSTFIX_EXPR . DOT IDENTIFIER
+  121             | POSTFIX_EXPR . ARROW IDENTIFIER
+  122             | POSTFIX_EXPR . INCREMENT
+  123             | POSTFIX_EXPR . DECREMENT
+
+    INCREMENT  shift, and go to state 196
+    DECREMENT  shift, and go to state 197
+    ARROW      shift, and go to state 198
+    DOT        shift, and go to state 199
+    LB         shift, and go to state 200
+
+    $default  reduce using rule 104 (UNARY_EXPR)
+
+
+State 103
+
+  116 POSTFIX_EXPR: PRIMARY_EXPR .
+  117             | PRIMARY_EXPR . LSB EXPR RSB
+
+    LSB  shift, and go to state 201
+
+    $default  reduce using rule 116 (POSTFIX_EXPR)
+
+
+State 104
+
+   85 MULTIPLICATIVE_EXPR: CAST_EXPR .
+
+    $default  reduce using rule 85 (MULTIPLICATIVE_EXPR)
+
+
+State 105
+
+   22 STATEMENT_LIST: STATEMENT .
+
+    $default  reduce using rule 22 (STATEMENT_LIST)
+
+
+State 106
+
+  134 STATEMENT: LABELED_STATEMENT .
+
+    $default  reduce using rule 134 (STATEMENT)
+
+
+State 107
+
+  136 STATEMENT: EXPR_STATEMENT .
+
+    $default  reduce using rule 136 (STATEMENT)
+
+
+State 108
+
+  137 STATEMENT: SELECTION_STATEMENT .
+
+    $default  reduce using rule 137 (STATEMENT)
+
+
+State 109
+
+  138 STATEMENT: ITERATION_STATEMENT .
+
+    $default  reduce using rule 138 (STATEMENT)
+
+
+State 110
+
+  139 STATEMENT: JUMP_STATEMENT .
+
+    $default  reduce using rule 139 (STATEMENT)
+
+
+State 111
+
+   24 INIT_DECLARATOR: DECLARATOR .
+   25                | DECLARATOR . EQUAL INITIALIZER
+
+    EQUAL  shift, and go to state 56
+
+    $default  reduce using rule 24 (INIT_DECLARATOR)
+
+
+State 112
+
+   17 DECLARATION_LIST: DECLARATION_LIST DECLARATION .
+
+    $default  reduce using rule 17 (DECLARATION_LIST)
+
+
+State 113
+
+    8 FUNCTION_DEFINITION: DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT .
+
+    $default  reduce using rule 8 (FUNCTION_DEFINITION)
+
+
+State 114
+
+   38 DIRECT_DECLARATOR: DIRECT_DECLARATOR LB RB .
+
+    $default  reduce using rule 38 (DIRECT_DECLARATOR)
+
+
+State 115
+
+   43 PARAMETER_DECLARATION: DECLARATION_SPECIFIER . DECLARATOR
+   44                      | DECLARATION_SPECIFIER . ABSTRACT_DECLARATOR
+   45                      | DECLARATION_SPECIFIER .
+
+    IDENTIFIER  shift, and go to state 1
+    ASTERISK    shift, and go to state 2
+    LB          shift, and go to state 202
+    LSB         shift, and go to state 203
+
+    $default  reduce using rule 45 (PARAMETER_DECLARATION)
+
+    DECLARATOR                  go to state 204
+    DIRECT_DECLARATOR           go to state 19
+    POINTER                     go to state 205
+    ABSTRACT_DECLARATOR         go to state 206
+    DIRECT_ABSTRACT_DECLARATOR  go to state 207
+
+
+State 116
+
+   37 DIRECT_DECLARATOR: DIRECT_DECLARATOR LB PARAMETER_LIST . RB
+   42 PARAMETER_LIST: PARAMETER_LIST . COMMA PARAMETER_DECLARATION
+
+    RB     shift, and go to state 208
+    COMMA  shift, and go to state 209
+
+
+State 117
+
+   41 PARAMETER_LIST: PARAMETER_DECLARATION .
+
+    $default  reduce using rule 41 (PARAMETER_LIST)
+
+
+State 118
+
+  124 PRIMARY_EXPR: IDENTIFIER .
+
+    $default  reduce using rule 124 (PRIMARY_EXPR)
+
+
+State 119
+
+   36 DIRECT_DECLARATOR: DIRECT_DECLARATOR LSB RSB .
+
+    $default  reduce using rule 36 (DIRECT_DECLARATOR)
+
+
+State 120
+
+   35 DIRECT_DECLARATOR: DIRECT_DECLARATOR LSB CONSTANT_EXPR . RSB
+
+    RSB  shift, and go to state 210
+
+
+State 121
+
+   46 CONSTANT_EXPR: CONDITIONAL_EXPR .
+
+    $default  reduce using rule 46 (CONSTANT_EXPR)
+
+
+State 122
+
+  130 CAST_EXPR: UNARY_EXPR .
+
+    $default  reduce using rule 130 (CAST_EXPR)
+
+
+State 123
+
+  162 STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB STRUCT_DECLARATION_LIST . RCB
+  166 STRUCT_DECLARATION_LIST: STRUCT_DECLARATION_LIST . STRUCT_DECLARATION
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    RCB       shift, and go to state 211
+
+    TYPE_SPECIFIER            go to state 46
+    STRUCT_SPECIFIER          go to state 22
+    STRUCT_DECLARATION        go to state 126
+    SPECIFIER_QUALIFIER_LIST  go to state 49
+    ENUM_SPECIFIER            go to state 23
+
+
+State 124
+
+  168 SPECIFIER_QUALIFIER_LIST: TYPE_SPECIFIER SPECIFIER_QUALIFIER_LIST .
+
+    $default  reduce using rule 168 (SPECIFIER_QUALIFIER_LIST)
+
+
+State 125
+
+  163 STRUCT_SPECIFIER: STRUCT LCB STRUCT_DECLARATION_LIST RCB .
+
+    $default  reduce using rule 163 (STRUCT_SPECIFIER)
+
+
+State 126
+
+  166 STRUCT_DECLARATION_LIST: STRUCT_DECLARATION_LIST STRUCT_DECLARATION .
+
+    $default  reduce using rule 166 (STRUCT_DECLARATION_LIST)
+
+
+State 127
+
+  174 STRUCT_DECLARATOR: COLON . CONSTANT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONSTANT_EXPR        go to state 212
+    CONDITIONAL_EXPR     go to state 121
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 128
+
+  172 STRUCT_DECLARATOR: DECLARATOR .
+  173                  | DECLARATOR . COLON CONSTANT_EXPR
+
+    COLON  shift, and go to state 213
+
+    $default  reduce using rule 172 (STRUCT_DECLARATOR)
+
+
+State 129
+
+  167 STRUCT_DECLARATION: SPECIFIER_QUALIFIER_LIST STRUCT_DECLARATOR_LIST . SEMICOLON
+
+    SEMICOLON  shift, and go to state 214
+
+
+State 130
+
+  170 STRUCT_DECLARATOR_LIST: STRUCT_DECLARATOR .
+  171                       | STRUCT_DECLARATOR . COMMA STRUCT_DECLARATOR
+
+    COMMA  shift, and go to state 215
+
+    $default  reduce using rule 170 (STRUCT_DECLARATOR_LIST)
+
+
+State 131
+
+  175 ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST . RCB
+  179 ENUMERATOR_LIST: ENUMERATOR_LIST . COMMA ENUMERATOR
+
+    RCB    shift, and go to state 216
+    COMMA  shift, and go to state 134
+
+
+State 132
+
+  181 ENUMERATOR: IDENTIFIER EQUAL . CONSTANT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONSTANT_EXPR        go to state 217
+    CONDITIONAL_EXPR     go to state 121
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 133
+
+  176 ENUM_SPECIFIER: ENUM LCB ENUMERATOR_LIST RCB .
+
+    $default  reduce using rule 176 (ENUM_SPECIFIER)
+
+
+State 134
+
+  179 ENUMERATOR_LIST: ENUMERATOR_LIST COMMA . ENUMERATOR
+
+    IDENTIFIER  shift, and go to state 51
+
+    ENUMERATOR  go to state 218
+
+
+State 135
+
+   27 INITIALIZER: LCB . INITIALIZER_LIST RCB
+   28            | LCB . INITIALIZER_LIST COMMA RCB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 135
+
+    INITIALIZER          go to state 219
+    INITIALIZER_LIST     go to state 220
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    ASSIGNMENT_EXPR      go to state 137
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 136
+
+   25 INIT_DECLARATOR: DECLARATOR EQUAL INITIALIZER .
+
+    $default  reduce using rule 25 (INIT_DECLARATOR)
+
+
+State 137
+
+   26 INITIALIZER: ASSIGNMENT_EXPR .
+
+    $default  reduce using rule 26 (INITIALIZER)
+
+
+State 138
+
+    6 FUNCTION_DEFINITION: DECLARATION_SPECIFIER DECLARATOR DECLARATION_LIST COMPOUND_STATEMENT .
+
+    $default  reduce using rule 6 (FUNCTION_DEFINITION)
+
+
+State 139
+
+  140 LABELED_STATEMENT: IDENTIFIER COLON . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 221
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 140
+
+  109 UNARY_EXPR: SIZEOF LB . TYPE_NAME RB
+  127 PRIMARY_EXPR: LB . EXPR RB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    CHAR            shift, and go to state 3
+    INT             shift, and go to state 4
+    FLOAT           shift, and go to state 5
+    DOUBLE          shift, and go to state 6
+    UNSIGNED        shift, and go to state 7
+    STRUCT          shift, and go to state 9
+    ENUM            shift, and go to state 10
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR          go to state 87
+    LOGICAL_OR_EXPR           go to state 88
+    LOGICAL_AND_EXPR          go to state 89
+    INCLUSIVE_OR_EXPR         go to state 90
+    EXCLUSIVE_OR_EXPR         go to state 91
+    AND_EXPR                  go to state 92
+    EQUALITY_EXPR             go to state 93
+    RELATIONAL_EXPR           go to state 94
+    SHIFT_EXPR                go to state 95
+    ADDITIVE_EXPR             go to state 96
+    MULTIPLICATIVE_EXPR       go to state 97
+    EXPR                      go to state 155
+    ASSIGNMENT_EXPR           go to state 99
+    UNARY_EXPR                go to state 100
+    UNARY_OPERATOR            go to state 101
+    POSTFIX_EXPR              go to state 102
+    PRIMARY_EXPR              go to state 103
+    CAST_EXPR                 go to state 104
+    TYPE_NAME                 go to state 222
+    TYPE_SPECIFIER            go to state 46
+    STRUCT_SPECIFIER          go to state 22
+    SPECIFIER_QUALIFIER_LIST  go to state 157
+    ENUM_SPECIFIER            go to state 23
+
+
+State 141
+
+  108 UNARY_EXPR: SIZEOF UNARY_EXPR .
+
+    $default  reduce using rule 108 (UNARY_EXPR)
+
+
+State 142
+
+  127 PRIMARY_EXPR: LB . EXPR RB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 155
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 143
+
+  105 UNARY_EXPR: INCREMENT UNARY_EXPR .
+
+    $default  reduce using rule 105 (UNARY_EXPR)
+
+
+State 144
+
+  106 UNARY_EXPR: DECREMENT UNARY_EXPR .
+
+    $default  reduce using rule 106 (UNARY_EXPR)
+
+
+State 145
+
+  145 SELECTION_STATEMENT: IF LB . EXPR RB STATEMENT
+  146                    | IF LB . EXPR RB STATEMENT ELSE STATEMENT
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 223
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 146
+
+  147 SELECTION_STATEMENT: SWITCH LB . EXPR RB STATEMENT
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 224
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 147
+
+  141 LABELED_STATEMENT: CASE CONSTANT_EXPR . COLON STATEMENT
+
+    COLON  shift, and go to state 225
+
+
+State 148
+
+  142 LABELED_STATEMENT: DEFAULT COLON . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 226
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 149
+
+  150 ITERATION_STATEMENT: FOR LB . EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT
+  151                    | FOR LB . EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    EXPR_STATEMENT       go to state 227
+
+
+State 150
+
+  149 ITERATION_STATEMENT: DO STATEMENT . WHILE LB EXPR RB SEMICOLON
+
+    WHILE  shift, and go to state 228
+
+
+State 151
+
+  148 ITERATION_STATEMENT: WHILE LB . EXPR RB STATEMENT
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 229
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 152
+
+  152 JUMP_STATEMENT: CONTINUE SEMICOLON .
+
+    $default  reduce using rule 152 (JUMP_STATEMENT)
+
+
+State 153
+
+  153 JUMP_STATEMENT: BREAK SEMICOLON .
+
+    $default  reduce using rule 153 (JUMP_STATEMENT)
+
+
+State 154
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  154 JUMP_STATEMENT: RETURN EXPR . SEMICOLON
+
+    SEMICOLON  shift, and go to state 230
+    COMMA      shift, and go to state 182
+
+
+State 155
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  127 PRIMARY_EXPR: LB EXPR . RB
+
+    RB     shift, and go to state 231
+    COMMA  shift, and go to state 182
+
+
+State 156
+
+  131 CAST_EXPR: LB TYPE_NAME . RB CAST_EXPR
+
+    RB  shift, and go to state 232
+
+
+State 157
+
+  132 TYPE_NAME: SPECIFIER_QUALIFIER_LIST . ABSTRACT_DECLARATOR
+  133          | SPECIFIER_QUALIFIER_LIST .
+
+    ASTERISK  shift, and go to state 2
+    LB        shift, and go to state 233
+    LSB       shift, and go to state 203
+
+    $default  reduce using rule 133 (TYPE_NAME)
+
+    POINTER                     go to state 234
+    ABSTRACT_DECLARATOR         go to state 235
+    DIRECT_ABSTRACT_DECLARATOR  go to state 207
+
+
+State 158
+
+   19 COMPOUND_STATEMENT: LCB DECLARATION_LIST RCB .
+
+    $default  reduce using rule 19 (COMPOUND_STATEMENT)
+
+
+State 159
+
+   18 COMPOUND_STATEMENT: LCB DECLARATION_LIST STATEMENT_LIST . RCB
+   23 STATEMENT_LIST: STATEMENT_LIST . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+    RCB             shift, and go to state 236
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 161
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 160
+
+   20 COMPOUND_STATEMENT: LCB STATEMENT_LIST RCB .
+
+    $default  reduce using rule 20 (COMPOUND_STATEMENT)
+
+
+State 161
+
+   23 STATEMENT_LIST: STATEMENT_LIST STATEMENT .
+
+    $default  reduce using rule 23 (STATEMENT_LIST)
+
+
+State 162
+
+   62 LOGICAL_OR_EXPR: LOGICAL_OR_EXPR LOGICAL_OR . LOGICAL_AND_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    LOGICAL_AND_EXPR     go to state 237
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 163
+
+   60 CONDITIONAL_EXPR: LOGICAL_OR_EXPR QUESTION . EXPR COLON CONDITIONAL_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 238
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 164
+
+   64 LOGICAL_AND_EXPR: LOGICAL_AND_EXPR LOGICAL_AND . INCLUSIVE_OR_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    INCLUSIVE_OR_EXPR    go to state 239
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 165
+
+   66 INCLUSIVE_OR_EXPR: INCLUSIVE_OR_EXPR BITWISE_OR . EXCLUSIVE_OR_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    EXCLUSIVE_OR_EXPR    go to state 240
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 166
+
+   68 EXCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPR XOR . AND_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    AND_EXPR             go to state 241
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 167
+
+   70 AND_EXPR: AND_EXPR AMPERSAND . EQUALITY_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    EQUALITY_EXPR        go to state 242
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 168
+
+   72 EQUALITY_EXPR: EQUALITY_EXPR EQUALITY . RELATIONAL_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    RELATIONAL_EXPR      go to state 243
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 169
+
+   73 EQUALITY_EXPR: EQUALITY_EXPR NOTEQUAL . RELATIONAL_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    RELATIONAL_EXPR      go to state 244
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 170
+
+   77 RELATIONAL_EXPR: RELATIONAL_EXPR LE . SHIFT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    SHIFT_EXPR           go to state 245
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 171
+
+   78 RELATIONAL_EXPR: RELATIONAL_EXPR GE . SHIFT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    SHIFT_EXPR           go to state 246
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 172
+
+   75 RELATIONAL_EXPR: RELATIONAL_EXPR LT . SHIFT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    SHIFT_EXPR           go to state 247
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 173
+
+   76 RELATIONAL_EXPR: RELATIONAL_EXPR GT . SHIFT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    SHIFT_EXPR           go to state 248
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 174
+
+   80 SHIFT_EXPR: SHIFT_EXPR LSHIFT . ADDITIVE_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    ADDITIVE_EXPR        go to state 249
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 175
+
+   81 SHIFT_EXPR: SHIFT_EXPR RSHIFT . ADDITIVE_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    ADDITIVE_EXPR        go to state 250
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 176
+
+   83 ADDITIVE_EXPR: ADDITIVE_EXPR PLUS . MULTIPLICATIVE_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    MULTIPLICATIVE_EXPR  go to state 251
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 177
+
+   84 ADDITIVE_EXPR: ADDITIVE_EXPR MINUS . MULTIPLICATIVE_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    MULTIPLICATIVE_EXPR  go to state 252
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 178
+
+   86 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR ASTERISK . CAST_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    UNARY_EXPR      go to state 122
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+    CAST_EXPR       go to state 253
+
+
+State 179
+
+   87 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR DIV . CAST_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    UNARY_EXPR      go to state 122
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+    CAST_EXPR       go to state 254
+
+
+State 180
+
+   88 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR MOD . CAST_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    UNARY_EXPR      go to state 122
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+    CAST_EXPR       go to state 255
+
+
+State 181
+
+  143 EXPR_STATEMENT: EXPR SEMICOLON .
+
+    $default  reduce using rule 143 (EXPR_STATEMENT)
+
+
+State 182
+
+   90 EXPR: EXPR COMMA . ASSIGNMENT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    ASSIGNMENT_EXPR      go to state 256
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 183
+
+   97 ASSIGNMENT_OPERATOR: PLUSEQUAL .
+
+    $default  reduce using rule 97 (ASSIGNMENT_OPERATOR)
+
+
+State 184
+
+   94 ASSIGNMENT_OPERATOR: MULEQUAL .
+
+    $default  reduce using rule 94 (ASSIGNMENT_OPERATOR)
+
+
+State 185
+
+   95 ASSIGNMENT_OPERATOR: DIVEQUAL .
+
+    $default  reduce using rule 95 (ASSIGNMENT_OPERATOR)
+
+
+State 186
+
+   96 ASSIGNMENT_OPERATOR: MODEQUAL .
+
+    $default  reduce using rule 96 (ASSIGNMENT_OPERATOR)
+
+
+State 187
+
+   98 ASSIGNMENT_OPERATOR: MINUSEQUAL .
+
+    $default  reduce using rule 98 (ASSIGNMENT_OPERATOR)
+
+
+State 188
+
+  101 ASSIGNMENT_OPERATOR: ANDEQUAL .
+
+    $default  reduce using rule 101 (ASSIGNMENT_OPERATOR)
+
+
+State 189
+
+   99 ASSIGNMENT_OPERATOR: LSHIFTEQUAL .
+
+    $default  reduce using rule 99 (ASSIGNMENT_OPERATOR)
+
+
+State 190
+
+  100 ASSIGNMENT_OPERATOR: RSHIFTEQUAL .
+
+    $default  reduce using rule 100 (ASSIGNMENT_OPERATOR)
+
+
+State 191
+
+   93 ASSIGNMENT_OPERATOR: EQUAL .
+
+    $default  reduce using rule 93 (ASSIGNMENT_OPERATOR)
+
+
+State 192
+
+  103 ASSIGNMENT_OPERATOR: OREQUAL .
+
+    $default  reduce using rule 103 (ASSIGNMENT_OPERATOR)
+
+
+State 193
+
+  102 ASSIGNMENT_OPERATOR: XOREQUAL .
+
+    $default  reduce using rule 102 (ASSIGNMENT_OPERATOR)
+
+
+State 194
+
+   92 ASSIGNMENT_EXPR: UNARY_EXPR ASSIGNMENT_OPERATOR . ASSIGNMENT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    ASSIGNMENT_EXPR      go to state 257
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 195
+
+  107 UNARY_EXPR: UNARY_OPERATOR CAST_EXPR .
+
+    $default  reduce using rule 107 (UNARY_EXPR)
+
+
+State 196
+
+  122 POSTFIX_EXPR: POSTFIX_EXPR INCREMENT .
+
+    $default  reduce using rule 122 (POSTFIX_EXPR)
+
+
+State 197
+
+  123 POSTFIX_EXPR: POSTFIX_EXPR DECREMENT .
+
+    $default  reduce using rule 123 (POSTFIX_EXPR)
+
+
+State 198
+
+  121 POSTFIX_EXPR: POSTFIX_EXPR ARROW . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 258
+
+
+State 199
+
+  120 POSTFIX_EXPR: POSTFIX_EXPR DOT . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 259
+
+
+State 200
+
+  118 POSTFIX_EXPR: POSTFIX_EXPR LB . ARGUMENT_EXPR_LIST RB
+  119             | POSTFIX_EXPR LB . RB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    RB              shift, and go to state 260
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    ASSIGNMENT_EXPR      go to state 261
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    ARGUMENT_EXPR_LIST   go to state 262
+    CAST_EXPR            go to state 104
+
+
+State 201
+
+  117 POSTFIX_EXPR: PRIMARY_EXPR LSB . EXPR RSB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 263
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 202
+
+   34 DIRECT_DECLARATOR: LB . DECLARATOR RB
+   50 DIRECT_ABSTRACT_DECLARATOR: LB . ABSTRACT_DECLARATOR RB
+   57                           | LB . PARAMETER_LIST RB
+   58                           | LB . RB
+
+    IDENTIFIER  shift, and go to state 1
+    ASTERISK    shift, and go to state 2
+    CHAR        shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    UNSIGNED    shift, and go to state 7
+    TYPEDEF     shift, and go to state 8
+    STRUCT      shift, and go to state 9
+    ENUM        shift, and go to state 10
+    LB          shift, and go to state 202
+    RB          shift, and go to state 264
+    LSB         shift, and go to state 203
+
+    DECLARATION_SPECIFIER       go to state 115
+    DECLARATOR                  go to state 30
+    DIRECT_DECLARATOR           go to state 19
+    POINTER                     go to state 205
+    PARAMETER_LIST              go to state 265
+    PARAMETER_DECLARATION       go to state 117
+    ABSTRACT_DECLARATOR         go to state 266
+    DIRECT_ABSTRACT_DECLARATOR  go to state 207
+    TYPE_SPECIFIER              go to state 21
+    STRUCT_SPECIFIER            go to state 22
+    ENUM_SPECIFIER              go to state 23
+
+
+State 203
+
+   53 DIRECT_ABSTRACT_DECLARATOR: LSB . CONSTANT_EXPR RSB
+   54                           | LSB . RSB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    RSB             shift, and go to state 267
+
+    CONSTANT_EXPR        go to state 268
+    CONDITIONAL_EXPR     go to state 121
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 204
+
+   43 PARAMETER_DECLARATION: DECLARATION_SPECIFIER DECLARATOR .
+
+    $default  reduce using rule 43 (PARAMETER_DECLARATION)
+
+
+State 205
+
+   31 DECLARATOR: POINTER . DIRECT_DECLARATOR
+   47 ABSTRACT_DECLARATOR: POINTER .
+   48                    | POINTER . DIRECT_ABSTRACT_DECLARATOR
+
+    IDENTIFIER  shift, and go to state 1
+    LB          shift, and go to state 202
+    LSB         shift, and go to state 203
+
+    $default  reduce using rule 47 (ABSTRACT_DECLARATOR)
+
+    DIRECT_DECLARATOR           go to state 43
+    DIRECT_ABSTRACT_DECLARATOR  go to state 269
+
+
+State 206
+
+   44 PARAMETER_DECLARATION: DECLARATION_SPECIFIER ABSTRACT_DECLARATOR .
+
+    $default  reduce using rule 44 (PARAMETER_DECLARATION)
+
+
+State 207
+
+   49 ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR .
+   51 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR . LSB CONSTANT_EXPR RSB
+   52                           | DIRECT_ABSTRACT_DECLARATOR . LSB RSB
+   55                           | DIRECT_ABSTRACT_DECLARATOR . LB PARAMETER_LIST RB
+   56                           | DIRECT_ABSTRACT_DECLARATOR . LB RB
+
+    LB   shift, and go to state 270
+    LSB  shift, and go to state 271
+
+    $default  reduce using rule 49 (ABSTRACT_DECLARATOR)
+
+
+State 208
+
+   37 DIRECT_DECLARATOR: DIRECT_DECLARATOR LB PARAMETER_LIST RB .
+
+    $default  reduce using rule 37 (DIRECT_DECLARATOR)
+
+
+State 209
+
+   42 PARAMETER_LIST: PARAMETER_LIST COMMA . PARAMETER_DECLARATION
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+
+    DECLARATION_SPECIFIER  go to state 115
+    PARAMETER_DECLARATION  go to state 272
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 210
+
+   35 DIRECT_DECLARATOR: DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB .
+
+    $default  reduce using rule 35 (DIRECT_DECLARATOR)
+
+
+State 211
+
+  162 STRUCT_SPECIFIER: STRUCT IDENTIFIER LCB STRUCT_DECLARATION_LIST RCB .
+
+    $default  reduce using rule 162 (STRUCT_SPECIFIER)
+
+
+State 212
+
+  174 STRUCT_DECLARATOR: COLON CONSTANT_EXPR .
+
+    $default  reduce using rule 174 (STRUCT_DECLARATOR)
+
+
+State 213
+
+  173 STRUCT_DECLARATOR: DECLARATOR COLON . CONSTANT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONSTANT_EXPR        go to state 273
+    CONDITIONAL_EXPR     go to state 121
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 214
+
+  167 STRUCT_DECLARATION: SPECIFIER_QUALIFIER_LIST STRUCT_DECLARATOR_LIST SEMICOLON .
+
+    $default  reduce using rule 167 (STRUCT_DECLARATION)
+
+
+State 215
+
+  171 STRUCT_DECLARATOR_LIST: STRUCT_DECLARATOR COMMA . STRUCT_DECLARATOR
+
+    IDENTIFIER  shift, and go to state 1
+    ASTERISK    shift, and go to state 2
+    LB          shift, and go to state 11
+    COLON       shift, and go to state 127
+
+    DECLARATOR         go to state 128
+    DIRECT_DECLARATOR  go to state 19
+    POINTER            go to state 20
+    STRUCT_DECLARATOR  go to state 274
+
+
+State 216
+
+  175 ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB .
+
+    $default  reduce using rule 175 (ENUM_SPECIFIER)
+
+
+State 217
+
+  181 ENUMERATOR: IDENTIFIER EQUAL CONSTANT_EXPR .
+
+    $default  reduce using rule 181 (ENUMERATOR)
+
+
+State 218
+
+  179 ENUMERATOR_LIST: ENUMERATOR_LIST COMMA ENUMERATOR .
+
+    $default  reduce using rule 179 (ENUMERATOR_LIST)
+
+
+State 219
+
+   29 INITIALIZER_LIST: INITIALIZER .
+
+    $default  reduce using rule 29 (INITIALIZER_LIST)
+
+
+State 220
+
+   27 INITIALIZER: LCB INITIALIZER_LIST . RCB
+   28            | LCB INITIALIZER_LIST . COMMA RCB
+   30 INITIALIZER_LIST: INITIALIZER_LIST . COMMA INITIALIZER
+
+    RCB    shift, and go to state 275
+    COMMA  shift, and go to state 276
+
+
+State 221
+
+  140 LABELED_STATEMENT: IDENTIFIER COLON STATEMENT .
+
+    $default  reduce using rule 140 (LABELED_STATEMENT)
+
+
+State 222
+
+  109 UNARY_EXPR: SIZEOF LB TYPE_NAME . RB
+
+    RB  shift, and go to state 277
+
+
+State 223
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  145 SELECTION_STATEMENT: IF LB EXPR . RB STATEMENT
+  146                    | IF LB EXPR . RB STATEMENT ELSE STATEMENT
+
+    RB     shift, and go to state 278
+    COMMA  shift, and go to state 182
+
+
+State 224
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  147 SELECTION_STATEMENT: SWITCH LB EXPR . RB STATEMENT
+
+    RB     shift, and go to state 279
+    COMMA  shift, and go to state 182
+
+
+State 225
+
+  141 LABELED_STATEMENT: CASE CONSTANT_EXPR COLON . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 280
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 226
+
+  142 LABELED_STATEMENT: DEFAULT COLON STATEMENT .
+
+    $default  reduce using rule 142 (LABELED_STATEMENT)
+
+
+State 227
+
+  150 ITERATION_STATEMENT: FOR LB EXPR_STATEMENT . EXPR_STATEMENT RB STATEMENT
+  151                    | FOR LB EXPR_STATEMENT . EXPR_STATEMENT EXPR RB STATEMENT
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    EXPR_STATEMENT       go to state 281
+
+
+State 228
+
+  149 ITERATION_STATEMENT: DO STATEMENT WHILE . LB EXPR RB SEMICOLON
+
+    LB  shift, and go to state 282
+
+
+State 229
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  148 ITERATION_STATEMENT: WHILE LB EXPR . RB STATEMENT
+
+    RB     shift, and go to state 283
+    COMMA  shift, and go to state 182
+
+
+State 230
+
+  154 JUMP_STATEMENT: RETURN EXPR SEMICOLON .
+
+    $default  reduce using rule 154 (JUMP_STATEMENT)
+
+
+State 231
+
+  127 PRIMARY_EXPR: LB EXPR RB .
+
+    $default  reduce using rule 127 (PRIMARY_EXPR)
+
+
+State 232
+
+  131 CAST_EXPR: LB TYPE_NAME RB . CAST_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    UNARY_EXPR      go to state 122
+    UNARY_OPERATOR  go to state 101
+    POSTFIX_EXPR    go to state 102
+    PRIMARY_EXPR    go to state 103
+    CAST_EXPR       go to state 284
+
+
+State 233
+
+   50 DIRECT_ABSTRACT_DECLARATOR: LB . ABSTRACT_DECLARATOR RB
+   57                           | LB . PARAMETER_LIST RB
+   58                           | LB . RB
+
+    ASTERISK  shift, and go to state 2
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    LB        shift, and go to state 233
+    RB        shift, and go to state 264
+    LSB       shift, and go to state 203
+
+    DECLARATION_SPECIFIER       go to state 115
+    POINTER                     go to state 234
+    PARAMETER_LIST              go to state 265
+    PARAMETER_DECLARATION       go to state 117
+    ABSTRACT_DECLARATOR         go to state 266
+    DIRECT_ABSTRACT_DECLARATOR  go to state 207
+    TYPE_SPECIFIER              go to state 21
+    STRUCT_SPECIFIER            go to state 22
+    ENUM_SPECIFIER              go to state 23
+
+
+State 234
+
+   47 ABSTRACT_DECLARATOR: POINTER .
+   48                    | POINTER . DIRECT_ABSTRACT_DECLARATOR
+
+    LB   shift, and go to state 233
+    LSB  shift, and go to state 203
+
+    $default  reduce using rule 47 (ABSTRACT_DECLARATOR)
+
+    DIRECT_ABSTRACT_DECLARATOR  go to state 269
+
+
+State 235
+
+  132 TYPE_NAME: SPECIFIER_QUALIFIER_LIST ABSTRACT_DECLARATOR .
+
+    $default  reduce using rule 132 (TYPE_NAME)
+
+
+State 236
+
+   18 COMPOUND_STATEMENT: LCB DECLARATION_LIST STATEMENT_LIST RCB .
+
+    $default  reduce using rule 18 (COMPOUND_STATEMENT)
+
+
+State 237
+
+   62 LOGICAL_OR_EXPR: LOGICAL_OR_EXPR LOGICAL_OR LOGICAL_AND_EXPR .
+   64 LOGICAL_AND_EXPR: LOGICAL_AND_EXPR . LOGICAL_AND INCLUSIVE_OR_EXPR
+
+    LOGICAL_AND  shift, and go to state 164
+
+    $default  reduce using rule 62 (LOGICAL_OR_EXPR)
+
+
+State 238
+
+   60 CONDITIONAL_EXPR: LOGICAL_OR_EXPR QUESTION EXPR . COLON CONDITIONAL_EXPR
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+
+    COLON  shift, and go to state 285
+    COMMA  shift, and go to state 182
+
+
+State 239
+
+   64 LOGICAL_AND_EXPR: LOGICAL_AND_EXPR LOGICAL_AND INCLUSIVE_OR_EXPR .
+   66 INCLUSIVE_OR_EXPR: INCLUSIVE_OR_EXPR . BITWISE_OR EXCLUSIVE_OR_EXPR
+
+    BITWISE_OR  shift, and go to state 165
+
+    $default  reduce using rule 64 (LOGICAL_AND_EXPR)
+
+
+State 240
+
+   66 INCLUSIVE_OR_EXPR: INCLUSIVE_OR_EXPR BITWISE_OR EXCLUSIVE_OR_EXPR .
+   68 EXCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPR . XOR AND_EXPR
+
+    XOR  shift, and go to state 166
+
+    $default  reduce using rule 66 (INCLUSIVE_OR_EXPR)
+
+
+State 241
+
+   68 EXCLUSIVE_OR_EXPR: EXCLUSIVE_OR_EXPR XOR AND_EXPR .
+   70 AND_EXPR: AND_EXPR . AMPERSAND EQUALITY_EXPR
+
+    AMPERSAND  shift, and go to state 167
+
+    $default  reduce using rule 68 (EXCLUSIVE_OR_EXPR)
+
+
+State 242
+
+   70 AND_EXPR: AND_EXPR AMPERSAND EQUALITY_EXPR .
+   72 EQUALITY_EXPR: EQUALITY_EXPR . EQUALITY RELATIONAL_EXPR
+   73              | EQUALITY_EXPR . NOTEQUAL RELATIONAL_EXPR
+
+    EQUALITY  shift, and go to state 168
+    NOTEQUAL  shift, and go to state 169
+
+    $default  reduce using rule 70 (AND_EXPR)
+
+
+State 243
+
+   72 EQUALITY_EXPR: EQUALITY_EXPR EQUALITY RELATIONAL_EXPR .
+   75 RELATIONAL_EXPR: RELATIONAL_EXPR . LT SHIFT_EXPR
+   76                | RELATIONAL_EXPR . GT SHIFT_EXPR
+   77                | RELATIONAL_EXPR . LE SHIFT_EXPR
+   78                | RELATIONAL_EXPR . GE SHIFT_EXPR
+
+    LE  shift, and go to state 170
+    GE  shift, and go to state 171
+    LT  shift, and go to state 172
+    GT  shift, and go to state 173
+
+    $default  reduce using rule 72 (EQUALITY_EXPR)
+
+
+State 244
+
+   73 EQUALITY_EXPR: EQUALITY_EXPR NOTEQUAL RELATIONAL_EXPR .
+   75 RELATIONAL_EXPR: RELATIONAL_EXPR . LT SHIFT_EXPR
+   76                | RELATIONAL_EXPR . GT SHIFT_EXPR
+   77                | RELATIONAL_EXPR . LE SHIFT_EXPR
+   78                | RELATIONAL_EXPR . GE SHIFT_EXPR
+
+    LE  shift, and go to state 170
+    GE  shift, and go to state 171
+    LT  shift, and go to state 172
+    GT  shift, and go to state 173
+
+    $default  reduce using rule 73 (EQUALITY_EXPR)
+
+
+State 245
+
+   77 RELATIONAL_EXPR: RELATIONAL_EXPR LE SHIFT_EXPR .
+   80 SHIFT_EXPR: SHIFT_EXPR . LSHIFT ADDITIVE_EXPR
+   81           | SHIFT_EXPR . RSHIFT ADDITIVE_EXPR
+
+    LSHIFT  shift, and go to state 174
+    RSHIFT  shift, and go to state 175
+
+    $default  reduce using rule 77 (RELATIONAL_EXPR)
+
+
+State 246
+
+   78 RELATIONAL_EXPR: RELATIONAL_EXPR GE SHIFT_EXPR .
+   80 SHIFT_EXPR: SHIFT_EXPR . LSHIFT ADDITIVE_EXPR
+   81           | SHIFT_EXPR . RSHIFT ADDITIVE_EXPR
+
+    LSHIFT  shift, and go to state 174
+    RSHIFT  shift, and go to state 175
+
+    $default  reduce using rule 78 (RELATIONAL_EXPR)
+
+
+State 247
+
+   75 RELATIONAL_EXPR: RELATIONAL_EXPR LT SHIFT_EXPR .
+   80 SHIFT_EXPR: SHIFT_EXPR . LSHIFT ADDITIVE_EXPR
+   81           | SHIFT_EXPR . RSHIFT ADDITIVE_EXPR
+
+    LSHIFT  shift, and go to state 174
+    RSHIFT  shift, and go to state 175
+
+    $default  reduce using rule 75 (RELATIONAL_EXPR)
+
+
+State 248
+
+   76 RELATIONAL_EXPR: RELATIONAL_EXPR GT SHIFT_EXPR .
+   80 SHIFT_EXPR: SHIFT_EXPR . LSHIFT ADDITIVE_EXPR
+   81           | SHIFT_EXPR . RSHIFT ADDITIVE_EXPR
+
+    LSHIFT  shift, and go to state 174
+    RSHIFT  shift, and go to state 175
+
+    $default  reduce using rule 76 (RELATIONAL_EXPR)
+
+
+State 249
+
+   80 SHIFT_EXPR: SHIFT_EXPR LSHIFT ADDITIVE_EXPR .
+   83 ADDITIVE_EXPR: ADDITIVE_EXPR . PLUS MULTIPLICATIVE_EXPR
+   84              | ADDITIVE_EXPR . MINUS MULTIPLICATIVE_EXPR
+
+    PLUS   shift, and go to state 176
+    MINUS  shift, and go to state 177
+
+    $default  reduce using rule 80 (SHIFT_EXPR)
+
+
+State 250
+
+   81 SHIFT_EXPR: SHIFT_EXPR RSHIFT ADDITIVE_EXPR .
+   83 ADDITIVE_EXPR: ADDITIVE_EXPR . PLUS MULTIPLICATIVE_EXPR
+   84              | ADDITIVE_EXPR . MINUS MULTIPLICATIVE_EXPR
+
+    PLUS   shift, and go to state 176
+    MINUS  shift, and go to state 177
+
+    $default  reduce using rule 81 (SHIFT_EXPR)
+
+
+State 251
+
+   83 ADDITIVE_EXPR: ADDITIVE_EXPR PLUS MULTIPLICATIVE_EXPR .
+   86 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR . ASTERISK CAST_EXPR
+   87                    | MULTIPLICATIVE_EXPR . DIV CAST_EXPR
+   88                    | MULTIPLICATIVE_EXPR . MOD CAST_EXPR
+
+    ASTERISK  shift, and go to state 178
+    DIV       shift, and go to state 179
+    MOD       shift, and go to state 180
+
+    $default  reduce using rule 83 (ADDITIVE_EXPR)
+
+
+State 252
+
+   84 ADDITIVE_EXPR: ADDITIVE_EXPR MINUS MULTIPLICATIVE_EXPR .
+   86 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR . ASTERISK CAST_EXPR
+   87                    | MULTIPLICATIVE_EXPR . DIV CAST_EXPR
+   88                    | MULTIPLICATIVE_EXPR . MOD CAST_EXPR
+
+    ASTERISK  shift, and go to state 178
+    DIV       shift, and go to state 179
+    MOD       shift, and go to state 180
+
+    $default  reduce using rule 84 (ADDITIVE_EXPR)
+
+
+State 253
+
+   86 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR ASTERISK CAST_EXPR .
+
+    $default  reduce using rule 86 (MULTIPLICATIVE_EXPR)
+
+
+State 254
+
+   87 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR DIV CAST_EXPR .
+
+    $default  reduce using rule 87 (MULTIPLICATIVE_EXPR)
+
+
+State 255
+
+   88 MULTIPLICATIVE_EXPR: MULTIPLICATIVE_EXPR MOD CAST_EXPR .
+
+    $default  reduce using rule 88 (MULTIPLICATIVE_EXPR)
+
+
+State 256
+
+   90 EXPR: EXPR COMMA ASSIGNMENT_EXPR .
+
+    $default  reduce using rule 90 (EXPR)
+
+
+State 257
+
+   92 ASSIGNMENT_EXPR: UNARY_EXPR ASSIGNMENT_OPERATOR ASSIGNMENT_EXPR .
+
+    $default  reduce using rule 92 (ASSIGNMENT_EXPR)
+
+
+State 258
+
+  121 POSTFIX_EXPR: POSTFIX_EXPR ARROW IDENTIFIER .
+
+    $default  reduce using rule 121 (POSTFIX_EXPR)
+
+
+State 259
+
+  120 POSTFIX_EXPR: POSTFIX_EXPR DOT IDENTIFIER .
+
+    $default  reduce using rule 120 (POSTFIX_EXPR)
+
+
+State 260
+
+  119 POSTFIX_EXPR: POSTFIX_EXPR LB RB .
+
+    $default  reduce using rule 119 (POSTFIX_EXPR)
+
+
+State 261
+
+  128 ARGUMENT_EXPR_LIST: ASSIGNMENT_EXPR .
+
+    $default  reduce using rule 128 (ARGUMENT_EXPR_LIST)
+
+
+State 262
+
+  118 POSTFIX_EXPR: POSTFIX_EXPR LB ARGUMENT_EXPR_LIST . RB
+  129 ARGUMENT_EXPR_LIST: ARGUMENT_EXPR_LIST . COMMA ASSIGNMENT_EXPR
+
+    RB     shift, and go to state 286
+    COMMA  shift, and go to state 287
+
+
+State 263
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  117 POSTFIX_EXPR: PRIMARY_EXPR LSB EXPR . RSB
+
+    RSB    shift, and go to state 288
+    COMMA  shift, and go to state 182
+
+
+State 264
+
+   58 DIRECT_ABSTRACT_DECLARATOR: LB RB .
+
+    $default  reduce using rule 58 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 265
+
+   42 PARAMETER_LIST: PARAMETER_LIST . COMMA PARAMETER_DECLARATION
+   57 DIRECT_ABSTRACT_DECLARATOR: LB PARAMETER_LIST . RB
+
+    RB     shift, and go to state 289
+    COMMA  shift, and go to state 209
+
+
+State 266
+
+   50 DIRECT_ABSTRACT_DECLARATOR: LB ABSTRACT_DECLARATOR . RB
+
+    RB  shift, and go to state 290
+
+
+State 267
+
+   54 DIRECT_ABSTRACT_DECLARATOR: LSB RSB .
+
+    $default  reduce using rule 54 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 268
+
+   53 DIRECT_ABSTRACT_DECLARATOR: LSB CONSTANT_EXPR . RSB
+
+    RSB  shift, and go to state 291
+
+
+State 269
+
+   48 ABSTRACT_DECLARATOR: POINTER DIRECT_ABSTRACT_DECLARATOR .
+   51 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR . LSB CONSTANT_EXPR RSB
+   52                           | DIRECT_ABSTRACT_DECLARATOR . LSB RSB
+   55                           | DIRECT_ABSTRACT_DECLARATOR . LB PARAMETER_LIST RB
+   56                           | DIRECT_ABSTRACT_DECLARATOR . LB RB
+
+    LB   shift, and go to state 270
+    LSB  shift, and go to state 271
+
+    $default  reduce using rule 48 (ABSTRACT_DECLARATOR)
+
+
+State 270
+
+   55 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LB . PARAMETER_LIST RB
+   56                           | DIRECT_ABSTRACT_DECLARATOR LB . RB
+
+    CHAR      shift, and go to state 3
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    UNSIGNED  shift, and go to state 7
+    TYPEDEF   shift, and go to state 8
+    STRUCT    shift, and go to state 9
+    ENUM      shift, and go to state 10
+    RB        shift, and go to state 292
+
+    DECLARATION_SPECIFIER  go to state 115
+    PARAMETER_LIST         go to state 293
+    PARAMETER_DECLARATION  go to state 117
+    TYPE_SPECIFIER         go to state 21
+    STRUCT_SPECIFIER       go to state 22
+    ENUM_SPECIFIER         go to state 23
+
+
+State 271
+
+   51 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LSB . CONSTANT_EXPR RSB
+   52                           | DIRECT_ABSTRACT_DECLARATOR LSB . RSB
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    RSB             shift, and go to state 294
+
+    CONSTANT_EXPR        go to state 295
+    CONDITIONAL_EXPR     go to state 121
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 272
+
+   42 PARAMETER_LIST: PARAMETER_LIST COMMA PARAMETER_DECLARATION .
+
+    $default  reduce using rule 42 (PARAMETER_LIST)
+
+
+State 273
+
+  173 STRUCT_DECLARATOR: DECLARATOR COLON CONSTANT_EXPR .
+
+    $default  reduce using rule 173 (STRUCT_DECLARATOR)
+
+
+State 274
+
+  171 STRUCT_DECLARATOR_LIST: STRUCT_DECLARATOR COMMA STRUCT_DECLARATOR .
+
+    $default  reduce using rule 171 (STRUCT_DECLARATOR_LIST)
+
+
+State 275
+
+   27 INITIALIZER: LCB INITIALIZER_LIST RCB .
+
+    $default  reduce using rule 27 (INITIALIZER)
+
+
+State 276
+
+   28 INITIALIZER: LCB INITIALIZER_LIST COMMA . RCB
+   30 INITIALIZER_LIST: INITIALIZER_LIST COMMA . INITIALIZER
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 135
+    RCB             shift, and go to state 296
+
+    INITIALIZER          go to state 297
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    ASSIGNMENT_EXPR      go to state 137
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 277
+
+  109 UNARY_EXPR: SIZEOF LB TYPE_NAME RB .
+
+    $default  reduce using rule 109 (UNARY_EXPR)
+
+
+State 278
+
+  145 SELECTION_STATEMENT: IF LB EXPR RB . STATEMENT
+  146                    | IF LB EXPR RB . STATEMENT ELSE STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 298
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 279
+
+  147 SELECTION_STATEMENT: SWITCH LB EXPR RB . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 299
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 280
+
+  141 LABELED_STATEMENT: CASE CONSTANT_EXPR COLON STATEMENT .
+
+    $default  reduce using rule 141 (LABELED_STATEMENT)
+
+
+State 281
+
+  150 ITERATION_STATEMENT: FOR LB EXPR_STATEMENT EXPR_STATEMENT . RB STATEMENT
+  151                    | FOR LB EXPR_STATEMENT EXPR_STATEMENT . EXPR RB STATEMENT
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+    RB              shift, and go to state 300
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 301
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 282
+
+  149 ITERATION_STATEMENT: DO STATEMENT WHILE LB . EXPR RB SEMICOLON
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 302
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 283
+
+  148 ITERATION_STATEMENT: WHILE LB EXPR RB . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 303
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 284
+
+  131 CAST_EXPR: LB TYPE_NAME RB CAST_EXPR .
+
+    $default  reduce using rule 131 (CAST_EXPR)
+
+
+State 285
+
+   60 CONDITIONAL_EXPR: LOGICAL_OR_EXPR QUESTION EXPR COLON . CONDITIONAL_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 304
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    UNARY_EXPR           go to state 122
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 286
+
+  118 POSTFIX_EXPR: POSTFIX_EXPR LB ARGUMENT_EXPR_LIST RB .
+
+    $default  reduce using rule 118 (POSTFIX_EXPR)
+
+
+State 287
+
+  129 ARGUMENT_EXPR_LIST: ARGUMENT_EXPR_LIST COMMA . ASSIGNMENT_EXPR
+
+    IDENTIFIER      shift, and go to state 118
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    LB              shift, and go to state 82
+
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    ASSIGNMENT_EXPR      go to state 305
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+
+
+State 288
+
+  117 POSTFIX_EXPR: PRIMARY_EXPR LSB EXPR RSB .
+
+    $default  reduce using rule 117 (POSTFIX_EXPR)
+
+
+State 289
+
+   57 DIRECT_ABSTRACT_DECLARATOR: LB PARAMETER_LIST RB .
+
+    $default  reduce using rule 57 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 290
+
+   50 DIRECT_ABSTRACT_DECLARATOR: LB ABSTRACT_DECLARATOR RB .
+
+    $default  reduce using rule 50 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 291
+
+   53 DIRECT_ABSTRACT_DECLARATOR: LSB CONSTANT_EXPR RSB .
+
+    $default  reduce using rule 53 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 292
+
+   56 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LB RB .
+
+    $default  reduce using rule 56 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 293
+
+   42 PARAMETER_LIST: PARAMETER_LIST . COMMA PARAMETER_DECLARATION
+   55 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LB PARAMETER_LIST . RB
+
+    RB     shift, and go to state 306
+    COMMA  shift, and go to state 209
+
+
+State 294
+
+   52 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LSB RSB .
+
+    $default  reduce using rule 52 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 295
+
+   51 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LSB CONSTANT_EXPR . RSB
+
+    RSB  shift, and go to state 307
+
+
+State 296
+
+   28 INITIALIZER: LCB INITIALIZER_LIST COMMA RCB .
+
+    $default  reduce using rule 28 (INITIALIZER)
+
+
+State 297
+
+   30 INITIALIZER_LIST: INITIALIZER_LIST COMMA INITIALIZER .
+
+    $default  reduce using rule 30 (INITIALIZER_LIST)
+
+
+State 298
+
+  145 SELECTION_STATEMENT: IF LB EXPR RB STATEMENT .
+  146                    | IF LB EXPR RB STATEMENT . ELSE STATEMENT
+
+    ELSE  shift, and go to state 308
+
+    ELSE      [reduce using rule 145 (SELECTION_STATEMENT)]
+    $default  reduce using rule 145 (SELECTION_STATEMENT)
+
+
+State 299
+
+  147 SELECTION_STATEMENT: SWITCH LB EXPR RB STATEMENT .
+
+    $default  reduce using rule 147 (SELECTION_STATEMENT)
+
+
+State 300
+
+  150 ITERATION_STATEMENT: FOR LB EXPR_STATEMENT EXPR_STATEMENT RB . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 309
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 301
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  151 ITERATION_STATEMENT: FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR . RB STATEMENT
+
+    RB     shift, and go to state 310
+    COMMA  shift, and go to state 182
+
+
+State 302
+
+   90 EXPR: EXPR . COMMA ASSIGNMENT_EXPR
+  149 ITERATION_STATEMENT: DO STATEMENT WHILE LB EXPR . RB SEMICOLON
+
+    RB     shift, and go to state 311
+    COMMA  shift, and go to state 182
+
+
+State 303
+
+  148 ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT .
+
+    $default  reduce using rule 148 (ITERATION_STATEMENT)
+
+
+State 304
+
+   60 CONDITIONAL_EXPR: LOGICAL_OR_EXPR QUESTION EXPR COLON CONDITIONAL_EXPR .
+
+    $default  reduce using rule 60 (CONDITIONAL_EXPR)
+
+
+State 305
+
+  129 ARGUMENT_EXPR_LIST: ARGUMENT_EXPR_LIST COMMA ASSIGNMENT_EXPR .
+
+    $default  reduce using rule 129 (ARGUMENT_EXPR_LIST)
+
+
+State 306
+
+   55 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LB PARAMETER_LIST RB .
+
+    $default  reduce using rule 55 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 307
+
+   51 DIRECT_ABSTRACT_DECLARATOR: DIRECT_ABSTRACT_DECLARATOR LSB CONSTANT_EXPR RSB .
+
+    $default  reduce using rule 51 (DIRECT_ABSTRACT_DECLARATOR)
+
+
+State 308
+
+  146 SELECTION_STATEMENT: IF LB EXPR RB STATEMENT ELSE . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 312
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 309
+
+  150 ITERATION_STATEMENT: FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT .
+
+    $default  reduce using rule 150 (ITERATION_STATEMENT)
+
+
+State 310
+
+  151 ITERATION_STATEMENT: FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB . STATEMENT
+
+    IDENTIFIER      shift, and go to state 59
+    CONSTANT        shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+    SIZEOF          shift, and go to state 62
+    SEMICOLON       shift, and go to state 63
+    INCREMENT       shift, and go to state 64
+    DECREMENT       shift, and go to state 65
+    PLUS            shift, and go to state 66
+    MINUS           shift, and go to state 67
+    ASTERISK        shift, and go to state 68
+    TILDE           shift, and go to state 69
+    AMPERSAND       shift, and go to state 70
+    EXCLAMATION     shift, and go to state 71
+    IF              shift, and go to state 72
+    SWITCH          shift, and go to state 73
+    CASE            shift, and go to state 74
+    DEFAULT         shift, and go to state 75
+    FOR             shift, and go to state 76
+    DO              shift, and go to state 77
+    WHILE           shift, and go to state 78
+    CONTINUE        shift, and go to state 79
+    BREAK           shift, and go to state 80
+    RETURN          shift, and go to state 81
+    LB              shift, and go to state 82
+    LCB             shift, and go to state 36
+
+    COMPOUND_STATEMENT   go to state 85
+    CONDITIONAL_EXPR     go to state 87
+    LOGICAL_OR_EXPR      go to state 88
+    LOGICAL_AND_EXPR     go to state 89
+    INCLUSIVE_OR_EXPR    go to state 90
+    EXCLUSIVE_OR_EXPR    go to state 91
+    AND_EXPR             go to state 92
+    EQUALITY_EXPR        go to state 93
+    RELATIONAL_EXPR      go to state 94
+    SHIFT_EXPR           go to state 95
+    ADDITIVE_EXPR        go to state 96
+    MULTIPLICATIVE_EXPR  go to state 97
+    EXPR                 go to state 98
+    ASSIGNMENT_EXPR      go to state 99
+    UNARY_EXPR           go to state 100
+    UNARY_OPERATOR       go to state 101
+    POSTFIX_EXPR         go to state 102
+    PRIMARY_EXPR         go to state 103
+    CAST_EXPR            go to state 104
+    STATEMENT            go to state 313
+    LABELED_STATEMENT    go to state 106
+    EXPR_STATEMENT       go to state 107
+    SELECTION_STATEMENT  go to state 108
+    ITERATION_STATEMENT  go to state 109
+    JUMP_STATEMENT       go to state 110
+
+
+State 311
+
+  149 ITERATION_STATEMENT: DO STATEMENT WHILE LB EXPR RB . SEMICOLON
+
+    SEMICOLON  shift, and go to state 314
+
+
+State 312
+
+  146 SELECTION_STATEMENT: IF LB EXPR RB STATEMENT ELSE STATEMENT .
+
+    $default  reduce using rule 146 (SELECTION_STATEMENT)
+
+
+State 313
+
+  151 ITERATION_STATEMENT: FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT .
+
+    $default  reduce using rule 151 (ITERATION_STATEMENT)
+
+
+State 314
+
+  149 ITERATION_STATEMENT: DO STATEMENT WHILE LB EXPR RB SEMICOLON .
+
+    $default  reduce using rule 149 (ITERATION_STATEMENT)
