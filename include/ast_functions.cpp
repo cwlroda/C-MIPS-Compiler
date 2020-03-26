@@ -907,10 +907,22 @@ inline void Expr::alloc_mem(std::vector<int>& mv){
     if(assign_expr != NULL){
         int iterations = 0;
         assign_expr -> alloc_mem(iterations);
-        for(int i=0; i<iterations; i++){
+
+        if(iterations > 0 && iterations < 3){
+            mv.push_back(1);
+            mv.push_back(1);
             mv.push_back(1);
             mv.push_back(1);
         }
+
+        else{
+            for(int i=0; i<iterations; i++){
+                mv.push_back(1);
+                mv.push_back(1);
+            }
+        }
+
+        std::cout << iterations << std::endl;
     }
 }
 inline void AssignmentExpr::alloc_mem(int& iterations){
@@ -989,7 +1001,12 @@ inline void PostfixExpr::alloc_mem(int& iterations){
     }
 }
 inline void ArgumentExprList::alloc_mem(int& iterations){
+    if(arg_expr_list != NULL){
+        arg_expr_list->alloc_mem(iterations);
+    }
+
     if( ass_expr != NULL){
+        std::cout << "hi" << std::endl;
         iterations ++;
         ass_expr -> alloc_mem(iterations);
     }
