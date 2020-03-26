@@ -769,10 +769,10 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         out << std::endl;
         decl->print_asm(out);
         out << "\t.data" << std::endl;
-        out << "\t.globl\t" << context.GlobalDirectDeclarator << std::endl;
+        out << "\t.globl\t" << context.var_iden << std::endl;
         out << "\t.align\t2" << std::endl;
-        out << "\t.type\t" << context.GlobalDirectDeclarator << ", @object" << std::endl;
-        out << "\t.size\t" << context.GlobalDirectDeclarator << ", ";
+        out << "\t.type\t" << context.var_iden << ", @object" << std::endl;
+        out << "\t.size\t" << context.var_iden << ", ";
 
         if(context.what_typeSpec == "char"){
             out << "1";
@@ -782,25 +782,26 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         }
         out << std::endl;
 
-        out << context.GlobalDirectDeclarator << ":" << std::endl;
+        out << context.var_iden << ":" << std::endl;
         if(context.what_typeSpec == "char"){
             out << "\t.byte\t";
         }
         else{
             out << "\t.word\t";
         }
-        out << context.GlobalVarNum << std::endl;
+        out << context.var_val << std::endl;
 
         Bindings* global_var = new Bindings;
-        global_var->id = context.GlobalDirectDeclarator;
-        global_var->value = context.GlobalVarNum;
+        global_var->id = context.var_iden;
+        global_var->value = context.var_val;
         global_var->type = context.what_typeSpec;
 
-        context.GlobalVar.push_back(global_var);
+        std::pair<std::string, Bindings*> var (context.var_iden, global_var);
+        context.GlobalVar.insert(var);
 
         context.is_GlobalVar = false;
         context.what_typeSpec = "0";
-        context.GlobalDirectDeclarator = "0";
+        context.var_iden = "0";
     }
 
     else if(func_def != NULL){
@@ -835,6 +836,8 @@ inline int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
     return 16+8*sizee;
 }
 inline void FunctionDefinition::print_asm(std::ofstream& out){
+    context.frame_offset_counter = 8;
+
     if(decl_spec != NULL){
         decl_spec->print_asm(out);
     }
@@ -873,6 +876,7 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tj\t$31" << std::endl;
     out << "\tnop" << std::endl;
 
+    context.frame_offset_counter = 8;
 }
 
 inline void CompoundStatement::alloc_mem(std::vector<int>& mv){
@@ -1023,6 +1027,7 @@ inline void DeclarationList::alloc_mem(std::vector<int>& mv){
 inline void Declaration::alloc_mem(std::vector<int>& mv){
     decl_spec->alloc_mem(mv);
 }
+
 inline void DeclarationSpecifier::alloc_mem(std::vector<int>& mv){
     type_spec->alloc_mem(mv);
 }
@@ -1044,8 +1049,25 @@ inline void DeclarationList::print_asm(std::ofstream& out){
 
 inline void Declaration::print_asm(std::ofstream& out){
     decl_spec -> print_asm(out);
+
     if(init_declr != NULL){
         init_declr->print_asm(out);
+    }
+
+    if(context.is_LocalVar){
+        Bindings* local_var = new Bindings;
+        local_var->type = context.what_typeSpec;
+        local_var->id = context.var_iden;
+        local_var->value = context.var_val;
+        local_var->frame_offset = context.frame_offset_counter;
+
+        std::pair<std::string, Bindings*> var (context.var_iden, local_var);
+        context.LocalVar.insert(var);
+
+        context.frame_offset_counter++;
+
+        out << "\tli\t$2," << local_var->value << std::endl;
+        out << "\tsw\t$2," << local_var->frame_offset << "($fp)" << std::endl;
     }
 }
 
@@ -1064,7 +1086,7 @@ inline void TypeSpecifier::print_asm(std::ofstream& out){
     //     enum_spec -> print_asm(out);
     // }
     // else{
-        context.what_typeSpec = *type;
+    context.what_typeSpec = *type;
     //}
 }
 
@@ -1089,7 +1111,7 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     }
 
     if(context.is_GlobalVar == true){
-        context.GlobalDirectDeclarator = *iden;
+        context.var_iden = *iden;
     }
 
     if(context.in_func == true && iden != NULL){
@@ -1152,7 +1174,7 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
 inline void PrimaryExpr::print_asm(std::ofstream& out){
     if(constant != NULL){
         if(context.is_GlobalVar == true){
-            context.GlobalVarNum = stoi(*constant);
+            context.var_val = stoi(*constant);
         }
         if(context.is_return == true){
             context.returnNum = stoi(*constant);
@@ -1215,7 +1237,9 @@ inline void CastExpr::print_asm(std::ofstream& out){
 
 inline void CompoundStatement::print_asm(std::ofstream& out){
     if(decl_list != NULL){
+        context.is_LocalVar = true;
         decl_list -> print_asm(out);
+        context.is_LocalVar = false;
     }
     if(state_list != NULL){
         state_list -> print_asm(out);
