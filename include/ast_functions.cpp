@@ -892,6 +892,31 @@ inline void Statement::alloc_mem(std::vector<int>& mv){
     if(comp_state != NULL){
         comp_state -> alloc_mem(mv);
     }
+    if(expr_state != NULL){
+        expr_state -> alloc_mem(mv);
+    }
+}
+
+inline void ExprStatement::alloc_mem(std::vector<int>& mv){
+    if(expr != NULL){
+        expr->alloc_mem(mv);
+        
+    }
+}
+inline void Expr::alloc_mem(std::vector<int>& mv){
+    if(assign_expr != NULL){
+        int iterations = 0;
+        assign_expr -> alloc_mem(iterations);
+        for(int i=0; i<iterations; i++){
+            mv.push_back(1);
+            mv.push_back(1);
+        }
+    }
+}
+inline void AssignmentExpr::alloc_mem(int& iterations){
+    if(cond_expr =! NULL){
+        cond_expr -> alloc_mem(iterations);
+    }
 }
 inline void DeclarationList::alloc_mem(std::vector<int>& mv){
     if(decl_list!=NULL){

@@ -428,6 +428,7 @@ class Expr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& mv);
 
     private:
         AssignmentExpr *assign_expr;
@@ -993,6 +994,7 @@ class ExprStatement{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& mv);
 
     private:
         Expr *expr;
