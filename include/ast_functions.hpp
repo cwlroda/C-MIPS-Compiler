@@ -467,6 +467,7 @@ class ConditionalExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
 
     private:
         LogicalOrExpr *log_or_expr;
@@ -488,6 +489,7 @@ class LogicalOrExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
 
     private:
         LogicalAndExpr *log_and_expr;
@@ -508,6 +510,8 @@ class LogicalAndExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         InclusiveOrExpr *incl_or_expr;
@@ -528,6 +532,8 @@ class InclusiveOrExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         ExclusiveOrExpr *excl_or_expr;
@@ -548,6 +554,8 @@ class ExclusiveOrExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         AndExpr *and_expr;
@@ -568,6 +576,8 @@ class AndExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         EqualityExpr *equal_expr;
@@ -590,6 +600,8 @@ class EqualityExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         RelationalExpr *rel_expr;
@@ -613,6 +625,8 @@ class RelationalExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         ShiftExpr *shift_expr;
@@ -636,6 +650,8 @@ class ShiftExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         AdditiveExpr *add_expr;
@@ -659,6 +675,8 @@ class AdditiveExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         MultiplicativeExpr *mul_expr;
@@ -682,6 +700,8 @@ class MultiplicativeExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         CastExpr *cast_expr;
@@ -707,6 +727,7 @@ class AssignmentExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
 
     private:
         ConditionalExpr *cond_expr;
@@ -753,6 +774,8 @@ class UnaryExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         PostfixExpr *post_expr;
@@ -802,6 +825,8 @@ class PostfixExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         PrimaryExpr *pri_expr;
@@ -851,6 +876,8 @@ class ArgumentExprList{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+        
 
     private:
         AssignmentExpr *ass_expr;
@@ -873,6 +900,8 @@ class CastExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(int& iterations);
+
 
     private:
         UnaryExpr *un_expr;

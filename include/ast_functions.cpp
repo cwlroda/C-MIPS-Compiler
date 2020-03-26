@@ -914,8 +914,84 @@ inline void Expr::alloc_mem(std::vector<int>& mv){
     }
 }
 inline void AssignmentExpr::alloc_mem(int& iterations){
-    if(cond_expr =! NULL){
+    if(cond_expr != NULL){
         cond_expr -> alloc_mem(iterations);
+    }
+}
+inline void ConditionalExpr::alloc_mem(int& iterations){
+    if( log_or_expr != NULL){
+        log_or_expr -> alloc_mem(iterations);
+    }
+}
+inline void LogicalOrExpr::alloc_mem(int& iterations){
+    if( log_and_expr != NULL){
+        log_and_expr -> alloc_mem(iterations);
+    }
+}
+inline void LogicalAndExpr::alloc_mem(int& iterations){
+    if( incl_or_expr != NULL){
+        incl_or_expr -> alloc_mem(iterations);
+    }
+}
+inline void InclusiveOrExpr::alloc_mem(int& iterations){
+    if( excl_or_expr != NULL){
+        excl_or_expr -> alloc_mem(iterations);
+    }
+}
+inline void ExclusiveOrExpr::alloc_mem(int& iterations){
+    if( and_expr != NULL){
+        and_expr -> alloc_mem(iterations);
+    }
+}
+inline void AndExpr::alloc_mem(int& iterations){
+    if( equal_expr != NULL){
+        equal_expr -> alloc_mem(iterations);
+    }
+}
+inline void EqualityExpr::alloc_mem(int& iterations){
+    if( rel_expr != NULL){
+        rel_expr -> alloc_mem(iterations);
+    }
+}
+inline void RelationalExpr::alloc_mem(int& iterations){
+    if( shift_expr != NULL){
+        shift_expr -> alloc_mem(iterations);
+    }
+}
+inline void ShiftExpr::alloc_mem(int& iterations){
+    if( add_expr != NULL){
+        add_expr -> alloc_mem(iterations);
+    }
+}
+inline void AdditiveExpr::alloc_mem(int& iterations){
+    if( mul_expr != NULL){
+        mul_expr -> alloc_mem(iterations);
+    }
+}
+inline void MultiplicativeExpr::alloc_mem(int& iterations){
+    if( cast_expr != NULL){
+        cast_expr -> alloc_mem(iterations);
+    }
+}
+inline void CastExpr::alloc_mem(int& iterations){
+    if( un_expr != NULL){
+        un_expr -> alloc_mem(iterations);
+    }
+}
+inline void UnaryExpr::alloc_mem(int& iterations){
+    if( post_expr != NULL){
+        post_expr -> alloc_mem(iterations);
+    }
+}
+inline void PostfixExpr::alloc_mem(int& iterations){
+    if( arg_expr_list != NULL){
+        arg_expr_list -> alloc_mem(iterations);
+    }
+}
+inline void ArgumentExprList::alloc_mem(int& iterations){
+    if( ass_expr != NULL){
+        iterations ++;
+        ass_expr -> alloc_mem(iterations);
     }
 }
 inline void DeclarationList::alloc_mem(std::vector<int>& mv){
