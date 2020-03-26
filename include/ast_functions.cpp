@@ -1178,13 +1178,10 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
     if(op != NULL){
 
         if(*op == "++"){
-            std::cout << "it came here " << std::endl;
             context.is_solving = true;;
             post_expr->print_asm(out);
             context.is_solving = false;
-            std::cout << "it came here 2" << std::endl;
             out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            std::cout << "it came here 3" << std::endl;
             out << "\tnop" << std::endl;
             out << "\taddiu\t$2,$2,1"<<std::endl;
             out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
@@ -1318,7 +1315,9 @@ inline void Statement::print_asm(std::ofstream& out){
         expr_state -> print_asm(out);
     }
     if(select_state != NULL){
+        context.in_if = true;
         select_state -> print_asm(out);
+        context.in_if = false;
     }
     if(it_state != NULL){
         it_state -> print_asm(out);
@@ -1339,20 +1338,37 @@ inline void ExprStatement::print_asm(std::ofstream& out){
 }
 
 inline void SelectionStatement::print_asm(std::ofstream& out){
-    expr -> print_asm(out);
-    if_state -> print_asm(out);
-    if(else_state != NULL){
-        else_state -> print_asm(out);
+    if(expr != NULL){
+        expr->print_asm(out);
     }
-    if(IF != NULL){
-        /*DO SOMETHING HERE */
-    }
+
+    
+    std::string if_return = "$L" + std::to_string(context.gen_label);
+    std::string else_label = if_return;
+
     if(ELSE != NULL){
-        /*DO SOMETHING HERE */
+        context.gen_label++;
+        if_return = "$L" + std::to_string(context.gen_label);
     }
-    if(IF != NULL){
-        /*DO SOMETHING HERE */
+
+    context.gen_label++;
+
+    //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    out << "\tli\t\t$2," /* << value of expr */ << std::endl;
+    out << "\tbne\t\t$3,$2," << else_label << std::endl;
+    out << "\tnop" << std::endl;
+
+    if_state->print_asm(out);
+    out << "\tb\t\t" << if_return << std::endl;
+    out << "\tnop" << std::endl;
+
+    if(else_state != NULL){
+        out << else_label << ":" << std::endl;
+        context.gen_label++;
+        else_state->print_asm(out);
     }
+
+    out << if_return << ":" << std::endl;
 }
 
 inline void IterationStatement::print_asm(std::ofstream& out){

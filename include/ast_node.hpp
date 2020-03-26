@@ -46,9 +46,9 @@ struct Context{
     std::vector<std::string> GlobalVarPy; // stores global variables (for Python)
     std::unordered_map<std::string, Bindings*> GlobalVar; // stores global variables
     std::unordered_map<std::string, Bindings*> LocalVar; // stores local variables
+
+    int gen_label = 1;
 };
-
-
 
 // Declarations
 class TranslationUnit;
