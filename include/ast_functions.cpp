@@ -861,19 +861,19 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     comp_state->alloc_mem(MemoryAlloc);
     int NeededMem = CalcMemoryNeeded(MemoryAlloc);
     out << "\taddiu\t$sp,$sp,-" << NeededMem << std::endl;
-    out << "\tsw\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
-    out << "\tsw\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
-    out << "\tmove $fp,$sp" << std::endl;
+    out << "\tsw\t\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
+    out << "\tsw\t\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
+    out << "\tmove\t$fp,$sp" << std::endl;
 
 
 
     comp_state -> print_asm(out);
 
     out << "\tmove\t$sp,$fp" << std::endl;
-    out << "\tlw\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
-    out << "\tlw\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
+    out << "\tlw\t\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
+    out << "\tlw\t\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
     out << "\taddiu\t$sp,$sp," << NeededMem << std::endl;
-    out << "\tj\t$31" << std::endl;
+    out << "\tj\t\t$31" << std::endl;
     out << "\tnop" << std::endl;
 
     context.frame_offset_counter = 8;
@@ -1061,10 +1061,10 @@ inline void Declaration::print_asm(std::ofstream& out){
         std::pair<std::string, Bindings*> var (context.var_iden, local_var);
         context.LocalVar.insert(var);
 
-        context.frame_offset_counter++;
-
-        out << "\tli\t$2," << local_var->value << std::endl;
-        out << "\tsw\t$2," << local_var->frame_offset << "($fp)" << std::endl;
+        context.frame_offset_counter += 4;
+        std::cout << local_var->id << std::endl;
+        out << "\tli\t\t$2," << local_var->value << std::endl;
+        out << "\tsw\t\t$2," << local_var->frame_offset << "($fp)" << std::endl;
     }
 }
 
@@ -1108,6 +1108,10 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     }
 
     if(context.is_GlobalVar == true){
+        context.var_iden = *iden;
+    }
+
+    if(context.is_LocalVar){
         context.var_iden = *iden;
     }
 
@@ -1200,6 +1204,11 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         if(context.is_GlobalVar == true){
             context.var_val = stoi(*constant);
         }
+
+        if(context.is_LocalVar == true){
+            context.var_val = stoi(*constant);
+        }
+
         if(context.is_return == true){
             context.returnNum = stoi(*constant);
         }
