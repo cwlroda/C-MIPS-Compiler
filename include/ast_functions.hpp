@@ -72,6 +72,7 @@ class FunctionDefinition{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        int CalcMemoryNeeded(std::vector<int> mv);
 
     private:
         DeclarationSpecifier *decl_spec;
@@ -94,6 +95,7 @@ class Declaration{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& mv);
 
     private:
         DeclarationSpecifier *decl_spec;
@@ -115,6 +117,7 @@ class DeclarationSpecifier{
 
         void print_c(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& mv);
 
     private:
         TypeSpecifier *type_spec;
@@ -136,7 +139,7 @@ class DeclarationList{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
-
+        void alloc_mem(std::vector<int>& mv);
     private:
         DeclarationList *decl_list;
         Declaration *decl;
@@ -914,6 +917,7 @@ class CompoundStatement{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out, bool is_init, bool in_func);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& mv);
 
     private:
         DeclarationList *decl_list;
@@ -934,6 +938,7 @@ class StatementList{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& ac);
 
     private:
         Statement *state;
@@ -962,6 +967,7 @@ class Statement{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& mv);
 
         CompoundStatement* get_comp_state(){return comp_state;}
         SelectionStatement* get_select_state(){return select_state;}
@@ -1117,6 +1123,7 @@ class TypeSpecifier{
 
         void print_c(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void alloc_mem(std::vector<int>& mv);
 
     private:
         std::string *type;

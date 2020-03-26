@@ -813,7 +813,25 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 
     out << std::endl;
 }
-
+int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
+    if(mv.size() == 0){
+        return 8;
+    }
+    else{
+        std::vector<int>::iterator it = mv.begin();
+        int count = 0;
+        for(it=mv.begin(); it!=mv.end(); it++){
+            if(count%2==1 && *it==2){
+                mv.insert(it,88);
+                it++;
+                count++;
+            }
+            count++;
+        }
+    }
+    int sizee = (mv.size()+(mv.size()%2==1))/2;
+    return 16+8*sizee;
+}
 inline void FunctionDefinition::print_asm(std::ofstream& out){
     if(decl_spec != NULL){
         decl_spec->print_asm(out);
@@ -830,27 +848,69 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
 
     out << context.FuncName << ":" << std::endl;
 
-    out << "\taddiu\t$sp,$sp,-48" << std::endl;
-    out << "\tsw\t$31,44($sp)" << std::endl;
-    out << "\tsw\t$fp,40($sp)" << std::endl;
-    out << "\tmove $fp,$sp" << std::endl;
+    
 
 
     if(decl_list != NULL){
         decl_list->print_asm(out);
     }
+    std::vector<int> MemoryAlloc;
+    comp_state->alloc_mem(MemoryAlloc);
+    int NeededMem = CalcMemoryNeeded(MemoryAlloc);
+    out << "\taddiu\t$sp,$sp,-" << NeededMem << std::endl;
+    out << "\tsw\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
+    out << "\tsw\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
+    out << "\tmove $fp,$sp" << std::endl;
+
+
 
     comp_state -> print_asm(out);
 
     out << "\tmove\t$sp,$fp" << std::endl;
-    out << "\tlw\t$31,44($sp)" << std::endl;
-    out << "\tlw\t$fp,40($sp)" << std::endl;
-    out << "\taddiu\t$sp,$sp,48" << std::endl;
+    out << "\tlw\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
+    out << "\tlw\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
+    out << "\taddiu\t$sp,$sp," << NeededMem << std::endl;
     out << "\tj\t$31" << std::endl;
     out << "\tnop" << std::endl;
 
 }
 
+inline void CompoundStatement::alloc_mem(std::vector<int>& mv){
+    decl_list->alloc_mem(mv);
+    state_list->alloc_mem(mv);
+}
+inline void StatementList::alloc_mem(std::vector<int>& mv){
+    if(state_list != NULL){
+        state_list -> alloc_mem(mv);
+    }
+    state -> alloc_mem(mv);
+}
+inline void Statement::alloc_mem(std::vector<int>& mv){
+    if(comp_state != NULL){
+        comp_state -> alloc_mem(mv);
+    }
+}
+inline void DeclarationList::alloc_mem(std::vector<int>& mv){
+    if(decl_list!=NULL){
+        decl_list->alloc_mem(mv);
+    }
+    decl->alloc_mem(mv);
+}
+inline void Declaration::alloc_mem(std::vector<int>& mv){
+    decl_spec->alloc_mem(mv);
+}
+inline void DeclarationSpecifier::alloc_mem(std::vector<int>& mv){
+    type_spec->alloc_mem(mv);
+}
+inline void TypeSpecifier::alloc_mem(std::vector<int>& mv){
+    if(*type == "double"){
+        mv.push_back(2);
+        mv.push_back(3);
+    }
+    else{
+        mv.push_back(1);
+    }
+}
 inline void DeclarationList::print_asm(std::ofstream& out){
     if(decl_list!=NULL){
         decl_list->print_asm(out);
