@@ -796,6 +796,8 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         global_var->value = context.GlobalVarNum;
         global_var->type = context.what_typeSpec;
 
+        context.GlobalVar.push_back(global_var);
+
         context.is_GlobalVar = false;
         context.what_typeSpec = "0";
         context.GlobalDirectDeclarator = "0";
@@ -1303,7 +1305,6 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         context.returnNum = 0;
     }
     //DO SOMETHING ABOUT TYPE
-    
 }
 
 inline void Expr::print_asm(std::ofstream& out){
