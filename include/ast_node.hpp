@@ -9,7 +9,8 @@ struct Bindings{
     double value;
     std::string type;
     bool typdef = false;
-    int stack_offset;
+    int stack_offset = 0;
+    int frame_offset = 0;
 
     bool is_pointer = false;
     bool is_init = false;
