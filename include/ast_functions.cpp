@@ -1163,9 +1163,6 @@ inline void UnaryExpr::print_asm(std::ofstream& out){
 }
 
 inline void PostfixExpr::print_asm(std::ofstream& out){
-    if(op != NULL){
-        context.is_solving = true;
-    }
 
     if(pri_expr != NULL){
         pri_expr->print_asm(out);
@@ -1174,25 +1171,41 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
     if(post_expr != NULL){
         post_expr -> print_asm(out);
     }
-
-    if(*op == "++"){
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
-        out << "\taddiu\t$2,$2,1"<<std::endl;
-        out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-    }
-    if(*op == "--"){
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
-        out << "\taddiu\t$2,$2,-1"<<std::endl;
-        out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-    }
-
     if(op != NULL){
-        context.is_solving = false;
+
+        if(*op == "++"){
+            std::cout << "it came here " << std::endl;
+            context.is_solving = true;;
+            post_expr->print_asm(out);
+            context.is_solving = false;
+            std::cout << "it came here 2" << std::endl;
+            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+            std::cout << "it came here 3" << std::endl;
+            out << "\tnop" << std::endl;
+            out << "\taddiu\t$2,$2,1"<<std::endl;
+            out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+            context.solving_out = NULL;
+        }
     }
+    // if(*op == "++"){
+    //    std::cout << "it came here" << std::endl;
+    //     out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     out << "\tnop" << std::endl;
+    //     out << "\taddiu\t$2,$2,1"<<std::endl;
+    //     out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     context.solving_out = NULL;
+    // }
+    // if(*op == "--"){
+    //     out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     out << "\tnop" << std::endl;
+    //     out << "\taddiu\t$2,$2,-1"<<std::endl;
+    //     out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     context.solving_out = NULL;
+    // }
+
+    // if(op != NULL){
+    //     context.is_solving = false;
+    // }
 }
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){
@@ -1206,13 +1219,10 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
     }
 
     if(iden != NULL){
+        
         if(context.is_solving == true){
-            std::unordered_map<std::string, Bindings*>::iterator it;
-            it = context.LocalVar.find(*iden);
-
-            if(it != context.LocalVar.end()){
-                context.solving_out = it->second;
-            }
+            std::cout << *iden << std::endl;
+            context.solving_out=context.LocalVar[*iden];
         }
     }
 }

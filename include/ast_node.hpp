@@ -41,7 +41,7 @@ struct Context{
     bool is_return = false;
     int returnNum = 0;
     bool is_solving = false;
-    Bindings* solving_out = NULL;
+    Bindings* solving_out;
 
     std::vector<std::string> GlobalVarPy; // stores global variables (for Python)
     std::unordered_map<std::string, Bindings*> GlobalVar; // stores global variables
