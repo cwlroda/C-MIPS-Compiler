@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 struct Bindings{
     std::string id;
@@ -28,11 +29,14 @@ struct Context{
     //bool func_decl = false; // check if it is a function declaration or a global variable
     bool is_GlobalVar = false; // check if it is a global variable
     std::string what_typeSpec = "0";
-    std::string GlobalDirectDeclarator = "0";
+    std::string var_iden = "0";
     std::string FuncName = "0";
-    int GlobalVarNum = 0;
+    int var_val = 0;
     int indent = 0; // stores indentation level
     int brackets = 0; // stores parentheses nesting level
+
+    bool is_LocalVar = false;
+    int frame_offset_counter = 0;
 
     bool is_return = false;
     int returnNum = 0;
@@ -40,8 +44,8 @@ struct Context{
     Bindings* solving_out = NULL;
 
     std::vector<std::string> GlobalVarPy; // stores global variables (for Python)
-    std::vector<Bindings*> GlobalVar; // stores global variables
-    std::vector<Bindings*> LocalVar; // stores local variables
+    std::unordered_map<std::string, Bindings*> GlobalVar; // stores global variables
+    std::unordered_map<std::string, Bindings*> LocalVar; // stores local variables
 };
 
 
