@@ -73,8 +73,8 @@ inline void FunctionDefinition::print_py(std::ofstream& out){
         if(decl_list == NULL){
             out << "):" << std::endl;
 
-            std::vector<std::string>::iterator itr = context.GlobalVar.begin();
-            while(itr != context.GlobalVar.end()){
+            std::vector<std::string>::iterator itr = context.GlobalVarPy.begin();
+            while(itr != context.GlobalVarPy.end()){
                 out << "\t" << "global " << *itr << std::endl;
                 itr++;
             }
@@ -161,7 +161,7 @@ inline void DirectDeclarator::print_py(std::ofstream& out, bool is_init, bool in
     if(!in_func){
         if(context.indent == 0 && !context.var_param){
             if(iden != NULL){
-                context.GlobalVar.push_back(*iden);
+                context.GlobalVarPy.push_back(*iden);
             }
         }
 
@@ -197,15 +197,9 @@ inline void DirectDeclarator::print_py(std::ofstream& out, bool is_init, bool in
             out << "def " << *iden << "(";
         }
 
-        if(param_type_list != NULL){
-            param_type_list->print_py(out);
+        if(param_list != NULL){
+            param_list->print_py(out);
         }
-    }
-}
-
-inline void ParameterTypeList::print_py(std::ofstream& out){
-    if(param_list != NULL){
-        param_list->print_py(out);
     }
 }
 
@@ -797,6 +791,11 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         }
         out << context.GlobalVarNum << std::endl;
 
+        Bindings* global_var = new Bindings;
+        global_var->id = context.GlobalDirectDeclarator;
+        global_var->value = context.GlobalVarNum;
+        global_var->type = context.what_typeSpec;
+
         context.is_GlobalVar = false;
         context.what_typeSpec = "0";
         context.GlobalDirectDeclarator = "0";
@@ -806,7 +805,7 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
         context.in_func = true;
         out << std::endl;
         func_def->print_asm(out);
-        
+
         context.FuncName = "0";
         context.in_func = false;
     }

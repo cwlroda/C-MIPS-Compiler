@@ -231,14 +231,14 @@ class DirectDeclarator{
             Declarator *_declr,
             DirectDeclarator *_dir_declr,
             ConstantExpr *_const_expr,
-            ParameterTypeList *_param_type_list,
+            ParameterList *_param_list,
             std::string *_iden,
             std::string *_brac_type
         ):
             declr(_declr),
             dir_declr(_dir_declr),
             const_expr(_const_expr),
-            param_type_list(_param_type_list),
+            param_list(_param_list),
             iden(_iden),
             brac_type(_brac_type)
         {}
@@ -252,29 +252,9 @@ class DirectDeclarator{
         Declarator *declr;
         DirectDeclarator *dir_declr;
         ConstantExpr *const_expr;
-        ParameterTypeList *param_type_list;
+        ParameterList *param_list;
         std::string *iden;
         std::string *brac_type;
-};
-
-class ParameterTypeList{
-    public:
-        ParameterTypeList(
-            ParameterList *_param_list,
-            std::string *_ellipsis
-        ):
-            param_list(_param_list),
-            ellipsis(_ellipsis)
-        {}
-        ~ParameterTypeList(){}
-
-        void print_c(std::ofstream& out);
-        void print_py(std::ofstream& out);
-        void print_asm(std::ofstream& out);
-
-    private:
-        ParameterList *param_list;
-        std::string *ellipsis;
 };
 
 class ParameterList{
@@ -345,12 +325,12 @@ class DirectAbstractDeclarator{
             AbstractDeclarator *_abs_declr,
             DirectAbstractDeclarator *_dir_abs_declr,
             ConstantExpr *_const_expr,
-            ParameterTypeList *_param_type_list
+            ParameterList *_param_list
         ):
             abs_declr(_abs_declr),
             dir_abs_declr(_dir_abs_declr),
             const_expr(_const_expr),
-            param_type_list(_param_type_list)
+            param_list(_param_list)
         {}
         ~DirectAbstractDeclarator(){}
 
@@ -361,7 +341,7 @@ class DirectAbstractDeclarator{
         AbstractDeclarator *abs_declr;
         DirectAbstractDeclarator *dir_abs_declr;
         ConstantExpr *const_expr;
-        ParameterTypeList *param_type_list;
+        ParameterList *param_list;
 };
 
 class SpecifierQualifierList{

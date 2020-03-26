@@ -4,6 +4,17 @@
 #include <vector>
 #include <string>
 
+struct Bindings{
+    std::string id;
+    double value;
+    std::string type;
+    bool typdef = false;
+    int stack_offset;
+
+    bool is_pointer = false;
+    bool is_init = false;
+};
+
 struct Context{
     bool in_func = false; // check if entering function
     bool is_init = false; // check if function/variable is initialised
@@ -25,12 +36,12 @@ struct Context{
     bool is_return = false;
     int returnNum = 0;
 
-
-
-
-
-    std::vector<std::string> GlobalVar; // stores global variables
+    std::vector<std::string> GlobalVarPy; // stores global variables
+    std::vector<Bindings*> GlobalVar;
+    std::vector<Bindings*> LocalVar; // stores local variables
 };
+
+
 
 // Declarations
 class TranslationUnit;
@@ -45,7 +56,6 @@ class Initializer;
 class InitializerList;
 class Declarator;
 class DirectDeclarator;
-class ParameterTypeList;
 class ParameterList;
 class ParameterDeclaration;
 class AbstractDeclarator;

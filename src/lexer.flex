@@ -77,7 +77,8 @@ extern FILE *yyin;
 ","                 { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return COMMA; }
 
 [0-9]+              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return CONSTANT; }
-[A-Za-z_][A-Za-z0-9_]*              { yylval.str=new std::string(yytext); if(*yylval.str == "elsereturn"){std::cout << "hi";}/* ECHO; std::cout << std::endl; */ return IDENTIFIER; }
+[A-Za-z_][A-Za-z0-9_]*              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return IDENTIFIER; }
+
 
 [ \t\v\n\f\r]*		{;}
 

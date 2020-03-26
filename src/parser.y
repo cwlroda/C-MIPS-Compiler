@@ -34,7 +34,6 @@
     Declarator *declr;
     DirectDeclarator *dir_declr;
     Pointer *ptr;
-    ParameterTypeList *param_type_list;
     ParameterList *param_list;
     ParameterDeclaration *param_decl;
     ConstantExpr *const_expr;
@@ -117,7 +116,6 @@
 %type <declr> DECLARATOR
 %type <dir_declr> DIRECT_DECLARATOR
 %type <ptr> POINTER
-%type <param_type_list> PARAMETER_TYPE_LIST
 %type <param_list> PARAMETER_LIST
 %type <param_decl> PARAMETER_DECLARATION
 %type <const_expr> CONSTANT_EXPR
@@ -217,14 +215,11 @@ DIRECT_DECLARATOR: IDENTIFIER                                                   
                 |  LB DECLARATOR RB                                                             { $$ = new DirectDeclarator($2, NULL, NULL, NULL, NULL, NULL); }
                 |  DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB                                      { $$ = new DirectDeclarator(NULL, $1, $3, NULL, NULL, NULL); }
                 |  DIRECT_DECLARATOR LSB RSB                                                    { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, $2); }
-                |  DIRECT_DECLARATOR LB PARAMETER_TYPE_LIST RB                                  { $$ = new DirectDeclarator(NULL, $1, NULL, $3, NULL, NULL); }
+                |  DIRECT_DECLARATOR LB PARAMETER_LIST RB                                       { $$ = new DirectDeclarator(NULL, $1, NULL, $3, NULL, NULL); }
                 |  DIRECT_DECLARATOR LB RB                                                      { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, NULL); }
 
 POINTER: ASTERISK POINTER                                                                       
     |    ASTERISK                                                                               
-
-PARAMETER_TYPE_LIST: PARAMETER_LIST                                                             { $$ = new ParameterTypeList($1, NULL); }
-                |    PARAMETER_LIST COMMA ELLIPSIS                                              { $$ = new ParameterTypeList($1, $3); }
 
 PARAMETER_LIST: PARAMETER_DECLARATION                                                           { $$ = new ParameterList($1, NULL); }
             |   PARAMETER_LIST COMMA PARAMETER_DECLARATION                                      { $$ = new ParameterList($3, $1); }
@@ -244,9 +239,9 @@ DIRECT_ABSTRACT_DECLARATOR: LB ABSTRACT_DECLARATOR RB
                         |   DIRECT_ABSTRACT_DECLARATOR LSB RSB                                  
                         |   LSB CONSTANT_EXPR RSB                                               
                         |   LSB RSB                                                             
-                        |   DIRECT_ABSTRACT_DECLARATOR LB PARAMETER_TYPE_LIST RB                
+                        |   DIRECT_ABSTRACT_DECLARATOR LB PARAMETER_LIST RB                
                         |   DIRECT_ABSTRACT_DECLARATOR LB RB                                    
-                        |   LB PARAMETER_TYPE_LIST RB                                           
+                        |   LB PARAMETER_LIST RB                                           
                         |   LB RB                                                               
 
 CONDITIONAL_EXPR: LOGICAL_OR_EXPR                                                               { $$ = new ConditionalExpr($1, NULL, NULL); }
