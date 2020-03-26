@@ -1199,7 +1199,7 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
     }
     if(iden != NULL){
         if(context.is_solving == true){
-            solving_out = context.LocalVar.find(*iden);
+            context.solving_out = context.LocalVar.find(*iden);
         }
     }
 }
