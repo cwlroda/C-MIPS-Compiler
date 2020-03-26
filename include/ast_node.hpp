@@ -36,6 +36,8 @@ struct Context{
 
     bool is_return = false;
     int returnNum = 0;
+    bool is_solving = false;
+    Bindings* solving_out = NULL;
 
     std::vector<std::string> GlobalVarPy; // stores global variables (for Python)
     std::vector<Bindings*> GlobalVar; // stores global variables
