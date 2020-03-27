@@ -1233,7 +1233,7 @@ inline void ArgumentExprList::print_asm(std::ofstream& out){
     ass_expr -> print_asm(out);
     context.is_solving = false;
     if(context.function_call > 4){
-        out << "\tsw\t$2," << 16+(8*context.stack_offset) << "($sp)" << std::endl;
+        out << "\tsw\t$2," << 8+(8*context.stack_offset) << "($sp)" << std::endl;
         context.stack_offset++;
         context.function_call--;
     }
