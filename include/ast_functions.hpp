@@ -747,6 +747,7 @@ class AssignmentOperator{
 
         void print_c(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        std::string get_type(){ return *type; }
 
     private:
         std::string *type;

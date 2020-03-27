@@ -806,6 +806,7 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 
     else if(func_def != NULL){
         context.in_func = true;
+        context.got_func_name = false;
         out << std::endl;
         func_def->print_asm(out);
 
@@ -868,7 +869,7 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
 
 
     comp_state -> print_asm(out);
-
+    out << "$" << context.FuncName << "END:" << std::endl;
     out << "\tmove\t$sp,$fp" << std::endl;
     out << "\tlw\t\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
     out << "\tlw\t\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
@@ -1062,7 +1063,6 @@ inline void Declaration::print_asm(std::ofstream& out){
         context.LocalVar.insert(var);
 
         context.frame_offset_counter += 4;
-        std::cout << local_var->id << std::endl;
         out << "\tli\t\t$2," << local_var->value << std::endl;
         out << "\tsw\t\t$2," << local_var->frame_offset << "($fp)" << std::endl;
     }
@@ -1115,8 +1115,9 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         context.var_iden = *iden;
     }
 
-    if(context.in_func == true && iden != NULL){
+    if(context.in_func == true && iden != NULL && !context.got_func_name){
         context.FuncName = *iden;
+        context.got_func_name = true;
     }
 }
 
@@ -1143,18 +1144,27 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
     if(cond_expr != NULL){
         cond_expr->print_asm(out);
     }
-    
-    // if(un_expr != NULL){
-    //     un_expr -> print_asm(out);
-    //     ass_op -> print_asm(out);
-    //     ass_expr -> print_asm(out);
-    // }
+
+    else{
+        if(un_expr != NULL){
+            un_expr->print_asm(out);
+        }
+
+        std::string result_var = context.var_iden;
+
+        if(ass_expr != NULL){
+            ass_expr->print_asm(out);
+        }
+
+        Bindings* result_bindings = context.LocalVar[result_var];
+
+        out << "\tsw\t\t$2," << result_bindings->frame_offset << "($fp)" << std::endl;
+    }
 }
 
 inline void UnaryExpr::print_asm(std::ofstream& out){
     if(post_expr != NULL){
         post_expr->print_asm(out);
-        std::cout << "it came here 992" << std::endl;
     }
     // else{
     //     if(un_op != NULL){
@@ -1168,40 +1178,49 @@ inline void UnaryExpr::print_asm(std::ofstream& out){
 }
 
 inline void PostfixExpr::print_asm(std::ofstream& out){
+
     if(pri_expr != NULL){
-        std::cout << "here 1" << std::endl;
         pri_expr->print_asm(out);
-        std::cout << "here 4" << std::endl;
     }
-    std::cout << "it came here 995" << std::endl;
+
     if(post_expr != NULL){
-    
         post_expr -> print_asm(out);
     }
-    std::cout << "it came here 994" << std::endl;
     if(op != NULL){
+
         if(*op == "++"){
+            context.is_solving = true;;
             post_expr->print_asm(out);
+            context.is_solving = false;
             out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
             out << "\tnop" << std::endl;
             out << "\taddiu\t$2,$2,1"<<std::endl;
             out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
             context.solving_out = NULL;
         }
-        if(*op == "--"){
-            post_expr->print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\taddiu\t$2,$2,-1"<<std::endl;
-            out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-        }
     }
-    std::cout << "it came here 993" << std::endl;
+    // if(*op == "++"){
+    //    std::cout << "it came here" << std::endl;
+    //     out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     out << "\tnop" << std::endl;
+    //     out << "\taddiu\t$2,$2,1"<<std::endl;
+    //     out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     context.solving_out = NULL;
+    // }
+    // if(*op == "--"){
+    //     out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     out << "\tnop" << std::endl;
+    //     out << "\taddiu\t$2,$2,-1"<<std::endl;
+    //     out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    //     context.solving_out = NULL;
+    // }
+
+    // if(op != NULL){
+    //     context.is_solving = false;
+    // }
 }
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){
-    std::cout << "it came here 998" << std::endl;
     if(constant != NULL){
         if(context.is_GlobalVar == true){
             context.var_val = stoi(*constant);
@@ -1215,14 +1234,14 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
             context.returnNum = stoi(*constant);
         }
     }
-std::cout << "it came here 997" << std::endl;
+
     if(iden != NULL){
         
         if(context.is_solving == true){
+            std::cout << *iden << std::endl;
             context.solving_out=context.LocalVar[*iden];
         }
     }
-    std::cout << "it came here 996" << std::endl;
 }
 
 inline void ConditionalExpr::print_asm(std::ofstream& out){
@@ -1235,331 +1254,43 @@ inline void ConditionalExpr::print_asm(std::ofstream& out){
 }
 
 inline void LogicalOrExpr::print_asm(std::ofstream& out){
-    if(log_or_expr != NULL){
-        int l2 = context.gen_label;
-        context.gen_label++;
-        int l3 = context.gen_label;
-        context.gen_label++;
-        int l4 = context.gen_label;
-        context.gen_label++;
-        
-        
-
-        log_or_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
-        out << "\tbne\t$2,$0,$L" << l2 << std::endl;
-        out << "\tnop" << std::endl;
-        context.solving_out = NULL;
-        log_and_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
-        out << "\tbeq\t$2,$0,$L" << l3 << std::endl;
-        out << "\tnop" << std::endl;
-        out << std::endl;
-        out << "$L" << l2 << ":" << std::endl;
-        out << "\tli\t$2,1" << std::endl;
-        out << "\tb\t$L" << l4 << std::endl;
-        out << "nop" << std::endl;
-        out << std::endl;
-        out << "$L" << l3 << ":" << std::endl;
-        out << "\tmove\t$2,$0" << std::endl;
-        out << "$L" << l4 << ":" << std::endl;
-        //store
-    }
-    else{
-        log_and_expr -> print_asm(out);
-    }
-    
-    
+    log_and_expr -> print_asm(out);
 }
 
 inline void LogicalAndExpr::print_asm(std::ofstream& out){
-    if(log_and_expr != NULL){
-         int l2 = context.gen_label;
-        context.gen_label++;
-        int l3 = context.gen_label;
-        context.gen_label++;
-
-        log_and_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
-        out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
-        out << "\tnop" << std::endl;
-        context.solving_out = NULL;
-        incl_or_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
-        out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
-        out << "\tnop" << std::endl;
-        out << std::endl;
-        out << "$L" << l2 << ":" << std::endl;
-        out << "\tmove\t$2,$0" << std::endl;
-        out << "$L" << l3 << ":" << std::endl;
-        //store
-        
-    }
-    else{
-        incl_or_expr -> print_asm(out);
-    }
-    
+    incl_or_expr -> print_asm(out);
 }
 
 inline void InclusiveOrExpr::print_asm(std::ofstream& out){
-    if(incl_or_expr != NULL){
-        incl_or_expr -> print_asm(out);
-        out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        excl_or_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        out << "\tnop" << std::endl;
-        out << "\tor\t$2,$3,$2" << std::endl;
-        //store
-    }
-    else{
-        excl_or_expr -> print_asm(out);
-    }
-    
+    excl_or_expr -> print_asm(out);
 }
 
 inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
-    if(excl_or_expr != NULL){
-        excl_or_expr -> print_asm(out);
-        out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        and_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        out << "\tnop" << std::endl;
-        out << "\txor\t$2,$3,$2" << std::endl;
-        //store
-    }
-    else{
-        and_expr -> print_asm(out);
-    }
-    
+    and_expr -> print_asm(out);
 }
 
 inline void AndExpr::print_asm(std::ofstream& out){
-    if(and_expr != NULL){
-        and_expr -> print_asm(out);
-        out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        equal_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        out << "\tnop" << std::endl;
-        out << "\tand\t$2,$3,$2" << std::endl;
-        //store
-    }
-    else{
-        equal_expr -> print_asm(out);
-    }
-    
+    equal_expr -> print_asm(out);
 }
 
 inline void EqualityExpr::print_asm(std::ofstream& out){
-    if(equal_expr != NULL){
-        if(*op == "=="){
-            equal_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            rel_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\txor\t$2,$3,$2" << std::endl;
-            out << "\tsltu\t$2,$2,1" << std::endl;
-            out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            context.solving_out = NULL;
-        }
-        if(*op == "!="){
-            equal_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            rel_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\txor\t$2,$3,$2" << std::endl;
-            out << "\tsltu\t$2,$0,$2" << std::endl;
-            out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            context.solving_out = NULL;
-        }
-    }
-    else{
-        rel_expr -> print_asm(out);
-    }
-    
+    rel_expr -> print_asm(out);
 }
 
 inline void RelationalExpr::print_asm(std::ofstream& out){
-    if(rel_expr != NULL){
-        if(*op == "<"){
-            rel_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tslt\t$2,$3,$2" << std::endl;
-            out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-        }
-        if(*op == ">"){
-            rel_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tslt\t$2,$2,$3" << std::endl;
-            out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-        }
-        if(*op == "<="){
-            rel_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tslt\t$2,$2,$3" << std::endl;
-            out << "\txori\t$2,$2,0x1" << std::endl;
-            out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-        }
-        if(*op == ">="){
-            rel_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tslt\t$2,$3,$2" << std::endl;
-            out << "\txori\t$2,$2,0x1" << std::endl;
-            out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-        }
-    }
-    else{
-        shift_expr -> print_asm(out);
-    }
-    
+    shift_expr -> print_asm(out);
 }
 
 inline void ShiftExpr::print_asm(std::ofstream& out){
-    if(shift_expr != NULL){
-        if(*op == "<<"){
-            shift_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            add_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tsll\t$2,$3,$2" << std::endl;
-            //store
-        }
-        if(*op == ">>"){
-            shift_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            add_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tsra\t$2,$3,$2" << std::endl;
-            //store
-        }
-        
-    }
-    else{
-        add_expr -> print_asm(out);
-    }
-    
+    add_expr -> print_asm(out);
 }
 
 inline void AdditiveExpr::print_asm(std::ofstream& out){
-    if(add_expr != NULL){
-        if(*op == "+"){
-            add_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            mul_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\taddu\t$2,$3,$2" << std::endl;
-            //store
-        }
-        if(*op == "-"){
-            add_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            mul_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tsubu\t$2,$3,$2" << std::endl;
-            //store
-        }
-    }
-    else{
-        mul_expr -> print_asm(out);
-    }
-    
+    mul_expr -> print_asm(out);
 }
 
 inline void MultiplicativeExpr::print_asm(std::ofstream& out){
-    if(mul_expr != NULL){
-        if(*op == "*"){
-            mul_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            cast_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tmult\t$2,$3,$2" << std::endl;
-            out << "\tmflo\t$2" << std::endl;
-            //store
-        }
-        if(*op == "/"){
-            int l2 = context.gen_label;
-            context.gen_label++;
-            mul_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            cast_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
-            out << "\tdiv\t$0,$3,$2" << std::endl;
-            out << "$L" << l2 << ":" << std::endl;
-            out << "\tmfhi\t$2" << std::endl;
-            out << "\tmflo\t$2" << std::endl;
-            //store
-        }
-        if(*op == "%"){
-            int l2 = context.gen_label;
-            context.gen_label++;
-            mul_expr -> print_asm(out);
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
-            cast_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
-            out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
-            out << "\tdiv\t$0,$3,$2" << std::endl;
-            out << "$L" << l2 << ":" << std::endl;
-            out << "\tmflo\t$2" << std::endl;
-            out << "\tmfhi\t$2" << std::endl;
-            //store
-        }
-        
-
-    }
-    else{
-        cast_expr -> print_asm(out);
-    }
-    
+    cast_expr -> print_asm(out);
 }
 
 inline void CastExpr::print_asm(std::ofstream& out){
@@ -1592,11 +1323,8 @@ inline void Statement::print_asm(std::ofstream& out){
         comp_state -> print_asm(out);
     }
     if(expr_state != NULL){
-        context.is_solving = true;
         expr_state -> print_asm(out);
-        context.is_solving = false;
     }
-    std::cout << "it came here 999" << std::endl;
     if(select_state != NULL){
         context.in_if = true;
         select_state -> print_asm(out);
@@ -1624,7 +1352,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
     if(expr != NULL){
         expr->print_asm(out);
     }
-    
+
     
     std::string if_return = "$L" + std::to_string(context.gen_label);
     std::string else_label = if_return;
@@ -1633,7 +1361,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
         context.gen_label++;
         if_return = "$L" + std::to_string(context.gen_label);
     }
-    
+
     context.gen_label++;
 
     //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
@@ -1683,6 +1411,8 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         }
         context.is_return = false;
         context.returnNum = 0;
+
+        out << "\tj\t\t$" << context.FuncName << "END" << std::endl;
     }
     //DO SOMETHING ABOUT TYPE
 }

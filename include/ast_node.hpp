@@ -31,6 +31,7 @@ struct Context{
     std::string what_typeSpec = "0";
     std::string var_iden = "0";
     std::string FuncName = "0";
+    bool got_func_name = true;
     int var_val = 0;
     int indent = 0; // stores indentation level
     int brackets = 0; // stores parentheses nesting level
@@ -46,6 +47,7 @@ struct Context{
     std::vector<std::string> GlobalVarPy; // stores global variables (for Python)
     std::unordered_map<std::string, Bindings*> GlobalVar; // stores global variables
     std::unordered_map<std::string, Bindings*> LocalVar; // stores local variables
+
     int gen_label = 1;
 };
 
