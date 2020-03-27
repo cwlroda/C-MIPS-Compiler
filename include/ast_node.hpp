@@ -42,6 +42,7 @@ struct Context{
 
     bool is_return = false;
     int returnNum = 0;
+    bool return_var = false;
     bool is_solving = false;
     bool is_firststep = true;
     std::vector<std::string> solving_out_constant;
