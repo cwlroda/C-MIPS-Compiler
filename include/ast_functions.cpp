@@ -1190,10 +1190,11 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
     if(post_expr != NULL && pri_expr == NULL && op == NULL && iden == NULL){
         context.function_call = 1;
         post_expr -> print_asm(out);
+        std::string temp = context.function_name;
         if(arg_expr_list != NULL){
             arg_expr_list -> print_asm(out);
         }
-        out << "\tjal\t"<< context.function_name << std::endl;
+        out << "\tjal\t"<< temp << std::endl;
         out << "\tnop" << std::endl;
         context.function_name = "";
         context.function_call = 0;
