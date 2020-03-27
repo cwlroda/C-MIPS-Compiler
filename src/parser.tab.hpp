@@ -115,26 +115,24 @@ extern int yydebug;
     TYPEDEF = 304,
     STRUCT = 305,
     ENUM = 306,
-    ELLIPSIS = 307,
-    IF = 308,
-    ELSE = 309,
-    SWITCH = 310,
-    CASE = 311,
-    DEFAULT = 312,
-    FOR = 313,
-    DO = 314,
-    WHILE = 315,
-    CONTINUE = 316,
-    BREAK = 317,
-    RETURN = 318,
-    LB = 319,
-    RB = 320,
-    LSB = 321,
-    RSB = 322,
-    LCB = 323,
-    RCB = 324,
-    COLON = 325,
-    COMMA = 326
+    IF = 307,
+    ELSE = 308,
+    SWITCH = 309,
+    CASE = 310,
+    DEFAULT = 311,
+    FOR = 312,
+    WHILE = 313,
+    CONTINUE = 314,
+    BREAK = 315,
+    RETURN = 316,
+    LB = 317,
+    RB = 318,
+    LSB = 319,
+    RSB = 320,
+    LCB = 321,
+    RCB = 322,
+    COLON = 323,
+    COMMA = 324
   };
 #endif
 
@@ -204,7 +202,7 @@ union YYSTYPE
 
     std::string *str;
 
-#line 208 "src/parser.tab.hpp" /* yacc.c:1909  */
+#line 206 "src/parser.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

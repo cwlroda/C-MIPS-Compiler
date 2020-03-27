@@ -5,10 +5,7 @@ int main(){
     int c = 4;
     int d = 5;
     int e = 6;
-    x = a + b - c * d | e / 10 & 20 || 30 && 40 ^ a > b < c >= d <= e << 6 >> 8;
+    x = a + b - c * d | e / 10 & 20 || (30 && 40) ^ a > b < c >= d <= e << 6 >> 8;
 
     return 10;
-}
-int f(){
-    return 5;
 }
