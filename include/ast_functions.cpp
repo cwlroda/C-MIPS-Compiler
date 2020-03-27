@@ -1247,13 +1247,13 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         if(context.is_return == true){
             context.returnNum = stoi(*constant);
         }
-        if(context.is_solving == true){
+        if(context.is_solving == true || context.is_cond){
             context.solving_out_constant.push_back(*constant);
         }
     }
 
     if(iden != NULL){
-        if(context.is_solving == true){
+        if(context.is_solving == true || context.is_cond){
             context.solving_out.push_back(context.LocalVar[*iden]);
             context.solving_out_constant.push_back("");
         }
@@ -1270,6 +1270,7 @@ inline void ConditionalExpr::print_asm(std::ofstream& out){
 }
 
 inline void LogicalOrExpr::print_asm(std::ofstream& out){
+
     if(log_or_expr != NULL){
         int l2 = context.gen_label;
         context.gen_label++;
@@ -1279,7 +1280,8 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
         context.gen_label++;
 
         log_or_expr -> print_asm(out);
-        if(context.is_firststep == true){
+
+        if(context.is_firststep == true || context.is_cond){
             if(context.solving_out_constant[context.solving_out_constant.size()-1] == ""){
                 out << "\tlw\t$2," << context.solving_out[context.solving_out.size()-1]->frame_offset << "($fp)" << std::endl;
                 context.solving_out.pop_back();
@@ -1345,9 +1347,9 @@ inline void LogicalAndExpr::print_asm(std::ofstream& out){
         }
         out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
-        std::cout << "I GOT HERE" << std::endl;
+
         incl_or_expr -> print_asm(out);
-        std::cout << "I GOT HERE2" << std::endl;
+
         if(context.solving_out_constant[context.solving_out_constant.size()-1] == ""){
             out << "\tlw\t$2," << context.solving_out[context.solving_out.size()-1]->frame_offset << "($fp)" << std::endl;
             out << "\tnop" << std::endl;
@@ -1548,8 +1550,11 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 context.is_firststep = false;
             }
             shift_expr -> print_asm(out);
+
             if(context.solving_out_constant[context.solving_out_constant.size()-1] == ""){
+                out << "IM HERE2" << std::endl;
                 out << "\tlw\t$3," << context.solving_out[context.solving_out.size()-1]->frame_offset << "($fp)" << std::endl;
+                out << "IM HERE" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
             }
@@ -1754,7 +1759,6 @@ if(add_expr != NULL){
             else{
                 out << "\tli\t$3," << context.solving_out_constant[context.solving_out_constant.size()-1] << std::endl;
                 context.solving_out_constant.pop_back();
-                out << "IM HERE BIJ" << std::endl;
             }
             out << "\tsubu\t$2,$3,$2" << std::endl;
         }
@@ -1975,7 +1979,7 @@ inline void IterationStatement::print_asm(std::ofstream& out){
             expr -> print_asm(out);
         }
 
-        out << "\tbeq\t\t$2,$0," << while_body << std::endl;
+        out << "\tbne\t\t$2,$0," << while_body << std::endl;
         out << "\tnop" << std::endl << std::endl;
     }
 
