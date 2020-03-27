@@ -8,13 +8,27 @@
 
 	.text
 	.align	2
-	.globl	f
+	.globl	main
 	.set	nomips16
 	.set	nomicromips
-	.ent	f
-	.type	f, @function
-f:
-	addiu	$sp,$sp,-8
-	sw	$31,4($sp)
-	sw	$fp,0($sp)
-	move $fp,$sp
+	.ent	main
+	.type	main, @function
+main:
+	addiu	$sp,$sp,-24
+	sw		$31,20($sp)
+	sw		$fp,16($sp)
+	move	$fp,$sp
+
+	li		$2,0
+	sw		$2,8($fp)
+	lw	$2,8($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,8($fp)
+	move	$sp,$fp
+	lw		$31,20($sp)
+	lw		$fp,16($sp)
+	addiu	$sp,$sp,24
+	j		$31
+	nop
+

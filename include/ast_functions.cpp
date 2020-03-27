@@ -1144,16 +1144,17 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         cond_expr->print_asm(out);
     }
     
-    if(un_expr != NULL){
-        un_expr -> print_asm(out);
-        ass_op -> print_asm(out);
-        ass_expr -> print_asm(out);
-    }
+    // if(un_expr != NULL){
+    //     un_expr -> print_asm(out);
+    //     ass_op -> print_asm(out);
+    //     ass_expr -> print_asm(out);
+    // }
 }
 
 inline void UnaryExpr::print_asm(std::ofstream& out){
     if(post_expr != NULL){
         post_expr->print_asm(out);
+        std::cout << "it came here 992" << std::endl;
     }
     // else{
     //     if(un_op != NULL){
@@ -1167,16 +1168,18 @@ inline void UnaryExpr::print_asm(std::ofstream& out){
 }
 
 inline void PostfixExpr::print_asm(std::ofstream& out){
-
     if(pri_expr != NULL){
+        std::cout << "here 1" << std::endl;
         pri_expr->print_asm(out);
+        std::cout << "here 4" << std::endl;
     }
-
+    std::cout << "it came here 995" << std::endl;
     if(post_expr != NULL){
+    
         post_expr -> print_asm(out);
     }
+    std::cout << "it came here 994" << std::endl;
     if(op != NULL){
-
         if(*op == "++"){
             post_expr->print_asm(out);
             out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
@@ -1194,9 +1197,11 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
             context.solving_out = NULL;
         }
     }
+    std::cout << "it came here 993" << std::endl;
 }
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){
+    std::cout << "it came here 998" << std::endl;
     if(constant != NULL){
         if(context.is_GlobalVar == true){
             context.var_val = stoi(*constant);
@@ -1210,13 +1215,14 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
             context.returnNum = stoi(*constant);
         }
     }
-
+std::cout << "it came here 997" << std::endl;
     if(iden != NULL){
         
         if(context.is_solving == true){
             context.solving_out=context.LocalVar[*iden];
         }
     }
+    std::cout << "it came here 996" << std::endl;
 }
 
 inline void ConditionalExpr::print_asm(std::ofstream& out){
@@ -1236,6 +1242,8 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
         context.gen_label++;
         int l4 = context.gen_label;
         context.gen_label++;
+        
+        
 
         log_or_expr -> print_asm(out);
         out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
@@ -1588,6 +1596,7 @@ inline void Statement::print_asm(std::ofstream& out){
         expr_state -> print_asm(out);
         context.is_solving = false;
     }
+    std::cout << "it came here 999" << std::endl;
     if(select_state != NULL){
         context.in_if = true;
         select_state -> print_asm(out);
