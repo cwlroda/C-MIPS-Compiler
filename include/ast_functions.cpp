@@ -1242,14 +1242,15 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         if(context.is_return == true){
             context.returnNum = stoi(*constant);
         }
+        if(context.is_solving == true){
+            context.solving_out_constant = stoi(*constant);
+        }
     }
 
     if(iden != NULL){
         
         if(context.is_solving == true){
             context.solving_out=context.LocalVar[*iden];
-            
-        std::cout << *iden << std::endl;
         }
     }
 }
@@ -1275,15 +1276,30 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
         
 
         log_or_expr -> print_asm(out);
-        Bindings temp = *context.solving_out;
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
+        if(context.is_firststep == true){
+            if(context.solving_out != NULL){
+                out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                context.solving_out = NULL;
+                out << "\tnop" << std::endl;
+            }
+            else{
+                out << "\tli\t$2," << context.solving_out_constant << std::endl;
+            }
+            context.is_firststep = false;
+        }
+        
         out << "\tbne\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
         context.solving_out = NULL;
         log_and_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
+        if(context.solving_out != NULL){
+            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+            out << "\tnop" << std::endl;
+            context.solving_out = NULL;
+        }
+        else{
+            out << "\tli\t$2," << context.solving_out_constant << std::endl;
+        }
         out << "\tbeq\t$2,$0,$L" << l3 << std::endl;
         out << "\tnop" << std::endl;
         out << std::endl;
@@ -1295,8 +1311,6 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
         out << "$L" << l3 << ":" << std::endl;
         out << "\tmove\t$2,$0" << std::endl;
         out << "$L" << l4 << ":" << std::endl;
-        out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
-        //store
     }
     else{
         log_and_expr -> print_asm(out);
@@ -1306,29 +1320,40 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
 inline void LogicalAndExpr::print_asm(std::ofstream& out){
     if(log_and_expr != NULL){
         
-         int l2 = context.gen_label;
+        int l2 = context.gen_label;
         context.gen_label++;
         int l3 = context.gen_label;
         context.gen_label++;
 
         log_and_expr -> print_asm(out);
-        Bindings temp = *context.solving_out;
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
+        if(context.is_firststep == true){
+            if(context.solving_out != NULL){
+                out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$2," << context.solving_out_constant << std::endl;
+            }
+            context.is_firststep = false;
+        }
         out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
-        context.solving_out = NULL;
         incl_or_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tnop" << std::endl;
+        if(context.solving_out != NULL){
+            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+            out << "\tnop" << std::endl;
+            context.solving_out = NULL;
+        }
+        else{
+            out << "\tli\t$2," << context.solving_out_constant << std::endl;
+        }
         out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
         out << std::endl;
         out << "$L" << l2 << ":" << std::endl;
         out << "\tmove\t$2,$0" << std::endl;
         out << "$L" << l3 << ":" << std::endl;
-        //store  
-        out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
     }
     
     else{
@@ -1339,16 +1364,28 @@ inline void LogicalAndExpr::print_asm(std::ofstream& out){
 inline void InclusiveOrExpr::print_asm(std::ofstream& out){
     if(incl_or_expr != NULL){
         incl_or_expr -> print_asm(out);
-        Bindings temp = *context.solving_out;
-        out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-    excl_or_expr -> print_asm(out);
-    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
+        if(context.is_firststep == true){
+            if(context.solving_out != NULL){
+                out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$2," << context.solving_out_constant << std::endl;
+            }
+            context.is_firststep = false;
+        }
+        
+        excl_or_expr -> print_asm(out);
+        if(context.solving_out != NULL){
+            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+            context.solving_out = NULL;
+        }
+        else{
+            out << "\tli\t$3," << context.solving_out_constant << std::endl;
+        }
+        
         out << "\tnop" << std::endl;
         out << "\tor\t$2,$3,$2" << std::endl;
-        //store
-        out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
     }
     else{
         excl_or_expr -> print_asm(out);
@@ -1358,16 +1395,26 @@ inline void InclusiveOrExpr::print_asm(std::ofstream& out){
 inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
     if(excl_or_expr != NULL){
         excl_or_expr -> print_asm(out);
-        Bindings temp = *context.solving_out;
-        out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
+        if(context.is_firststep == true){
+            if(context.solving_out != NULL){
+                out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$2," << context.solving_out_constant << std::endl;
+            }
+            context.is_firststep = false;
+        }
         and_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        out << "\tnop" << std::endl;
+        if(context.solving_out != NULL){
+            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+            context.solving_out = NULL;
+            out << "\tnop" << std::endl;
+        }
+        else{
+            out << "\tli\t$3," << context.solving_out_constant << std::endl;
+        }
         out << "\txor\t$2,$3,$2" << std::endl;
-        //store
-        out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
     }
     else{
         and_expr -> print_asm(out);
@@ -1378,16 +1425,27 @@ inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
 inline void AndExpr::print_asm(std::ofstream& out){
     if(and_expr != NULL){
         and_expr -> print_asm(out);
-        Bindings temp = *context.solving_out;
-        out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
+        if(context.is_firststep == true){
+            if(context.solving_out != NULL){
+                out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$2," << context.solving_out_constant << std::endl;
+            }
+            context.is_firststep = false;
+        }
+        
         equal_expr -> print_asm(out);
-        out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        context.solving_out = NULL;
-        out << "\tnop" << std::endl;
+        if(context.solving_out != NULL){
+            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+            context.solving_out = NULL;
+            out << "\tnop" << std::endl;
+        }
+        else{
+            out << "\tli\t$3," << context.solving_out_constant << std::endl;
+        }
         out << "\tand\t$2,$3,$2" << std::endl;
-        //store
-        out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
     }
     else{
         equal_expr -> print_asm(out);
@@ -1399,39 +1457,59 @@ inline void EqualityExpr::print_asm(std::ofstream& out){
     if(equal_expr != NULL){
         if(*op == "=="){
             equal_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             rel_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\txor\t$2,$3,$2" << std::endl;
             out << "\tsltu\t$2,$2,1" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            
         }
         if(*op == "!="){
             equal_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             rel_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\txor\t$2,$3,$2" << std::endl;
             out << "\tsltu\t$2,$0,$2" << std::endl;
-            out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            out << "\tandi\t$2,$2,0x00ff" << std::endl;     
         }
     }
     else{
         rel_expr -> print_asm(out);
     }
-    
 }
 
 
@@ -1439,57 +1517,102 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
  if(rel_expr != NULL){
         if(*op == "<"){
             rel_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tslt\t$2,$3,$2" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
         if(*op == ">"){
             rel_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tslt\t$2,$2,$3" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
         if(*op == "<="){
             rel_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
+            
             shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tslt\t$2,$2,$3" << std::endl;
             out << "\txori\t$2,$2,0x1" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
         if(*op == ">="){
             rel_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             shift_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tslt\t$2,$3,$2" << std::endl;
             out << "\txori\t$2,$2,0x1" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
     }
     else{
@@ -1501,127 +1624,199 @@ inline void ShiftExpr::print_asm(std::ofstream& out){
 if(shift_expr != NULL){
         if(*op == "<<"){
             shift_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }       
+                context.is_firststep = false;
+            }
             add_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }    
             out << "\tsll\t$2,$3,$2" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
         if(*op == ">>"){
             shift_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;    
+            }
             add_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tsra\t$2,$3,$2" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
-        
     }
     else{
         add_expr -> print_asm(out);
     }
-    
 }
 
 inline void AdditiveExpr::print_asm(std::ofstream& out){
 if(add_expr != NULL){
         if(*op == "+"){
             add_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             mul_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\taddu\t$2,$3,$2" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
         if(*op == "-"){
             add_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             mul_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+                out << "IM HERE BIJ" << std::endl;
+            }
             out << "\tsubu\t$2,$3,$2" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
     }
     else{
         mul_expr -> print_asm(out);
     }
-    
 }
-
 inline void MultiplicativeExpr::print_asm(std::ofstream& out){
 if(mul_expr != NULL){
         if(*op == "*"){
             mul_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
+            
             cast_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tmult\t$2,$3,$2" << std::endl;
             out << "\tmflo\t$2" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
         if(*op == "/"){
             int l2 = context.gen_label;
             context.gen_label++;
             mul_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             cast_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
             out << "\tdiv\t$0,$3,$2" << std::endl;
             out << "$L" << l2 << ":" << std::endl;
             out << "\tmfhi\t$2" << std::endl;
             out << "\tmflo\t$2" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
         if(*op == "%"){
             int l2 = context.gen_label;
             context.gen_label++;
             mul_expr -> print_asm(out);
-            Bindings temp = *context.solving_out;
-            out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            context.solving_out = NULL;
+            if(context.is_firststep == true){
+                if(context.solving_out != NULL){
+                    out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                    context.solving_out = NULL;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant << std::endl;
+                }
+                context.is_firststep = false;
+            }
             cast_expr -> print_asm(out);
-            out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            if(context.solving_out != NULL){
+                out << "\tlw\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out = NULL;
+            }
+            else{
+                out << "\tli\t$3," << context.solving_out_constant << std::endl;
+            }
             out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
             out << "\tdiv\t$0,$3,$2" << std::endl;
             out << "$L" << l2 << ":" << std::endl;
             out << "\tmflo\t$2" << std::endl;
             out << "\tmfhi\t$2" << std::endl;
-            //store
-            out << "\tsw\t$2," << temp.frame_offset << "($fp)" << std::endl;
         }
-        
-
     }
     else{
         cast_expr -> print_asm(out);
     }
-    
 }
 
 inline void CastExpr::print_asm(std::ofstream& out){
@@ -1657,6 +1852,7 @@ inline void Statement::print_asm(std::ofstream& out){
         context.is_solving = true;
         expr_state -> print_asm(out);
         context.is_solving = false;
+        context.is_firststep = true;
     }
     if(select_state != NULL){
         context.in_if = true;

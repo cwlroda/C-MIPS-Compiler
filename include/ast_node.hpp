@@ -42,7 +42,9 @@ struct Context{
     bool is_return = false;
     int returnNum = 0;
     bool is_solving = false;
+    bool is_firststep = true;
     Bindings* solving_out;
+    int solving_out_constant = 0;
 
     std::vector<std::string> GlobalVarPy; // stores global variables (for Python)
     std::unordered_map<std::string, Bindings*> GlobalVar; // stores global variables
