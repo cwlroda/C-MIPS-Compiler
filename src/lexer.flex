@@ -18,14 +18,12 @@ extern FILE *yyin;
 "unsigned"          { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return UNSIGNED; }
 "struct"            { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return STRUCT; }
 "enum"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return ENUM; }
-"..."               { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return ELLIPSIS; }
 "if"                { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return IF; }
 "else"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return ELSE; }
 "switch"            { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return SWITCH; }
 "case"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return CASE; }
 "default"           { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return DEFAULT; }
 "for"               { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return FOR; }
-"do"                { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return DO; }
 "while"             { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return WHILE; }
 "continue"          { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return CONTINUE; }
 "break"             { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return BREAK; }

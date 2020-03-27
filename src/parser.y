@@ -87,8 +87,8 @@
 %token EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
 %token BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
 %token CHAR INT FLOAT DOUBLE UNSIGNED TYPEDEF
-%token STRUCT ENUM ELLIPSIS
-%token IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
+%token STRUCT ENUM
+%token IF ELSE SWITCH CASE DEFAULT FOR WHILE CONTINUE BREAK RETURN
 %token LB RB LSB RSB LCB RCB COLON COMMA
 
 %type <str> IDENTIFIER CONSTANT STRING_LITERAL SIZEOF SEMICOLON
@@ -98,8 +98,8 @@
 %type <str> EQUAL PLUS MINUS ASTERISK DIV MOD TILDE LT GT OREQUAL XOREQUAL
 %type <str> BITWISE_OR AMPERSAND EXCLAMATION QUESTION XOR
 %type <str> CHAR INT FLOAT DOUBLE UNSIGNED TYPEDEF
-%type <str> STRUCT ENUM ELLIPSIS
-%type <str> IF ELSE SWITCH CASE DEFAULT FOR DO WHILE CONTINUE BREAK RETURN
+%type <str> STRUCT ENUM
+%type <str> IF ELSE SWITCH CASE DEFAULT FOR WHILE CONTINUE BREAK RETURN
 %type <str> LB RB LSB RSB LCB RCB COLON COMMA
 
 %type <trans_unit> TRANSLATION_UNIT
@@ -358,10 +358,9 @@ SELECTION_STATEMENT: IF LB EXPR RB STATEMENT                                    
                 |    IF LB EXPR RB STATEMENT ELSE STATEMENT                                     { $$ = new SelectionStatement($3, $5, $7, $1, $6, NULL); }
                 |    SWITCH LB EXPR RB STATEMENT                                                { $$ = new SelectionStatement($3, $5, NULL, NULL, NULL, $1); }
 
-ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT                                                 { $$ = new IterationStatement($3, $5, NULL, NULL, $1, NULL); }
-                |    DO STATEMENT WHILE LB EXPR RB SEMICOLON                                    { $$ = new IterationStatement($5, $2, NULL, NULL, $3, $1); }
-                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT                          { $$ = new IterationStatement(NULL, $6, $3, $4, $1, NULL); }
-                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT                     { $$ = new IterationStatement($5, $7, $3, $4, $1, NULL); }
+ITERATION_STATEMENT: WHILE LB EXPR RB STATEMENT                                                 { $$ = new IterationStatement($3, $5, NULL, NULL, $1); }
+                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT RB STATEMENT                          { $$ = new IterationStatement(NULL, $6, $3, $4, $1); }
+                |    FOR LB EXPR_STATEMENT EXPR_STATEMENT EXPR RB STATEMENT                     { $$ = new IterationStatement($5, $7, $3, $4, $1); }
 
 JUMP_STATEMENT: CONTINUE SEMICOLON                                                              { $$ = new JumpStatement($1, NULL); }
             |   BREAK SEMICOLON                                                                 { $$ = new JumpStatement($1, NULL); }

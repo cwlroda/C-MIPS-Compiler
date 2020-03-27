@@ -1072,15 +1072,13 @@ class IterationStatement{
             Statement *_state,
             ExprStatement *_for_first,
             ExprStatement *_for_second,
-            std::string *_type,
-            std::string *_add_type
+            std::string *_type
         ):
             expr(_expr),
             state(_state),
             for_first(_for_first),
             for_second(_for_second),
-            type(_type),
-            add_type(_add_type)
+            type(_type)
         {}
         ~IterationStatement(){}
 
@@ -1094,7 +1092,6 @@ class IterationStatement{
         ExprStatement *for_first;
         ExprStatement *for_second;
         std::string *type;
-        std::string *add_type;
 };
 
 class JumpStatement{
