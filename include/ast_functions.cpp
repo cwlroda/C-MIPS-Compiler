@@ -878,6 +878,7 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tnop" << std::endl;
 
     context.frame_offset_counter = 8;
+    context.stack_offset = 0;
 }
 
 inline void CompoundStatement::alloc_mem(std::vector<int>& mv){
@@ -1162,9 +1163,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         }
 
         Bindings* result_bindings = context.LocalVar[result_var];
-        std::cout << "test1" << std::endl;
         out << "\tsw\t\t$2," << result_bindings->frame_offset << "($fp)" << std::endl;
-        std::cout << "test2" << std::endl;
     }
 }
 
@@ -1188,15 +1187,23 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
     if(pri_expr != NULL){
         pri_expr->print_asm(out);
     }
-
-    if(post_expr != NULL){
+    if(post_expr != NULL && pri_expr == NULL && op == NULL && iden == NULL){
+        context.function_call = 1;
+        post_expr -> print_asm(out);
+        if(arg_expr_list != NULL){
+            arg_expr_list -> print_asm(out);
+        }
+        out << "\tjal\t"<< context.function_name << std::endl;
+        out << "\tnop" << std::endl;
+        context.function_name = "";
+        context.function_call = 0;
+    }
+    else if(post_expr != NULL){
         post_expr -> print_asm(out);
     }
     if(op != NULL){
 
         if(*op == "++"){
-            
-        std::cout << "test3" << std::endl;
             post_expr->print_asm(out);
             out << "\tlw\t$2," << context.solving_out[context.solving_out.size()-1]->frame_offset << "($fp)" << std::endl;
             out << "\tnop" << std::endl;
@@ -1213,25 +1220,27 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
             context.solving_out.pop_back();
         }
     }
-    // if(*op == "++"){
-    //    std::cout << "it came here" << std::endl;
-    //     out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-    //     out << "\tnop" << std::endl;
-    //     out << "\taddiu\t$2,$2,1"<<std::endl;
-    //     out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-    //     context.solving_out.pop_back();
-    // }
-    // if(*op == "--"){
-    //     out << "\tlw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-    //     out << "\tnop" << std::endl;
-    //     out << "\taddiu\t$2,$2,-1"<<std::endl;
-    //     out << "\tsw\t$2," << context.solving_out->frame_offset << "($fp)" << std::endl;
-    //     context.solving_out.pop_back();
-    // }
+    
+}
 
-    // if(op != NULL){
-    //     context.is_solving = false;
-    // }
+inline void ArgumentExprList::print_asm(std::ofstream& out){
+    if(arg_expr_list != NULL){
+        context.function_call++;
+        arg_expr_list -> print_asm(out);
+    }
+    context.is_solving = true;
+    ass_expr -> print_asm(out);
+    context.is_solving = false;
+    if(context.function_call > 4){
+        out << "\tsw\t$2," << 16+(8*context.stack_offset) << "($sp)" << std::endl;
+        context.stack_offset++;
+        context.function_call--;
+    }
+    else if (context.function_call <= 4){
+        out << context.function_call <<std::endl;
+        out << "\tmove\t$" << 3+context.function_call <<",$2" << std::endl;
+        context.function_call--;
+    }
 }
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){
@@ -1256,6 +1265,9 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         if(context.is_solving == true || context.is_cond){
             context.solving_out.push_back(context.LocalVar[*iden]);
             context.solving_out_constant.push_back("");
+        }
+        if(context.function_call > 0){
+            context.function_name = *iden;
         }
     }
 }

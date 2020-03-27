@@ -46,7 +46,9 @@ struct Context{
     bool is_firststep = true;
     std::vector<std::string> solving_out_constant;
     std::vector<Bindings*> solving_out; 
-
+    int stack_offset = 0;
+    int function_call = 0;
+    std::string function_name;
     std::vector<std::string> GlobalVarPy; // stores global variables (for Python)
     std::unordered_map<std::string, Bindings*> GlobalVar; // stores global variables
     std::unordered_map<std::string, Bindings*> LocalVar; // stores local variables
