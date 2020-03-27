@@ -1257,6 +1257,10 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
             context.solving_out.push_back(context.LocalVar[*iden]);
             context.solving_out_constant.push_back("");
         }
+
+        if(context.is_return){
+            context.return_var = true;
+        }
     }
 }
 
@@ -1983,25 +1987,62 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl << std::endl;
     }
 
-    if(for_first != NULL){
-        for_first -> print_asm(out);
-    }
-    if(for_second != NULL){
-        for_second -> print_asm(out);
+    else if(*type == "for"){
+        if(for_first != NULL){
+            for_first -> print_asm(out);
+        }
+
+        std::string second_state = "$L" + std::to_string(context.gen_label);
+        context.gen_label++;
+        std::string for_body = "$L" + std::to_string(context.gen_label);
+        context.gen_label++;
+
+        out << "\tb\t\t" << second_state << std::endl;
+        out << "\tnop" << std::endl << std::endl;
+
+        out << for_body << ":" << std::endl;
+
+        if(state != NULL){
+            state->print_asm(out);
+        }
+
+        if(expr != NULL){
+            expr->print_asm(out);
+        }
+
+        out << second_state << ":" << std::endl;
+
+        if(for_second != NULL){
+            for_second -> print_asm(out);
+        }
+
+        out << "\tbne\t\t$2,$0," << for_body << std::endl;
+        out << "\tnop" << std::endl << std::endl;
     }
 }
 
 inline void JumpStatement::print_asm(std::ofstream& out){
     if(*type == "return"){
         context.is_return = true;
-        expr -> print_asm(out);
-        if(context.returnNum != 0){
-            out << "\tli\t\t$2," << context.returnNum << std::endl;
+
+        if(expr != NULL){
+            context.is_cond = true;
+            expr -> print_asm(out);
+            context.is_cond = false;
         }
-        else{
-            out << "\tmove\t\t$2,$0" << std::endl;
+
+        if(!context.return_var){
+            if(context.returnNum != 0){
+                out << "\tli\t\t$2," << context.returnNum << std::endl;
+            }
+
+            else{
+                out << "\tmove\t\t$2,$0" << std::endl;
+            }
         }
+
         context.is_return = false;
+        context.return_var = false;
         context.returnNum = 0;
 
         out << "\tj\t\t$" << context.FuncName << "END" << std::endl;
