@@ -22,6 +22,7 @@ struct Context{
     bool is_init = false; // check if function/variable is initialised
     bool in_while = false; // check if entering while loop
     bool in_if = false; // check if in if-else body
+    bool is_cond = false; // check if expression is a condition
     bool main_func = false; // check for main function
     bool func_param = false; // check if function has parameters
     bool var_param = false; // check if variable has parameters

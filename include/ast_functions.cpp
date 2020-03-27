@@ -1142,7 +1142,12 @@ inline void InitializerList::print_asm(std::ofstream& out){
 
 inline void AssignmentExpr::print_asm(std::ofstream& out){
     if(cond_expr != NULL){
+        if(context.in_if || context.in_while){
+            context.is_cond = true;
+        }
+
         cond_expr->print_asm(out);
+        context.is_cond = false;
     }
 
     else{
@@ -1272,8 +1277,6 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
         context.gen_label++;
         int l4 = context.gen_label;
         context.gen_label++;
-        
-        
 
         log_or_expr -> print_asm(out);
         if(context.is_firststep == true){
@@ -1287,7 +1290,7 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
             }
             context.is_firststep = false;
         }
-        
+
         out << "\tbne\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
         context.solving_out = NULL;
@@ -1514,7 +1517,7 @@ inline void EqualityExpr::print_asm(std::ofstream& out){
 
 
 inline void RelationalExpr::print_asm(std::ofstream& out){
- if(rel_expr != NULL){
+    if(rel_expr != NULL){
         if(*op == "<"){
             rel_expr -> print_asm(out);
             if(context.is_firststep == true){
@@ -1860,7 +1863,9 @@ inline void Statement::print_asm(std::ofstream& out){
         context.in_if = false;
     }
     if(it_state != NULL){
+        context.in_while = true;
         it_state -> print_asm(out);
+        context.in_while = false;
     }
     if(jump_state != NULL){
         jump_state -> print_asm(out);
@@ -1882,7 +1887,6 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
         expr->print_asm(out);
     }
 
-    
     std::string if_return = "$L" + std::to_string(context.gen_label);
     std::string else_label = if_return;
 
@@ -1912,19 +1916,36 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
 }
 
 inline void IterationStatement::print_asm(std::ofstream& out){
-    if(expr != NULL){
-        expr -> print_asm(out);
+    if(*type == "while"){
+        std::string while_body = "$L" + std::to_string(context.gen_label);
+        context.gen_label++;
+        std::string while_cond = "$L" + std::to_string(context.gen_label);
+        context.gen_label++;
+
+        out << "\tb\t\t" << while_cond << std::endl;
+        out << "\tnop" << std::endl << std::endl;
+
+        out << while_body << ":" << std::endl;
+
+        if(state != NULL){
+            state -> print_asm(out);
+        }
+
+        out << while_cond << ":" << std::endl;
+
+        if(expr != NULL){
+            expr -> print_asm(out);
+        }
+
+        out << "\tbeq\t\t$2,$0," << while_body << std::endl;
+        out << "\tnop" << std::endl << std::endl;
     }
-    state -> print_asm(out);
+
     if(for_first != NULL){
         for_first -> print_asm(out);
     }
     if(for_second != NULL){
         for_second -> print_asm(out);
-    }
-    //DO SOMETHING ABOUT TYPE
-    if(add_type != NULL){
-        //DO SOMETHING ABOUT ADD_TYPE
     }
 }
 
