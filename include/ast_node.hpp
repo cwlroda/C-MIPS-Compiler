@@ -15,6 +15,7 @@ struct Bindings{
 
     bool is_pointer = false;
     bool is_init = false;
+    bool is_arr = false;
 };
 
 struct Context{
@@ -29,6 +30,7 @@ struct Context{
     bool elif_block = false; // check for more else-if blocks
     //bool func_decl = false; // check if it is a function declaration or a global variable
     bool is_GlobalVar = false; // check if it is a global variable
+
     std::string what_typeSpec = "0";
     std::string var_iden = "0";
     std::string FuncName = "0";
@@ -56,7 +58,15 @@ struct Context{
     std::vector<std::string> break_number;
     //std::vector<bool> firststepchecker;
     int gen_label = 1;
-    bool return_are_u_single = true; 
+    bool return_are_u_single = true;
+
+    bool is_array = false; // check if it is an array
+    bool store_arr_vals = false; // check if array is initialised
+    int arr_size = 0;
+    std::vector<std::string> arr_vals;
+    bool arr_access = false;
+    std::string arr_name;
+    int arr_index = -1;
 };
 
 // Declarations

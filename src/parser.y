@@ -203,7 +203,6 @@ INIT_DECLARATOR: DECLARATOR                                                     
 
 INITIALIZER: ASSIGNMENT_EXPR                                                                    { $$ = new Initializer($1, NULL); }
         |    LCB INITIALIZER_LIST RCB                                                           { $$ = new Initializer(NULL, $2); }
-        |    LCB INITIALIZER_LIST COMMA RCB                                                     { $$ = new Initializer(NULL, $2); }
 
 INITIALIZER_LIST: INITIALIZER                                                                   { $$ = new InitializerList($1, NULL); }
                 | INITIALIZER_LIST COMMA INITIALIZER                                            { $$ = new InitializerList($3, $1); }
@@ -213,8 +212,7 @@ DECLARATOR: POINTER DIRECT_DECLARATOR                                           
 
 DIRECT_DECLARATOR: IDENTIFIER                                                                   { $$ = new DirectDeclarator(NULL, NULL, NULL, NULL, $1, NULL); }
                 |  LB DECLARATOR RB                                                             { $$ = new DirectDeclarator($2, NULL, NULL, NULL, NULL, NULL); }
-                |  DIRECT_DECLARATOR LSB CONSTANT_EXPR RSB                                      { $$ = new DirectDeclarator(NULL, $1, $3, NULL, NULL, NULL); }
-                |  DIRECT_DECLARATOR LSB RSB                                                    { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, $2); }
+                |  DIRECT_DECLARATOR LSB CONSTANT RSB                                           { $$ = new DirectDeclarator(NULL, $1, $3, NULL, NULL, $2); }
                 |  DIRECT_DECLARATOR LB PARAMETER_LIST RB                                       { $$ = new DirectDeclarator(NULL, $1, NULL, $3, NULL, NULL); }
                 |  DIRECT_DECLARATOR LB RB                                                      { $$ = new DirectDeclarator(NULL, $1, NULL, NULL, NULL, NULL); }
 

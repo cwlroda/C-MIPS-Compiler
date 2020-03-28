@@ -230,14 +230,14 @@ class DirectDeclarator{
         DirectDeclarator(
             Declarator *_declr,
             DirectDeclarator *_dir_declr,
-            ConstantExpr *_const_expr,
+            std::string *_constant,
             ParameterList *_param_list,
             std::string *_iden,
             std::string *_brac_type
         ):
             declr(_declr),
             dir_declr(_dir_declr),
-            const_expr(_const_expr),
+            constant(_constant),
             param_list(_param_list),
             iden(_iden),
             brac_type(_brac_type)
@@ -251,7 +251,7 @@ class DirectDeclarator{
     private:
         Declarator *declr;
         DirectDeclarator *dir_declr;
-        ConstantExpr *const_expr;
+        std::string *constant;
         ParameterList *param_list;
         std::string *iden;
         std::string *brac_type;
