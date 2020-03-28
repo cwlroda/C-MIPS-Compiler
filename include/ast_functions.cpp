@@ -1156,7 +1156,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             un_expr->print_asm(out);
         }
 
-        std::string result_var = context.var_iden;
+        int result_var = context.solving_out.back()->frame_offset;
 
         if(ass_expr != NULL){
             ass_expr->print_asm(out);
@@ -1165,6 +1165,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             if(context.solving_out_constant.back() == ""){
                 out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
                 out << "\tnop" << std::endl;
             }
             else{
@@ -1174,8 +1175,9 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             context.is_firststep = false;
         }
 
-        Bindings* result_bindings = context.LocalVar[result_var];
-        out << "\tsw\t\t$2," << result_bindings->frame_offset << "($fp)" << std::endl;
+        
+        out << "\tsw\t\t$2," << result_var << "($fp)" << std::endl;
+
     }
 }
 
@@ -1643,7 +1645,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
                 context.solving_out_constant.pop_back();
             }
-            out << "\tslt\t$2,$2,$3" << std::endl;
+            out << "\tslt\t$2,$3,$2" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
         }
         if(*op == "<="){
@@ -1701,7 +1703,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
                 context.solving_out_constant.pop_back();
             }
-            out << "\tslt\t$2,$2,$3" << std::endl;
+            out << "\tslt\t$2,$3,$2" << std::endl;
             out << "\txori\t$2,$2,0x1" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
         }
@@ -1865,7 +1867,7 @@ inline void MultiplicativeExpr::print_asm(std::ofstream& out){
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
                 context.solving_out_constant.pop_back();
             }
-            out << "\tmult\t$2,$2,$3" << std::endl;
+            out << "\tmul\t$2,$2,$3" << std::endl;
             out << "\tmflo\t$2" << std::endl;
         }
         if(*op == "/"){
@@ -1970,10 +1972,11 @@ inline void Statement::print_asm(std::ofstream& out){
         comp_state -> print_asm(out);
     }
     if(expr_state != NULL){
+        context.is_firststep = true;
         context.is_solving = true;
         expr_state -> print_asm(out);
         context.is_solving = false;
-        context.is_firststep = true; // potential problem
+        
     }
     if(select_state != NULL){
         context.in_if = true;
@@ -2016,7 +2019,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
     context.gen_label++;
 
     //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-    out << "\tbeq\t\t$3,$0," << else_label << std::endl;
+    out << "\tbeq\t\t$2,$0," << else_label << std::endl;
     out << "\tnop" << std::endl;
     bool firststepchecker = false;
     if(context.is_firststep == false){
@@ -2035,8 +2038,17 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
 
     if(else_state != NULL){
         out << else_label << ":" << std::endl;
+        bool firststepchecker = false;
+        if(context.is_firststep == false){
+            context.is_firststep = true;
+            firststepchecker = true;
+        }
         context.gen_label++;
         else_state->print_asm(out);
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
+        }
     }
 
     out << if_return << ":" << std::endl;
@@ -2054,18 +2066,26 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl << std::endl;
         
         out << while_body << ":" << std::endl;
-        
-        
-        if(state != NULL){
-            state -> print_asm(out);
+        bool firststepchecker = false;
+        if(context.is_firststep == false){
+            context.is_firststep = true;
+            firststepchecker = true;
         }
-        
+        if(state != NULL){
+            context.is_solving = true;
+            state -> print_asm(out);
+            context.is_solving = false;
+        }
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
+        }
 
         out << while_cond << "CONT:" << std::endl;
         out << "\tnop" << std::endl;
         out << while_cond << ":" << std::endl;
 
-        bool firststepchecker = false;
+        firststepchecker = false;
         if(context.is_firststep == false){
             context.is_firststep = true;
             firststepchecker = true;
@@ -2114,16 +2134,43 @@ inline void IterationStatement::print_asm(std::ofstream& out){
 
         out << for_body << ":" << std::endl;
 
+        context.is_solving = true;
+        bool firststepchecker = false;
+        if(context.is_firststep == false){
+        context.is_firststep = true;
+        firststepchecker = true;
+        }
         if(state != NULL){
             state->print_asm(out);
         }
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
+        }
+        context.is_solving = false;
+
+        
+        
         out << for_body << "CONT:" << std::endl;
+
+        context.is_solving = true;
+        firststepchecker = false;
+        if(context.is_firststep == false){
+            context.is_firststep = true;
+            firststepchecker = true;
+        }
         if(expr != NULL){
             expr->print_asm(out);
         }
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
+        }
+        context.is_solving = false;
+
 
         out << second_state << ":" << std::endl;
-        bool firststepchecker = false;
+         firststepchecker = false;
         if(context.is_firststep == false){
             context.is_firststep = true;
             firststepchecker = true;

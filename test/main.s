@@ -6,6 +6,16 @@
 	.module nooddspreg
 	.abicalls
 
+
+	.data
+	.globl	x
+	.align	2
+	.type	x, @object
+	.size	x, 4
+x:
+	.word	0
+
+
 	.text
 	.align	2
 	.globl	f
@@ -21,13 +31,3 @@ f:
 
 	li		$2,0
 	sw		$2,8($fp)
-	li		$2,10
-	b		$fEND
-$fEND:
-	move	$sp,$fp
-	lw		$31,20($sp)
-	lw		$fp,16($sp)
-	addiu	$sp,$sp,24
-	j		$31
-	nop
-
