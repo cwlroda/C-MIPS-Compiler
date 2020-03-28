@@ -1162,6 +1162,19 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             ass_expr->print_asm(out);
         }
 
+        if(context.is_firststep == true || context.is_cond){
+            if(context.solving_out_constant[context.solving_out_constant.size()-1] == ""){
+                out << "\tlw\t$2," << context.solving_out[context.solving_out.size()-1]->frame_offset << "($fp)" << std::endl;
+                context.solving_out.pop_back();
+                out << "\tnop" << std::endl;
+            }
+            else{
+                out << "\tli\t$2," << context.solving_out_constant[context.solving_out_constant.size()-1] << std::endl;
+                context.solving_out_constant.pop_back();
+            }
+            context.is_firststep = false;
+        }
+
         Bindings* result_bindings = context.LocalVar[result_var];
         out << "\tsw\t\t$2," << result_bindings->frame_offset << "($fp)" << std::endl;
     }
