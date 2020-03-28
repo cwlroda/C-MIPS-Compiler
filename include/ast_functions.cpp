@@ -1956,8 +1956,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
     context.gen_label++;
 
     //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-    out << "\tli\t\t$2," /* << value of expr */ << std::endl;
-    out << "\tbne\t\t$3,$2," << else_label << std::endl;
+    out << "\tbeq\t\t$3,$0," << else_label << std::endl;
     out << "\tnop" << std::endl;
 
     if_state->print_asm(out);
@@ -1978,29 +1977,25 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         std::string while_body = "$L" + std::to_string(context.gen_label);
         context.gen_label++;
         std::string while_cond = "$L" + std::to_string(context.gen_label);
-        context.break_number.push_back(std::to_string(context.gen_label));
-        std::string temp = context.break_number.back();
         context.gen_label++;
+
         out << "\tb\t\t" << while_cond << std::endl;
         out << "\tnop" << std::endl << std::endl;
 
         out << while_body << ":" << std::endl;
-        
+
         if(state != NULL){
             state -> print_asm(out);
         }
 
         out << while_cond << ":" << std::endl;
-        out << while_cond << "CONT" << std::endl;
 
         if(expr != NULL){
             expr -> print_asm(out);
         }
 
         out << "\tbne\t\t$2,$0," << while_body << std::endl;
-        out << "\tnop" << std::endl;
-        out << "$L" << temp << "END:" << std::endl;
-        context.break_number.pop_back();
+        out << "\tnop" << std::endl << std::endl;
     }
 
     else if(*type == "for"){
@@ -2011,8 +2006,6 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         std::string second_state = "$L" + std::to_string(context.gen_label);
         context.gen_label++;
         std::string for_body = "$L" + std::to_string(context.gen_label);
-        context.break_number.push_back(std::to_string(context.gen_label));
-        std::string temp = context.break_number.back();
         context.gen_label++;
 
         out << "\tb\t\t" << second_state << std::endl;
@@ -2023,7 +2016,7 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         if(state != NULL){
             state->print_asm(out);
         }
-        out << "$L" << temp << "CONT:" << std::endl;
+
         if(expr != NULL){
             expr->print_asm(out);
         }
@@ -2036,8 +2029,6 @@ inline void IterationStatement::print_asm(std::ofstream& out){
 
         out << "\tbne\t\t$2,$0," << for_body << std::endl;
         out << "\tnop" << std::endl << std::endl;
-        out << "$L" << temp << "END:" << std::endl;
-        context.break_number.pop_back();
     }
 }
 
@@ -2066,12 +2057,6 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         context.returnNum = 0;
 
         out << "\tj\t\t$" << context.FuncName << "END" << std::endl;
-    }
-    if(*type == "break"){
-        out << "\tj\t$L" << context.break_number.back() << "END" << std::endl;
-    }
-    if(*type == "continue"){
-        out << "\tj\tL" << context.break_number.back() << "CONT:"<< std::endl;
     }
     //DO SOMETHING ABOUT TYPE
 }
