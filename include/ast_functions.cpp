@@ -2002,14 +2002,14 @@ inline void IterationStatement::print_asm(std::ofstream& out){
 
         out << "\tb\t\t" << while_cond << std::endl;
         out << "\tnop" << std::endl << std::endl;
-        out << "\t$L" << while_cond << "CONT:" << std::endl;
-        out << "\tnop" << std::endl;
+        
         out << while_body << ":" << std::endl;
 
         if(state != NULL){
             state -> print_asm(out);
         }
-
+        out << while_cond << "CONT:" << std::endl;
+        out << "\tnop" << std::endl;
         out << while_cond << ":" << std::endl;
 
         if(expr != NULL){
