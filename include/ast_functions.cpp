@@ -1284,6 +1284,7 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         }
         if(context.is_return){
             context.return_var = true;
+            
         }
     }
 }
@@ -1298,15 +1299,14 @@ inline void ConditionalExpr::print_asm(std::ofstream& out){
 }
 
 inline void LogicalOrExpr::print_asm(std::ofstream& out){
-
     if(log_or_expr != NULL){
+        context.return_are_u_single = false; 
         int l2 = context.gen_label;
         context.gen_label++;
         int l3 = context.gen_label;
         context.gen_label++;
         int l4 = context.gen_label;
         context.gen_label++;
-
         log_or_expr -> print_asm(out);
 
         if(context.is_firststep == true || context.is_cond){
@@ -1355,7 +1355,7 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
 
 inline void LogicalAndExpr::print_asm(std::ofstream& out){
     if(log_and_expr != NULL){
-        
+        context.return_are_u_single = false; 
         int l2 = context.gen_label;
         context.gen_label++;
         int l3 = context.gen_label;
@@ -1406,6 +1406,7 @@ inline void LogicalAndExpr::print_asm(std::ofstream& out){
 
 inline void InclusiveOrExpr::print_asm(std::ofstream& out){
     if(incl_or_expr != NULL){
+        context.return_are_u_single = false; 
         incl_or_expr -> print_asm(out);
         if(context.is_firststep == true){
             if(context.solving_out_constant.back() == ""){
@@ -1441,6 +1442,7 @@ inline void InclusiveOrExpr::print_asm(std::ofstream& out){
 
 inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
     if(excl_or_expr != NULL){
+        context.return_are_u_single = false; 
         excl_or_expr -> print_asm(out);
         if(context.is_firststep == true){
             if(context.solving_out_constant.back() == ""){
@@ -1475,6 +1477,7 @@ inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
 
 inline void AndExpr::print_asm(std::ofstream& out){
     if(and_expr != NULL){
+        context.return_are_u_single = false; 
         and_expr -> print_asm(out);
         if(context.is_firststep == true){
             if(context.solving_out_constant.back() == ""){
@@ -1510,6 +1513,7 @@ inline void AndExpr::print_asm(std::ofstream& out){
 
 inline void EqualityExpr::print_asm(std::ofstream& out){
     if(equal_expr != NULL){
+        context.return_are_u_single = false; 
         if(*op == "=="){
             equal_expr -> print_asm(out);
             if(context.is_firststep == true ){
@@ -1584,6 +1588,7 @@ inline void EqualityExpr::print_asm(std::ofstream& out){
 
 inline void RelationalExpr::print_asm(std::ofstream& out){
     if(rel_expr != NULL){
+        context.return_are_u_single = false; 
         if(*op == "<"){
             rel_expr -> print_asm(out);
             if(context.is_firststep == true){
@@ -1707,7 +1712,8 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
     
 }
 inline void ShiftExpr::print_asm(std::ofstream& out){
-if(shift_expr != NULL){
+    if(shift_expr != NULL){
+        context.return_are_u_single = false; 
         if(*op == "<<"){
             shift_expr -> print_asm(out);
             if(context.is_firststep == true){
@@ -1769,7 +1775,8 @@ if(shift_expr != NULL){
 }
 
 inline void AdditiveExpr::print_asm(std::ofstream& out){
-if(add_expr != NULL){
+    if(add_expr != NULL){
+        context.return_are_u_single = false;
         if(*op == "+"){
             add_expr -> print_asm(out);
             if(context.is_firststep == true){
@@ -1830,7 +1837,8 @@ if(add_expr != NULL){
     }
 }
 inline void MultiplicativeExpr::print_asm(std::ofstream& out){
-if(mul_expr != NULL){
+    if(mul_expr != NULL){
+        context.return_are_u_single = false; 
         if(*op == "*"){
             mul_expr -> print_asm(out);
             if(context.is_firststep == true){
@@ -2081,7 +2089,18 @@ inline void IterationStatement::print_asm(std::ofstream& out){
 
     else if(*type == "for"){
         if(for_first != NULL){
+            context.is_solving = true;
+            bool firststepchecker = false;
+            if(context.is_firststep == false){
+            context.is_firststep = true;
+            firststepchecker = true;
+            }
             for_first -> print_asm(out);
+            if(firststepchecker == true){
+                context.is_firststep = false;
+                firststepchecker = false;
+            }
+            context.is_solving = false;
         }
 
         std::string second_state = "$L" + std::to_string(context.gen_label);
@@ -2129,23 +2148,31 @@ inline void IterationStatement::print_asm(std::ofstream& out){
 inline void JumpStatement::print_asm(std::ofstream& out){
     if(*type == "return"){
         context.is_return = true;
-
+        context.return_are_u_single = true;
         if(expr != NULL){
             context.is_cond = true;
             expr -> print_asm(out);
             context.is_cond = false;
-        }
-
-        if(!context.return_var){
-            if(context.returnNum != 0){
-                out << "\tli\t\t$2," << context.returnNum << std::endl;
+            if(context.return_are_u_single && context.return_var){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
+            
+            else if(!context.return_var){
+                if(context.returnNum != 0){
+                    out << "\tli\t\t$2," << context.returnNum << std::endl;
+                }
 
-            else{
-                out << "\tmove\t\t$2,$0" << std::endl;
+                else{
+                    out << "\tmove\t\t$2,$0" << std::endl;
+                }
             }
         }
-
+        
+        
+        context.return_are_u_single = true;
         context.is_return = false;
         context.return_var = false;
         context.returnNum = 0;

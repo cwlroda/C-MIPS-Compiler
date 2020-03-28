@@ -56,6 +56,7 @@ struct Context{
     std::vector<std::string> break_number;
     //std::vector<bool> firststepchecker;
     int gen_label = 1;
+    bool return_are_u_single = true; 
 };
 
 // Declarations
