@@ -1971,8 +1971,17 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
     //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
     out << "\tbeq\t\t$3,$0," << else_label << std::endl;
     out << "\tnop" << std::endl;
+    bool firststepchecker = 0;
+    if(context.is_firststep == 0){
+        context.is_firststep = 1;
+        firststepchecker = 1;
+    }
 
     if_state->print_asm(out);
+    if(firststepchecker == 1){
+        context.is_firststep = 0;
+    }
+    firststepchecker = 0;
     out << "\tb\t\t" << if_return << std::endl;
     out << "\tnop" << std::endl;
 
@@ -1995,7 +2004,8 @@ inline void IterationStatement::print_asm(std::ofstream& out){
 
         out << "\tb\t\t" << while_cond << std::endl;
         out << "\tnop" << std::endl << std::endl;
-
+        out << "\t$L" << while_cond << "CONT:" << std::endl;
+        out << "\tnop" << std::endl;
         out << while_body << ":" << std::endl;
 
         if(state != NULL){
@@ -2022,6 +2032,7 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         std::string second_state = "$L" + std::to_string(context.gen_label);
         context.gen_label++;
         std::string for_body = "$L" + std::to_string(context.gen_label);
+        context.break_number.push_back(for_body);
         context.gen_label++;
 
         out << "\tb\t\t" << second_state << std::endl;
@@ -2032,7 +2043,7 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         if(state != NULL){
             state->print_asm(out);
         }
-
+        out << for_body << "CONT:" << std::endl;
         if(expr != NULL){
             expr->print_asm(out);
         }
@@ -2044,7 +2055,10 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         }
 
         out << "\tbne\t\t$2,$0," << for_body << std::endl;
-        out << "\tnop" << std::endl << std::endl;
+        out << "\tnop" << std::endl;
+        out << for_body << "END:" << std::endl;
+        out << "\tnop" << std::endl;
+        context.break_number.pop_back();
     }
 }
 
@@ -2079,7 +2093,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl;
     }
     if(*type == "continue"){
-        out << "\tj\t\t" << context.break_number.back() << std::endl;
+        out << "\tj\t\t" << context.break_number.back() << "CONT" << std::endl;
     }
     //DO SOMETHING ABOUT TYPE
 }

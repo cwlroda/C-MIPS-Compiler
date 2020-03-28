@@ -1,8 +1,9 @@
 
 int main(){
     int x;
-    for(x=1; x<5; x++){
-        x = 100;
+    if(x+1 < 4){
+        if(x < 333){
+            return 10;
+        }
     }
 }
-

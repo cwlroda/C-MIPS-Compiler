@@ -21,24 +21,28 @@ main:
 
 	li		$2,0
 	sw		$2,8($fp)
-	sw		$2,8($fp)
-	b		$L1
-	nop
-
-$L2:
-	sw		$2,8($fp)
 	lw	$2,8($fp)
-	nop
-	addiu	$2,$2,1
-	sw	$2,8($fp)
-$L1:
-	lw	$2,8($fp)
-	li	$3,5
+	li	$3,1
+	addu	$2,$3,$2
+	li	$3,4
 	slt	$2,$3,$2
 	andi	$2,$2,0x00ff
-	bne		$2,$0,$L2
+	beq		$3,$0,$L1
 	nop
-
+	lw	$2,8($fp)
+	li	$3,333
+	slt	$2,$3,$2
+	andi	$2,$2,0x00ff
+	beq		$3,$0,$L2
+	nop
+	li		$2,10
+	j		$mainEND
+	b		$L2
+	nop
+$L2:
+	b		$L1
+	nop
+$L1:
 $mainEND:
 	move	$sp,$fp
 	lw		$31,20($sp)
