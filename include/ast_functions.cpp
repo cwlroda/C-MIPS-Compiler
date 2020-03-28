@@ -1977,6 +1977,7 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         std::string while_body = "$L" + std::to_string(context.gen_label);
         context.gen_label++;
         std::string while_cond = "$L" + std::to_string(context.gen_label);
+        context.break_number.push_back(while_cond);
         context.gen_label++;
 
         out << "\tb\t\t" << while_cond << std::endl;
@@ -1995,7 +1996,9 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         }
 
         out << "\tbne\t\t$2,$0," << while_body << std::endl;
-        out << "\tnop" << std::endl << std::endl;
+        out << "\tnop" << std::endl;
+        out << while_cond << "END:" << std::endl;
+        context.break_number.pop_back();
     }
 
     else if(*type == "for"){
@@ -2057,6 +2060,13 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         context.returnNum = 0;
 
         out << "\tj\t\t$" << context.FuncName << "END" << std::endl;
+    }
+    if(*type == "break"){
+        out << "\tj\t\t" << context.break_number.back() << "END" << std::endl;
+        out << "\tnop" << std::endl;
+    }
+    if(*type == "continue"){
+        out << "\tj\t\t" << context.break_number.back() << std::endl;
     }
     //DO SOMETHING ABOUT TYPE
 }
