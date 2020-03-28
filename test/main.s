@@ -40,7 +40,7 @@ main:
 	sw		$fp,16($sp)
 	move	$fp,$sp
 
-	li		$2,0
+	li		$2,100
 	sw		$2,8($fp)
 	b		$L2
 	nop
@@ -57,7 +57,7 @@ $L1:
 	andi	$2,$2,0x00ff
 	beq		$3,$0,$L3
 	nop
-	j		$L2END
+	b		$L2END
 	nop
 	b		$L3
 	nop
@@ -73,19 +73,21 @@ $L5:
 	andi	$2,$2,0x00ff
 	beq		$3,$0,$L6
 	nop
-	j		$L5CONT
+	b		$L5CONT
 	b		$L7
 	nop
 $L6:
-	j		$L5END
+	b		$L5END
 	nop
 $L7:
 $L5CONT:
 	li	$3,999999
 	addu	$2,$2,$3
 $L4:
-	li	$3,5
-	slt	$2,$2,$3
+	lw	$2,8($fp)
+	li	$3,5586
+	xor	$2,$2,$3
+	sltu	$2,$2,1
 	andi	$2,$2,0x00ff
 	bne		$2,$0,$L5
 	nop
@@ -97,15 +99,15 @@ $L5END:
 	andi	$2,$2,0x00ff
 	beq		$3,$0,$L9
 	nop
-	j		$L2CONT
+	b		$L2CONT
 	b		$L9
 	nop
 $L9:
 $L2CONT:
 	nop
 $L2:
-	lw	$3,8($fp)
-	nop
+	lw	$2,8($fp)
+	li	$3,406723
 	xor	$2,$2,$3
 	sltu	$2,$2,1
 	andi	$2,$2,0x00ff

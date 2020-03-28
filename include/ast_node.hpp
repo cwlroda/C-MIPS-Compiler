@@ -54,6 +54,7 @@ struct Context{
     std::unordered_map<std::string, Bindings*> GlobalVar; // stores global variables
     std::unordered_map<std::string, Bindings*> LocalVar; // stores local variables
     std::vector<std::string> break_number;
+    //std::vector<bool> firststepchecker;
     int gen_label = 1;
 };
 

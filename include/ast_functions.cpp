@@ -1161,7 +1161,6 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         if(ass_expr != NULL){
             ass_expr->print_asm(out);
         }
-
         if(context.is_firststep == true || context.is_cond){
             if(context.solving_out_constant.back() == ""){
                 out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
@@ -1315,6 +1314,7 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
                 out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 context.solving_out.pop_back();
                 out << "\tnop" << std::endl;
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1330,6 +1330,7 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
             out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             context.solving_out.pop_back();
             out << "\tnop" << std::endl;
+            context.solving_out_constant.pop_back();
         }
         else{
             out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1366,6 +1367,7 @@ inline void LogicalAndExpr::print_asm(std::ofstream& out){
                 out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1383,6 +1385,7 @@ inline void LogicalAndExpr::print_asm(std::ofstream& out){
             out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             out << "\tnop" << std::endl;
             context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
         }
         else{
             out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1408,6 +1411,7 @@ inline void InclusiveOrExpr::print_asm(std::ofstream& out){
             if(context.solving_out_constant.back() == ""){
                 out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1420,6 +1424,7 @@ inline void InclusiveOrExpr::print_asm(std::ofstream& out){
         if(context.solving_out_constant.back() == ""){
             out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
         }
         else{
             out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1441,6 +1446,7 @@ inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
             if(context.solving_out_constant.back() == ""){
                 out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1452,6 +1458,7 @@ inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
         if(context.solving_out_constant.back() == ""){
             out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
             out << "\tnop" << std::endl;
         }
         else{
@@ -1473,6 +1480,7 @@ inline void AndExpr::print_asm(std::ofstream& out){
             if(context.solving_out_constant.back() == ""){
                 out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1486,6 +1494,7 @@ inline void AndExpr::print_asm(std::ofstream& out){
             out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             context.solving_out.pop_back();
             out << "\tnop" << std::endl;
+            context.solving_out_constant.pop_back();
         }
         else{
             out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1503,22 +1512,30 @@ inline void EqualityExpr::print_asm(std::ofstream& out){
     if(equal_expr != NULL){
         if(*op == "=="){
             equal_expr -> print_asm(out);
-            if(context.is_firststep == true){
+            if(context.is_firststep == true ){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
+                    
                     context.solving_out_constant.pop_back();
+                    
                 }
+                
                 context.is_firststep = false;
+                
+                
             }
             rel_expr -> print_asm(out);
             if(context.solving_out_constant.back() == ""){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1535,6 +1552,7 @@ inline void EqualityExpr::print_asm(std::ofstream& out){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1547,6 +1565,7 @@ inline void EqualityExpr::print_asm(std::ofstream& out){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1571,6 +1590,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1584,6 +1604,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1598,6 +1619,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1610,6 +1632,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1624,6 +1647,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1637,6 +1661,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1652,6 +1677,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1664,6 +1690,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1687,6 +1714,7 @@ if(shift_expr != NULL){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1699,6 +1727,7 @@ if(shift_expr != NULL){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1712,6 +1741,7 @@ if(shift_expr != NULL){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1724,6 +1754,7 @@ if(shift_expr != NULL){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1745,6 +1776,7 @@ if(add_expr != NULL){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1757,6 +1789,7 @@ if(add_expr != NULL){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1770,6 +1803,7 @@ if(add_expr != NULL){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1782,6 +1816,7 @@ if(add_expr != NULL){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1802,6 +1837,7 @@ if(mul_expr != NULL){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1815,6 +1851,7 @@ if(mul_expr != NULL){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1831,6 +1868,7 @@ if(mul_expr != NULL){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1843,6 +1881,7 @@ if(mul_expr != NULL){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1862,6 +1901,7 @@ if(mul_expr != NULL){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
                 }
                 else{
                     out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
@@ -1874,6 +1914,7 @@ if(mul_expr != NULL){
                 out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 out << "\tnop" << std::endl;
                 context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
             }
             else{
                 out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
@@ -1924,7 +1965,7 @@ inline void Statement::print_asm(std::ofstream& out){
         context.is_solving = true;
         expr_state -> print_asm(out);
         context.is_solving = false;
-        context.is_firststep = true;
+        context.is_firststep = true; // potential problem
     }
     if(select_state != NULL){
         context.in_if = true;
@@ -1969,17 +2010,18 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
     //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
     out << "\tbeq\t\t$3,$0," << else_label << std::endl;
     out << "\tnop" << std::endl;
-    bool firststepchecker = 0;
-    if(context.is_firststep == 0){
-        context.is_firststep = 1;
-        firststepchecker = 1;
+    bool firststepchecker = false;
+    if(context.is_firststep == false){
+        context.is_firststep = true;
+        firststepchecker = true;
     }
 
     if_state->print_asm(out);
-    if(firststepchecker == 1){
-        context.is_firststep = 0;
+    if(firststepchecker == true){
+        context.is_firststep = false;
+        firststepchecker = false;
     }
-    firststepchecker = 0;
+    
     out << "\tb\t\t" << if_return << std::endl;
     out << "\tnop" << std::endl;
 
@@ -2004,16 +2046,31 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl << std::endl;
         
         out << while_body << ":" << std::endl;
-
+        
+        
         if(state != NULL){
             state -> print_asm(out);
         }
+        
+
         out << while_cond << "CONT:" << std::endl;
         out << "\tnop" << std::endl;
         out << while_cond << ":" << std::endl;
 
+        bool firststepchecker = false;
+        if(context.is_firststep == false){
+            context.is_firststep = true;
+            firststepchecker = true;
+        }
         if(expr != NULL){
+            context.is_solving = true;
             expr -> print_asm(out);
+            context.is_solving = false;
+        }
+        
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
         }
 
         out << "\tbne\t\t$2,$0," << while_body << std::endl;
@@ -2047,10 +2104,19 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         }
 
         out << second_state << ":" << std::endl;
-
+        bool firststepchecker = false;
+        if(context.is_firststep == false){
+            context.is_firststep = true;
+            firststepchecker = true;
+        }
         if(for_second != NULL){
             for_second -> print_asm(out);
         }
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
+        }
+
 
         out << "\tbne\t\t$2,$0," << for_body << std::endl;
         out << "\tnop" << std::endl;
@@ -2084,14 +2150,14 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         context.return_var = false;
         context.returnNum = 0;
 
-        out << "\tj\t\t$" << context.FuncName << "END" << std::endl;
+        out << "\tb\t\t$" << context.FuncName << "END" << std::endl;
     }
     if(*type == "break"){
-        out << "\tj\t\t" << context.break_number.back() << "END" << std::endl;
+        out << "\tb\t\t" << context.break_number.back() << "END" << std::endl;
         out << "\tnop" << std::endl;
     }
     if(*type == "continue"){
-        out << "\tj\t\t" << context.break_number.back() << "CONT" << std::endl;
+        out << "\tb\t\t" << context.break_number.back() << "CONT" << std::endl;
     }
     //DO SOMETHING ABOUT TYPE
 }
