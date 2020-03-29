@@ -905,6 +905,7 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
 
 
     comp_state -> print_asm(out);
+    out << "\tmove\t$16,$2" << std::endl;
     out << "$" << context.FuncName << "END:" << std::endl;
     out << "\tmove\t$sp,$fp" << std::endl;
     out << "\tlw\t\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
@@ -1097,7 +1098,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             ass_expr->print_asm(out);
         }
 
-        if(context.is_firststep == true || context.is_cond){
+        if((context.is_firststep == true || context.is_cond) && !context.function_call){
             if(context.is_GlobalVar){
                 out << "\tlui\t\t$2,%hi(" << context.solving_out.back()->id << ")" << std::endl;
                 out << "\tlw\t\t$2,%lo(" << context.solving_out.back()->id << ")($2)" << std::endl;
@@ -1131,6 +1132,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             out << "\tsw\t\t$2," << result_var << "($fp)" << std::endl;
         }
 
+        context.function_call = 0;
     }
 }
 
@@ -1169,7 +1171,6 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
         out << "\tjal\t"<< temp << std::endl;
         out << "\tnop" << std::endl;
         context.function_name = "";
-        context.function_call = 0;
     }
     else if(post_expr != NULL){
         post_expr -> print_asm(out);
@@ -1783,7 +1784,7 @@ inline void AdditiveExpr::print_asm(std::ofstream& out){
         context.return_are_u_single = false;
         if(*op == "+"){
             add_expr -> print_asm(out);
-            if(context.is_firststep == true){
+            if(context.is_firststep == true && !context.function_call){
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     context.solving_out.pop_back();
@@ -1796,15 +1797,17 @@ inline void AdditiveExpr::print_asm(std::ofstream& out){
                 context.is_firststep = false;
             }
             mul_expr -> print_asm(out);
-            if(context.solving_out_constant.back() == ""){
-                out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                out << "\tnop" << std::endl;
-                context.solving_out.pop_back();
-                context.solving_out_constant.pop_back();
-            }
-            else{
-                out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
-                context.solving_out_constant.pop_back();
+            if(!context.function_call){
+                if(context.solving_out_constant.back() == ""){
+                    out << "\tlw\t$3," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                    out << "\tnop" << std::endl;
+                    context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
+                }
+                else{
+                    out << "\tli\t$3," << context.solving_out_constant.back() << std::endl;
+                    context.solving_out_constant.pop_back();
+                }
             }
             out << "\taddu\t$2,$2,$3" << std::endl;
         }
