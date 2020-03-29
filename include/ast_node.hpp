@@ -35,6 +35,7 @@ struct Context{
     bool elif_block = false; // check for more else-if blocks
     //bool func_decl = false; // check if it is a function declaration or a global variable
     bool is_GlobalVar = false; // check if it is a global variable
+    bool empty_var = false; // check if variable has no value upon declaration
 
     std::string what_typeSpec = "0";
     std::string var_iden = "0";
