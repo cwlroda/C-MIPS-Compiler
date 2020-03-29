@@ -896,10 +896,10 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     }
     std::vector<int> MemoryAlloc;
     comp_state->alloc_mem(MemoryAlloc);
-    int NeededMem = CalcMemoryNeeded(MemoryAlloc);
-    out << "\taddiu\t$sp,$sp,-" << NeededMem << std::endl;
-    out << "\tsw\t\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
-    out << "\tsw\t\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
+    context.NeededMem = CalcMemoryNeeded(MemoryAlloc);
+    out << "\taddiu\t$sp,$sp,-" << context.NeededMem << std::endl;
+    out << "\tsw\t\t$31,"<< context.NeededMem - 4<<"($sp)" << std::endl;
+    out << "\tsw\t\t$fp,"<< context.NeededMem - 8 <<"($sp)" << std::endl;
     out << "\tmove\t$fp,$sp" << std::endl;
 
 
@@ -908,9 +908,9 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tmove\t$16,$2" << std::endl;
     out << "$" << context.FuncName << "END:" << std::endl;
     out << "\tmove\t$sp,$fp" << std::endl;
-    out << "\tlw\t\t$31,"<< NeededMem - 4<<"($sp)" << std::endl;
-    out << "\tlw\t\t$fp,"<<NeededMem - 8 <<"($sp)" << std::endl;
-    out << "\taddiu\t$sp,$sp," << NeededMem << std::endl;
+    out << "\tlw\t\t$31,"<< context.NeededMem - 4<<"($sp)" << std::endl;
+    out << "\tlw\t\t$fp,"<< context.NeededMem - 8 <<"($sp)" << std::endl;
+    out << "\taddiu\t$sp,$sp," << context.NeededMem << std::endl;
     out << "\tj\t\t$31" << std::endl;
     out << "\tnop" << std::endl;
 
@@ -967,8 +967,14 @@ inline void Declaration::print_asm(std::ofstream& out){
                     context.solving_out_constant.pop_back();
                 }
                 else{
-                    out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
-                    context.solving_out_constant.pop_back();
+                    if(context.solving_out_constant.size() == 0){
+                        out << "\tli\t\t$2,0" << std::endl;
+                    }
+                    else{
+                        out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
+                        context.solving_out_constant.pop_back();
+                    }
+                    
                 }
                 out << "\tsw\t\t$2," << local_var->frame_offset << "($fp)" << std::endl;
                 
@@ -1079,6 +1085,32 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
 
         cond_expr->print_asm(out);
         context.is_cond = false;
+
+        if((context.function_call > 0)){
+            if(context.is_GlobalVar){
+                out << "\tlui\t\t$2,%hi(" << context.solving_out.back()->id << ")" << std::endl;
+                out << "\tlw\t\t$2,%lo(" << context.solving_out.back()->id << ")($2)" << std::endl;
+                out << "\tnop" << std::endl;
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+            }
+
+            else{
+                if(context.solving_out_constant.back() == ""){
+                    out << "\tlw\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                    context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
+                    out << "\tnop" << std::endl;
+                }
+                else{
+                    out << "\tli\t$2," << context.solving_out_constant.back() << std::endl;
+                    context.solving_out_constant.pop_back();
+                }
+            }
+
+        }
+
+
     }
 
     else{
@@ -1097,8 +1129,8 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         if(ass_expr != NULL){
             ass_expr->print_asm(out);
         }
-
-        if((context.is_firststep == true || context.is_cond) && !context.function_call){
+        
+        if((context.is_firststep == true || context.is_cond)){
             if(context.is_GlobalVar){
                 out << "\tlui\t\t$2,%hi(" << context.solving_out.back()->id << ")" << std::endl;
                 out << "\tlw\t\t$2,%lo(" << context.solving_out.back()->id << ")($2)" << std::endl;
@@ -1163,7 +1195,11 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
     }
     if(post_expr != NULL && pri_expr == NULL && op == NULL && iden == NULL){
         context.function_call = 1;
+        context.morethanfour = 4;
+        context.functionregister = 4;
         post_expr -> print_asm(out);
+        context.morethanfour = 4;
+        context.functionregister = 4;
         std::string temp = context.function_name;
         if(arg_expr_list != NULL){
             arg_expr_list -> print_asm(out);
@@ -1205,16 +1241,20 @@ inline void ArgumentExprList::print_asm(std::ofstream& out){
     context.is_solving = true;
     ass_expr -> print_asm(out);
     context.is_solving = false;
-    if(context.function_call > 4){
-        out << "\tsw\t$2," << 8+(8*context.stack_offset) << "($sp)" << std::endl;
+
+
+    if(context.morethanfour == 0){
+        out << "\tsw\t$2," << 16+(4*context.stack_offset) << "($sp)" << std::endl;
         context.stack_offset++;
         context.function_call--;
     }
-    else if (context.function_call <= 4){
-        out << context.function_call <<std::endl;
-        out << "\tmove\t$" << 3+context.function_call <<",$2" << std::endl;
+    else {
+        out << "\tmove\t$" << context.functionregister <<",$2" << std::endl;
         context.function_call--;
+        context.morethanfour--;
+        context.functionregister++;
     }
+
 }
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){

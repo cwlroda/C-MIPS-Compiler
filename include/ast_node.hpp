@@ -46,7 +46,9 @@ struct Context{
 
     bool is_LocalVar = false;
     int frame_offset_counter = 0;
-
+    int NeededMem = 0;
+    int morethanfour = 4;
+    int functionregister = 4;
     bool is_return = false;
     int returnNum = 0;
     bool return_var = false;

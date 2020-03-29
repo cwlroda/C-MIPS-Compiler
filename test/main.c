@@ -1,6 +1,8 @@
-enum {sunday=5+6+7, monday, tuesday, wednesday = sunday+tuesday, thursday, friday = 1, saturday};
-
-
 int main(){
-    int lmao = sunday;
+    f(1,2,3,4,5,6);
+}
+
+int f(int x, int y, int z, int a, int b, int c){
+    x = 1;
+    y = 2;
 }
