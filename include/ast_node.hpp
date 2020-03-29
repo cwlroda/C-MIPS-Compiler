@@ -16,7 +16,13 @@ struct Bindings{
     bool is_pointer = false;
     bool is_init = false;
 };
-
+struct WithinEnum{
+    std::unordered_map<std::string, int> enummap;
+    int enumcounter = 0;
+};
+WithinEnum* enumgen;
+std::unordered_map<std::string, WithinEnum> Enums;
+std::unordered_map<std::string, WithinEnum>::iterator Enums_it;
 struct Context{
     bool in_func = false; // check if entering function
     bool is_init = false; // check if function/variable is initialised
@@ -56,7 +62,12 @@ struct Context{
     std::vector<std::string> break_number;
     //std::vector<bool> firststepchecker;
     int gen_label = 1;
-    bool return_are_u_single = true; 
+    bool return_are_u_single = true;
+    std::string* enum_name = NULL;
+    int enumerator_start = 0;
+    std::vector<std::string> enumoperators;
+    std::vector<std::pair<std::string, std::string>> enumoperands;
+
 };
 
 // Declarations

@@ -198,7 +198,7 @@ union YYSTYPE
     StructDeclarator *struct_declr;
     EnumSpecifier *enum_spec;
     EnumeratorList *enum_list;
-    Enumerator *enumr;
+    Enumerator *enume;
 
     std::string *str;
 

@@ -75,7 +75,7 @@
     StructDeclarator *struct_declr;
     EnumSpecifier *enum_spec;
     EnumeratorList *enum_list;
-    Enumerator *enumr;
+    Enumerator *enume;
 
     std::string *str;
 }
@@ -157,7 +157,7 @@
 %type <struct_declr> STRUCT_DECLARATOR
 %type <enum_spec> ENUM_SPECIFIER
 %type <enum_list> ENUMERATOR_LIST
-%type <enum> ENUMERATOR
+%type <enume> ENUMERATOR
 
 %nonassoc IF
 %nonassoc ELSE
@@ -329,7 +329,8 @@ POSTFIX_EXPR: PRIMARY_EXPR                                                      
 PRIMARY_EXPR: IDENTIFIER                                                                        { $$ = new PrimaryExpr($1, NULL, NULL, NULL); }
             | CONSTANT                                                                          { $$ = new PrimaryExpr(NULL, $1, NULL, NULL); }
             | STRING_LITERAL                                                                    { $$ = new PrimaryExpr(NULL, NULL, $1, NULL); }
-            | LB EXPR RB                                                                        { $$ = new PrimaryExpr(NULL, NULL, NULL, $2); }
+            | LB EXPR
+             RB                                                                        { $$ = new PrimaryExpr(NULL, NULL, NULL, $2); }
 
 ARGUMENT_EXPR_LIST: ASSIGNMENT_EXPR                                                             { $$ = new ArgumentExprList($1, NULL); }
                 |   ARGUMENT_EXPR_LIST COMMA ASSIGNMENT_EXPR                                    { $$ = new ArgumentExprList($3, $1); }
@@ -393,15 +394,15 @@ STRUCT_DECLARATOR: DECLARATOR
                 |  DECLARATOR COLON CONSTANT_EXPR                                               
                 |  COLON CONSTANT_EXPR                                                          
 
-ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB                                         
-                | ENUM LCB ENUMERATOR_LIST RCB                                                  
-                | ENUM IDENTIFIER                                                               
+ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB                                         { $$ = new EnumSpecifier($1, $2); }                                     
+                | ENUM LCB ENUMERATOR_LIST RCB                                                  { $$ = new EnumSpecifier(NULL, $2); }
+                | ENUM IDENTIFIER                                                               { $$ = new EnumSpecifier($1, NULL); }
 
-ENUMERATOR_LIST: ENUMERATOR                                                                     
-        |  ENUMERATOR_LIST COMMA ENUMERATOR                                                     
+ENUMERATOR_LIST: ENUMERATOR                                                                     { $$ = new EnumeratorList(NULL, $1); }
+        |  ENUMERATOR_LIST COMMA ENUMERATOR                                                     { $$ = new EnumeratorList($1, $2); }
 
-ENUMERATOR: IDENTIFIER                                                                          
-        |   IDENTIFIER EQUAL CONSTANT_EXPR                                                      
+ENUMERATOR: IDENTIFIER                                                                          { $$ = new Enumerator($1, NULL); }
+        |   IDENTIFIER EQUAL CONSTANT_EXPR                                                      { $$ = new Enumerator($1, $2); }
 
 %%
 

@@ -429,6 +429,7 @@ class Expr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(std::vector<int>& mv);
+        void checking_enum();
 
     private:
         AssignmentExpr *assign_expr;
@@ -446,6 +447,7 @@ class ConstantExpr{
 
         void print_c(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        
 
     private:
         ConditionalExpr *cond_expr;
@@ -468,6 +470,7 @@ class ConditionalExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
     private:
         LogicalOrExpr *log_or_expr;
@@ -490,6 +493,7 @@ class LogicalOrExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
     private:
         LogicalAndExpr *log_and_expr;
@@ -511,6 +515,7 @@ class LogicalAndExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -533,6 +538,7 @@ class InclusiveOrExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -555,6 +561,7 @@ class ExclusiveOrExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -577,6 +584,7 @@ class AndExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -601,6 +609,7 @@ class EqualityExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -626,6 +635,7 @@ class RelationalExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -651,6 +661,7 @@ class ShiftExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -676,6 +687,7 @@ class AdditiveExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -701,6 +713,7 @@ class MultiplicativeExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -728,6 +741,7 @@ class AssignmentExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
     private:
         ConditionalExpr *cond_expr;
@@ -776,6 +790,7 @@ class UnaryExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -799,6 +814,7 @@ class UnaryOperator{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void checking_enum();
 
     private:
         std::string *op;
@@ -827,6 +843,7 @@ class PostfixExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
         
 
 
@@ -856,6 +873,7 @@ class PrimaryExpr{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void checking_enum();
 
     private:
         std::string *iden;
@@ -903,6 +921,7 @@ class CastExpr{
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
         void alloc_mem(int& iterations);
+        void checking_enum();
 
 
     private:
@@ -1174,29 +1193,63 @@ class Pointer{
 
 class EnumSpecifier{
     public:
+        EnumSpecifier(
+            std::string *_iden,
+            EnumeratorList *_enum_list
+        ):
+            iden(_iden),
+            enum_list(_enum_list)
+        {}
+        ~EnumSpecifier(){}
+
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
 
     private:
+    std::string *iden;
+    EnumeratorList *enum_list;
 };
 
 class EnumeratorList{
     public:
+        EnumeratorList(
+            EnumeratorList *_enum_list,
+            Enumerator *_enume
+        ):
+            enum_list(_enum_list),
+            enume(_enume)
+        {}
+        ~EnumeratorList(){}
+
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
 
     private:
+        EnumeratorList *enum_list;
+        Enumerator *enume;
+        
 };
 
 class Enumerator{
     public:
+        Enumerator(
+            std::string *_iden,
+            ConstantExpr *_const_expr
+        ):
+            iden(_iden),
+            const_expr(_const_expr)
+        {}
+        ~Enumerator(){}
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
-
+        void searchupdate(std::pair<std::string, std::string>& operand);
+        
     private:
+        std::string *iden;
+        ConstantExpr *const_expr;
 };
 
 #endif

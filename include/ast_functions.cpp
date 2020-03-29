@@ -728,7 +728,6 @@ inline void Tab(std::ofstream& out){
 inline void TranslationUnit::print_asm_main(std::string& filename) const{
     std::ofstream outfile;
     outfile.open(filename.c_str());
-
     if(!outfile.is_open()){
         std::cerr << "Error opening " << filename << "!" << std::endl;
         exit(EXIT_FAILURE);
@@ -741,7 +740,8 @@ inline void TranslationUnit::print_asm_main(std::string& filename) const{
     outfile << "\t.module fp=xx" << std::endl;
     outfile << "\t.module nooddspreg" << std::endl;
     outfile << "\t.abicalls" << std::endl;
-
+    enumgen = new WithinEnum;
+    Enums.insert(std::pair<std::string, WithinEnum>("noname", *enumgen));
     if(trans_unit != NULL){
         trans_unit->print_asm(outfile);
     }
@@ -1080,12 +1080,12 @@ inline void TypeSpecifier::print_asm(std::ofstream& out){
     // if(struct_spec != NULL){
     //     struct_spec -> print_asm(out);
     // }
-    // else if(enum_spec != NULL){
-    //     enum_spec -> print_asm(out);
-    // }
-    // else{
+    if(enum_spec != NULL){
+        enum_spec -> print_asm(out);
+    }
+    else{
     context.what_typeSpec = *type;
-    //}
+    }
 }
 
 inline void InitDeclarator::print_asm(std::ofstream& out){
@@ -2238,4 +2238,295 @@ inline void JumpStatement::print_asm(std::ofstream& out){
 
 inline void Expr::print_asm(std::ofstream& out){
     assign_expr -> print_asm(out);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ENUM STUFFS */
+
+inline void ConditionalExpr::checking_enum(){
+    if(log_or_expr!= NULL){
+        log_or_expr -> checking_enum();
+    }
+}
+inline void LogicalOrExpr::checking_enum(){
+    if(log_or_expr != NULL){
+        context.enumoperators.push_back("||");
+        log_or_expr -> checking_enum(); 
+    }
+        log_and_expr -> checking_enum();
+}
+inline void LogicalAndExpr::checking_enum(){
+    if(log_and_expr != NULL){
+        context.enumoperators.push_back("&&");
+        log_and_expr -> checking_enum();
+    }
+        incl_or_expr -> checking_enum();
+}
+inline void InclusiveOrExpr::checking_enum(){
+    if(incl_or_expr != NULL){
+        context.enumoperators.push_back("|");
+        incl_or_expr -> checking_enum();
+    }
+        excl_or_expr -> checking_enum();
+}
+inline void ExclusiveOrExpr::checking_enum(){
+    if(excl_or_expr != NULL){
+        context.enumoperators.push_back("^");
+        excl_or_expr -> checking_enum();
+    }
+        and_expr -> checking_enum();
+}
+inline void AndExpr::checking_enum(){
+    if(and_expr != NULL){
+        context.enumoperators.push_back("&");
+        and_expr -> checking_enum();
+    }
+        equal_expr -> checking_enum();
+}
+inline void EqualityExpr::checking_enum(){
+    if(equal_expr != NULL){
+        if(*op == "=="){
+            context.enumoperators.push_back("==");
+        }
+        else if(*op == "!="){
+            context.enumoperators.push_back("!=");
+        }
+        equal_expr -> checking_enum();
+    }
+        rel_expr -> checking_enum();
+}
+inline void RelationalExpr::checking_enum(){
+    if(rel_expr != NULL){
+        context.enumoperators.push_back(*op);
+        rel_expr -> checking_enum();
+    }
+        shift_expr -> checking_enum();
+}
+inline void ShiftExpr::checking_enum(){
+    if(shift_expr != NULL){
+        context.enumoperators.push_back(*op);
+        shift_expr -> checking_enum();
+    }
+        add_expr -> checking_enum();
+}
+inline void AdditiveExpr::checking_enum(){
+    if(add_expr != NULL){
+        context.enumoperators.push_back(*op);
+        add_expr -> checking_enum();
+    }
+        mul_expr -> checking_enum();
+}
+inline void MultiplicativeExpr::checking_enum(){
+    if(mul_expr != NULL){
+        context.enumoperators.push_back(*op);
+        mul_expr -> checking_enum();
+    }
+        cast_expr -> checking_enum();
+}
+inline void CastExpr::checking_enum(){
+    un_expr -> checking_enum();
+}
+inline void UnaryExpr::checking_enum(){
+    post_expr -> checking_enum();
+}
+inline void PostfixExpr::checking_enum(){
+    if(post_expr != NULL){
+        context.enumoperators.push_back(*op);
+        post_expr -> checking_enum();
+    }
+    else if(pri_expr != NULL){
+        pri_expr -> checking_enum();
+    }
+}
+inline void PrimaryExpr::checking_enum(){
+    if(iden != NULL){
+        context.enumoperands.push_back(std::pair<std::string, std::string>("variable", *iden));
+    }
+    else if(constant != NULL){
+        context.enumoperands.push_back(std::pair<std::string,std::string>("constant", *constant));
+    }
+    // else if(expr != NULL){
+    //     expr -> checking_enum();
+    // }
+}
+
+// inline void Expr::checking_enum(){
+//     assign_expr -> checking_enum();
+// }
+
+// inline void AssignmentExpr::checking_enum(){
+//     if(cond_expr != NULL){
+//         cond_expr ->checking_enum;
+//     }
+//     else{
+//         context.enumoperators.push_back("=");
+//         un_expr -> checking_enum();
+//         ass_expr -> checking_enum();
+//     }
+    
+// }
+
+inline void EnumSpecifier::print_asm(std::ofstream& out){
+    if(iden != NULL){
+        *context.enum_name = *iden;
+        Enums_it = Enums.find(*iden);
+        if(Enums_it == Enums.end()){
+            enumgen = new WithinEnum;
+            Enums.insert(std::pair<std::string, WithinEnum>(*iden,*enumgen));
+        }
+        Enums_it = Enums.begin();
+    }
+    else{
+        *context.enum_name = "noname";
+    }
+
+    // context.is_solving = true;
+    // bool firststepchecker = false;
+    // if(context.is_firststep == false){
+    // context.is_firststep = true;
+    // firststepchecker = true;
+    // }
+    context.enumerator_start = 0;
+    enum_list -> print_asm(out);
+    context.enumerator_start = 0;
+    // if(firststepchecker == true){
+    //     context.is_firststep = false;
+    //     firststepchecker = false;
+    // }
+    // context.is_solving = false;
+}
+
+inline void EnumeratorList::print_asm(std::ofstream& out){
+    if(enum_list!=NULL){
+        enum_list -> print_asm(out);
+    }
+    enume -> print_asm(out);
+}
+
+inline void Enumerator::print_asm(std::ofstream& out){
+    if(const_expr != NULL){
+        const_expr -> print_asm(out);
+        if(Enums[*context.enum_name].enummap.size() == 0){
+            if(context.enumoperators.size() == 1){
+                std::pair<std::string, int>tmp(context.enumoperands[0].first, std::stoi(context.enumoperands[1].first));
+                Enums[*context.enum_name].enummap.insert(tmp);
+                context.enumoperands.pop_back();
+                context.enumoperands.pop_back();
+                context.enumoperators.pop_back();
+            }
+            else{
+                std::pair<std::string, int>tmp(context.enumoperands[0].first, 0);
+                context.enumoperands.pop_back();
+            }
+            
+        }
+        else{
+            while(context.enumoperators.size()!=0){
+                if(context.enumoperators.back() == "++" || context.enumoperators.back() == "--"){ 
+                }
+                else{
+                    std::pair<std::string,std::string> operand1;
+                    std::pair<std::string,std::string> operand2;
+
+                    operand2 = context.enumoperands.back();
+                    context.enumoperands.pop_back();
+                    operand1 = context.enumoperands.back();
+                    context.enumoperands.pop_back();
+
+                    searchupdate(operand1);
+                    searchupdate(operand2);
+
+                    if(context.enumoperators.back() == "||"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)||std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "&&"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)&&std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "|"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)|std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "^"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)^std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "&"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)&std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "=="){
+                        operand1.second = std::to_string(std::stoi(operand1.second)==std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "<"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)<std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == ">"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)>std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "<="){
+                        operand1.second = std::to_string(std::stoi(operand1.second)<=std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == ">="){
+                        operand1.second = std::to_string(std::stoi(operand1.second)>=std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "<<"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)<<std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == ">>"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)>>std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "+"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)+std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "-"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)-std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "*"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)*std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "/"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)/std::stoi(operand2.second));
+                    }
+                    if(context.enumoperators.back() == "%"){
+                        operand1.second = std::to_string(std::stoi(operand1.second)%std::stoi(operand2.second));
+                    }
+                    context.enumoperands.push_back(operand1);
+                    context.enumoperators.pop_back();
+                }
+            }
+        }
+        Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden,std::stoi(context.enumoperands.front().second)));
+        Enums[*context.enum_name].enumcounter = std::stoi(context.enumoperands.front().second);
+    }
+    else{
+        Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden, Enums[*context.enum_name].enumcounter));
+        Enums[*context.enum_name].enumcounter++;
+    }
+}
+
+inline void Enumerator::searchupdate(std::pair<std::string, std::string>& operand){
+    if(operand.first == "variable"){
+        bool found = false;
+        for(Enums_it=Enums.begin();Enums_it!=Enums.end(); Enums_it++){
+            if(found == true){
+                break;
+            }
+            std::unordered_map<std::string,int>::iterator sec_it;
+            for(sec_it=Enums_it->second.enummap.begin(); sec_it!=Enums_it->second.enummap.end(); sec_it++){
+                if(sec_it->first == operand.second){
+                    found = true;
+                    operand.first = "number";
+                    operand.second = std::to_string(sec_it->second);
+                    break;
+                }
+            }
+        }
+    }
 }
