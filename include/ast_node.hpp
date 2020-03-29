@@ -71,7 +71,7 @@ struct Context{
     WithinEnum* enumgen;
     std::unordered_map<std::string, WithinEnum> Enums;
     std::unordered_map<std::string, WithinEnum>::iterator Enums_it;
-
+    bool is_enum = false;
 
     bool is_array = false; // check if it is an array
     bool store_arr_vals = false; // check if array is initialised

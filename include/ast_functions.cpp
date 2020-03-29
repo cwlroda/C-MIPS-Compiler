@@ -771,71 +771,76 @@ inline void TranslationUnit::print_asm(std::ofstream& out){
 inline void ExternalDeclaration::print_asm(std::ofstream& out){
     if(decl != NULL){
         context.is_GlobalVar = true;
-
+        context.is_enum = false;
         decl->print_asm(out);
-        out << "\t.data" << std::endl;
-        out << "\t.globl\t" << context.var_iden << std::endl;
-        out << "\t.align\t2" << std::endl;
-        out << "\t.type\t" << context.var_iden << ", @object" << std::endl;
-        out << "\t.size\t" << context.var_iden << ", ";
-
-        int size;
-
-        if(context.what_typeSpec == "char"){
-            size = 1;
-        }
-        else{
-            size = 4;
-        }
-
-        if(context.is_array){
-            size *= context.arr_size;
-        }
-
-        out << size << std::endl;
-        out << context.var_iden << ":" << std::endl;
-
-        int it = 1;
-
-        if(context.is_array){
-            it = context.arr_size;
-        }
-
-        for(int i=0; i<it; i++){
+        if(context.is_enum == false){
+            out << "\t.data" << std::endl;
+            out << "\t.globl\t" << context.var_iden << std::endl;
+            out << "\t.align\t2" << std::endl;
+            out << "\t.type\t" << context.var_iden << ", @object" << std::endl;
+            out << "\t.size\t" << context.var_iden << ", ";
+            int size;
             if(context.what_typeSpec == "char"){
-                out << "\t.byte\t";
+                size = 1;
             }
             else{
-                out << "\t.word\t";
+                size = 4;
             }
 
             if(context.is_array){
-                out << context.arr_vals[0] << std::endl;
-                context.arr_vals.erase(context.arr_vals.begin());
+                size *= context.arr_size;
             }
 
-            else{
-                out << context.var_val << std::endl;
+            out << size << std::endl;
+            out << context.var_iden << ":" << std::endl;
+
+            int it = 1;
+
+            if(context.is_array){
+                it = context.arr_size;
             }
+
+            for(int i=0; i<it; i++){
+                if(context.what_typeSpec == "char"){
+                    out << "\t.byte\t";
+                }
+                else{
+                    out << "\t.word\t";
+                }
+
+                if(context.is_array){
+                    out << context.arr_vals[0] << std::endl;
+                    context.arr_vals.erase(context.arr_vals.begin());
+                }
+
+                else{
+                    out << context.var_val << std::endl;
+                }
+            }
+
+            Bindings* global_var = new Bindings;
+            global_var->id = context.var_iden;
+            global_var->value = context.var_val;
+            global_var->type = context.what_typeSpec;
+
+            if(context.is_array){
+                global_var->is_arr = true;
+            }
+
+            std::pair<std::string, Bindings*> var (context.var_iden, global_var);
+            context.GlobalVar.insert(var);
+
+            context.is_array = false;
+            context.arr_size = 0;
+            context.is_GlobalVar = false;
+            context.what_typeSpec = "0";
+            context.var_iden = "0";
         }
 
-        Bindings* global_var = new Bindings;
-        global_var->id = context.var_iden;
-        global_var->value = context.var_val;
-        global_var->type = context.what_typeSpec;
+        context.is_enum = false;
+        
 
-        if(context.is_array){
-            global_var->is_arr = true;
-        }
-
-        std::pair<std::string, Bindings*> var (context.var_iden, global_var);
-        context.GlobalVar.insert(var);
-
-        context.is_array = false;
-        context.arr_size = 0;
-        context.is_GlobalVar = false;
-        context.what_typeSpec = "0";
-        context.var_iden = "0";
+        
     }
 
     else if(func_def != NULL){
@@ -955,8 +960,18 @@ inline void Declaration::print_asm(std::ofstream& out){
             }
 
             else{
-                out << "\tli\t\t$2," << local_var->value << std::endl;
+                if(context.solving_out_constant.back() == ""){
+                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                    out << "\tnop" << std::endl;
+                    context.solving_out.pop_back();
+                    context.solving_out_constant.pop_back();
+                }
+                else{
+                    out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
+                    context.solving_out_constant.pop_back();
+                }
                 out << "\tsw\t\t$2," << local_var->frame_offset << "($fp)" << std::endl;
+                
             }
 
             context.frame_offset_counter += 4;
@@ -978,6 +993,7 @@ inline void TypeSpecifier::print_asm(std::ofstream& out){
     //     struct_spec -> print_asm(out);
     // }
     if(enum_spec != NULL){
+        context.is_enum = true;
         enum_spec -> print_asm(out);
     }
     else{
@@ -1039,7 +1055,9 @@ inline void Initializer::print_asm(std::ofstream& out){
         init_list -> print_asm(out);
     }
     if(assign_expr != NULL){
+        context.is_solving= true;
         assign_expr -> print_asm(out);
+        context.is_solving = false;
     }
 }
 
@@ -1233,7 +1251,6 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         if(context.is_solving == true || context.is_cond || context.arr_access){
             std::unordered_map<std::string, Bindings*>::iterator global_it;
             
-            
 
             global_it = context.GlobalVar.find(*iden);
 
@@ -1244,7 +1261,6 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
             }
 
             else{
-
                 bool found = false;
                 for(context.Enums_it=context.Enums.begin();context.Enums_it!=context.Enums.end(); context.Enums_it++){
                     if(found == true){
@@ -1254,25 +1270,21 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
                     for(sec_it=context.Enums_it->second.enummap.begin();sec_it!=context.Enums_it->second.enummap.end();sec_it++){
                         if(sec_it->first == *iden){
                             found = true;
-                            *constant = std::to_string(sec_it->second);
                             iden = NULL;
-                            context.solving_out_constant.push_back(*constant);
+                            context.solving_out_constant.push_back(std::to_string(sec_it->second));
+                            break;
                         }
                     }
                 }
                 if(found == false){
-                    context.solving_out.push_back(context.LocalVar[*iden]);
-                    context.solving_out_constant.push_back("");
+                     context.solving_out.push_back(context.LocalVar[*iden]);
+                     context.solving_out_constant.push_back("");
                 }
                 found == false;
                 
             }
 
-            
-
         }
-
-        
         if(context.function_call > 0){
             context.function_name = *iden;
         }
