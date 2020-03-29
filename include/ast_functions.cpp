@@ -871,7 +871,6 @@ inline int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
 }
 inline void FunctionDefinition::print_asm(std::ofstream& out){
     context.frame_offset_counter = 8;
-    out << 10 << std::endl;
     if(decl_spec != NULL){
         decl_spec->print_asm(out);
     }
@@ -915,7 +914,6 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
 }
 
 inline void DeclarationList::print_asm(std::ofstream& out){
-    out << 9 << std::endl;
     if(decl_list!=NULL){
         decl_list->print_asm(out);
     }
@@ -923,7 +921,6 @@ inline void DeclarationList::print_asm(std::ofstream& out){
 }
 
 inline void Declaration::print_asm(std::ofstream& out){
-    out << 8 << std::endl;
     decl_spec -> print_asm(out);
 
     if(init_declr != NULL){
@@ -970,7 +967,6 @@ inline void Declaration::print_asm(std::ofstream& out){
 }
 
 inline void DeclarationSpecifier::print_asm(std::ofstream& out){
-    out << 1 << std::endl;
     type_spec -> print_asm(out);
     if(decl_spec!=NULL){
         decl_spec->print_asm(out);
@@ -982,7 +978,6 @@ inline void TypeSpecifier::print_asm(std::ofstream& out){
     //     struct_spec -> print_asm(out);
     // }
     if(enum_spec != NULL){
-        out << 2 << std::endl;
         enum_spec -> print_asm(out);
     }
     else{
@@ -1235,7 +1230,6 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
     }
 
     if(iden != NULL){
-        out << "Hi" << std::endl;
         if(context.is_solving == true || context.is_cond || context.arr_access){
             std::unordered_map<std::string, Bindings*>::iterator global_it;
             
@@ -2386,25 +2380,17 @@ inline void PrimaryExpr::checking_enum(){
 // }
 
 inline void EnumSpecifier::print_asm(std::ofstream& out){
-    out << 9999 << std::endl;
     if(iden != NULL){
-        out << 3 << std::endl;
         *context.enum_name = *iden;
-        out << 4 << std::endl;
         context.Enums_it = context.Enums.find(*iden);
-        out << 5 << std::endl;
         if(context.Enums_it == context.Enums.end()){
             context.enumgen = new WithinEnum;
             context.Enums.insert(std::pair<std::string, WithinEnum>(*iden,*context.enumgen));
         }
-        out << 6 << std::endl;
         context.Enums_it = context.Enums.begin();
-        out << 7 << std::endl;
     }
     else{
-        out << 55 << std::endl;
         context.enum_name = new std::string("noname");
-        out << 56 << std::endl;
     }
 
     // context.is_solving = true;
@@ -2433,53 +2419,37 @@ inline void EnumeratorList::print_asm(std::ofstream& out){
         enum_list -> print_asm(out);
     }
     context.is_solving = true;
-    out << 512 << std::endl;
     enume -> print_asm(out);
     context.is_solving = false;
 }
 
 inline void Enumerator::print_asm(std::ofstream& out){
     if(const_expr != NULL){
-            out << 513 << std::endl;
         const_expr -> checking_enum();
-            out << 514 << std::endl;
-            out << *context.enum_name << std::endl;
-            out << context.Enums[*context.enum_name].enummap.size() << std::endl;
-            out << 515 << std::endl;
-        if(context.Enums[*context.enum_name].enummap.size() == 0){
-            // if(context.enumoperators.size() == 1){
-            //     std::pair<std::string, int>tmp(context.enumoperands[0].first, std::stoi(context.enumoperands[1].first));
-            //     context.Enums[*context.enum_name].enummap.insert(tmp);
-            //     context.enumoperands.pop_back();
-            //     context.enumoperands.pop_back();
+        // if(context.Enums[*context.enum_name].enummap.size() == 0){
+        //     // if(context.enumoperators.size() == 1){
+        //     //     std::pair<std::string, int>tmp(context.enumoperands[0].first, std::stoi(context.enumoperands[1].first));
+        //     //     context.Enums[*context.enum_name].enummap.insert(tmp);
+        //     //     context.enumoperands.pop_back();
+        //     //     context.enumoperands.pop_back();
 
-            //     context.enumoperators.pop_back();
-            // }
+        //     //     context.enumoperators.pop_back();
+        //     // }
             
-                std::pair<std::string, int>tmp(*iden,std::stoi(context.enumoperands[0].second));
-                context.enumoperands.pop_back();
+        //     std::pair<std::string, int>tmp(*iden,std::stoi(context.enumoperands[0].second));
+        //     context.enumoperands.pop_back();
+        //     context.Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden,tmp.second));
+        //     context.Enums[*context.enum_name].enumcounter= tmp.second;
+        //     context.Enums[*context.enum_name].enumcounter++;
+
             
-        }
-        else{
-            out << 516 << std::endl;
+        // }
+        // else{
             if(context.enumoperators.size()==0){
-                out << context.enumoperands[0].second;
                 std::pair<std::string, int>tmp(*iden, std::stoi(context.enumoperands[0].second));
-                out << 517 << std::endl;
-                context.enumoperands.pop_back();
             }
             else{
                 while(context.enumoperators.size()!=0){
-                    out << 601 << std::endl;
-                    out << context.enumoperators.size() << std::endl;
-                    for(int i=0; i<context.enumoperators.size(); i++){
-                        out << context.enumoperators[i] <<" ";
-                    }
-                    out << std::endl;
-                    for(int i=0; i<context.enumoperands.size(); i++){
-                        out << context.enumoperands[i].second << " ";
-                    }
-                    out << std::endl;
                     if(context.enumoperators.back() == "++" || context.enumoperators.back() == "--"){ 
                     }
                     else{
@@ -2487,83 +2457,24 @@ inline void Enumerator::print_asm(std::ofstream& out){
                         std::pair<std::string,std::string> operand2;
 
                         operand2 = context.enumoperands.back();
-                        out << operand2.second << std::endl;
                         context.enumoperands.pop_back();
                         operand1 = context.enumoperands.back();
-                        out << operand1.second << std::endl;
                         context.enumoperands.pop_back();
 
                         searchupdate(operand1);
-                        out << operand1.second << std::endl;
                         searchupdate(operand2);
-                        out << operand2.second << std::endl;
 
-                        if(context.enumoperators.back() == "||"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)||std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "&&"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)&&std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "|"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)|std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "^"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)^std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "&"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)&std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "=="){
-                            operand1.second = std::to_string(std::stoi(operand1.second)==std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "<"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)<std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == ">"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)>std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "<="){
-                            operand1.second = std::to_string(std::stoi(operand1.second)<=std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == ">="){
-                            operand1.second = std::to_string(std::stoi(operand1.second)>=std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "<<"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)<<std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == ">>"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)>>std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "+"){
-                            out << 701 << std::endl;
-                            operand1.second = std::to_string(std::stoi(operand1.second)+std::stoi(operand2.second));
-                            out << operand1.second << std::endl;
-                        }
-                        if(context.enumoperators.back() == "-"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)-std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "*"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)*std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "/"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)/std::stoi(operand2.second));
-                        }
-                        if(context.enumoperators.back() == "%"){
-                            operand1.second = std::to_string(std::stoi(operand1.second)%std::stoi(operand2.second));
-                        }
+                        operand1.second = std::to_string(context.int_house_solver(std::stoi(operand1.second), std::stoi(operand2.second), context.enumoperators.back()));
                         context.enumoperands.push_back(operand1);
                         context.enumoperators.pop_back();
                     }
                 }
-            } 
-        }
-        out << 801 << std::endl;
-        out << context.enumoperands.back().second << std::endl;
-        out << *iden << std::endl;
-        context.Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden,std::stoi(context.enumoperands.back().second)));
-        context.Enums[*context.enum_name].enumcounter = std::stoi(context.enumoperands.front().second);
-        context.Enums[*context.enum_name].enumcounter++;
-        context.enumoperands.pop_back();
+            }
+            context.Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden,std::stoi(context.enumoperands.back().second)));
+            context.Enums[*context.enum_name].enumcounter = std::stoi(context.enumoperands.front().second);
+            context.Enums[*context.enum_name].enumcounter++;
+            context.enumoperands.pop_back();
+        // } 
     }
     else{
         context.Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden, context.Enums[*context.enum_name].enumcounter));

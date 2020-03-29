@@ -22,6 +22,7 @@ struct WithinEnum{
     int enumcounter = 0;
 };
 
+
 struct Context{
     bool in_func = false; // check if entering function
     bool is_init = false; // check if function/variable is initialised
@@ -79,7 +80,64 @@ struct Context{
     bool arr_access = false;
     std::string arr_name;
     int arr_index = -1;
+
+    int int_house_solver(int first, int second, std::string operatorr){
+        if(operatorr == "||"){
+            first = first||second;
+        }
+        if(operatorr == "&&"){
+            first = first&&second;
+        }
+        if(operatorr == "|"){
+            first = first|second;
+        }
+        if(operatorr == "^"){
+            first = first^second;
+        }
+        if(operatorr == "&"){
+            first = first&second;
+        }
+        if(operatorr == "=="){
+            first = first==second;
+        }
+        if(operatorr == "<"){
+            first = first<second;
+        }
+        if(operatorr == ">"){
+            first = first>second;
+        }
+        if(operatorr == "<="){
+            first = first<=second;
+        }
+        if(operatorr == ">="){
+            first = first>=second;
+        }
+        if(operatorr == "<<"){
+            first = first<<second;
+        }
+        if(operatorr == ">>"){
+            first = first>>second;
+        }
+        if(operatorr == "+"){
+            first = first+second;
+        }
+        if(operatorr == "-"){
+            first = first-second;
+        }
+        if(operatorr == "*"){
+            first = first*second;
+        }
+        if(operatorr == "/"){
+            first = first/second;
+        }
+        if(operatorr == "%"){
+            first = first%second;
+        }
+        return first;
+    }
 };
+
+
 
 // Declarations
 class TranslationUnit;
@@ -147,5 +205,6 @@ class Pointer;
 class EnumSpecifier;
 class EnumeratorList;
 class Enumerator;
+
 
 #endif
