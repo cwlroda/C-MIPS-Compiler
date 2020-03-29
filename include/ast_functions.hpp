@@ -447,6 +447,7 @@ class ConstantExpr{
 
         void print_c(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        void checking_enum();
         
 
     private:

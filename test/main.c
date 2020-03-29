@@ -1,14 +1,13 @@
-int x;
+enum {a=65535};
+
+int g = 7;
 int f(){
-    int y = 0;
-    x = 0;
-    while(x<4){
-        y++;
-        if(y == 6){
-            break;
-        }
-        x++;
-    }
-return y;
+    int x = 0;
+    return 0;
+}
+int main(){
+    int y = 2;
+    int x = a;
+    x = f();
 }
 
