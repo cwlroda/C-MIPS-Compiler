@@ -870,7 +870,7 @@ inline int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
             count++;
         }
     }
-    int sizee = (mv.size()+(mv.size()%2==1))/2;
+    int sizee = ((mv.size()+context.parameterlist)+((mv.size()+context.parameterlist)%2==1))/2;
     return 16+8*sizee;
 }
 inline void FunctionDefinition::print_asm(std::ofstream& out){
@@ -901,6 +901,11 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tsw\t\t$31,"<< context.NeededMem - 4<<"($sp)" << std::endl;
     out << "\tsw\t\t$fp,"<< context.NeededMem - 8 <<"($sp)" << std::endl;
     out << "\tmove\t$fp,$sp" << std::endl;
+    for(int i=0; i<context.parameterlist; i++){
+        if(i<4){
+            out << "\tsw\t\t$" << 4+i << "," << context.NeededMem+i << "($fp)" << std::endl;
+        }
+    }
 
 
 
@@ -1029,6 +1034,7 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     }
 
     if(param_list != NULL){
+        context.parameterlist = 1;
         param_list -> print_asm(out);
     }
 
@@ -1062,6 +1068,7 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
 
 inline void ParameterList::print_asm(std::ofstream& out){
     if(param_list != NULL){
+        context.parameterlist++;
         param_list -> print_asm(out);
     }
     param_decl->print_asm(out);
