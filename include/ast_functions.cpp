@@ -742,8 +742,7 @@ inline void TranslationUnit::print_asm_main(std::string& filename) const{
     outfile << "\t.previous" << std::endl;
     outfile << "\t.nan\tlegacy" << std::endl;
     outfile << "\t.module fp=xx" << std::endl;
-    outfile << "\t.module nooddspreg" << std::endl;
-    outfile << "\t.abicalls" << std::endl;   
+    outfile << "\t.module nooddspreg" << std::endl;  
     outfile << "\t.abicalls" << std::endl << std::endl;
     context.enumgen = new WithinEnum;
     context.Enums.insert(std::pair<std::string, WithinEnum>("noname", *context.enumgen));
@@ -818,25 +817,25 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
                 }
             }
 
-            Bindings* global_var = new Bindings;
-            global_var->id = context.var_iden;
-            global_var->value = context.var_val;
-            global_var->type = context.what_typeSpec;
+            
+        }
+        Bindings* global_var = new Bindings;
+        global_var->id = context.var_iden;
+        global_var->value = context.var_val;
+        global_var->type = context.what_typeSpec;
 
-            if(context.is_array){
-                global_var->is_arr = true;
-            }
-
-            std::pair<std::string, Bindings*> var (context.var_iden, global_var);
-            context.GlobalVar.insert(var);
-
-            context.is_array = false;
-            context.arr_size = 0;
-            context.is_GlobalVar = false;
-            context.what_typeSpec = "0";
-            context.var_iden = "0";
+        if(context.is_array){
+            global_var->is_arr = true;
         }
 
+        std::pair<std::string, Bindings*> var (context.var_iden, global_var);
+        context.GlobalVar.insert(var);
+
+        context.is_array = false;
+        context.arr_size = 0;
+        context.is_GlobalVar = false;
+        context.what_typeSpec = "0";
+        context.var_iden = "0";
         context.is_enum = false;
         
 
@@ -2415,10 +2414,7 @@ inline void EnumSpecifier::print_asm(std::ofstream& out){
     enum_list -> print_asm(out);
     context.enumerator_start = 0;
     std::unordered_map<std::string, int>::iterator it;
-    for(it = context.Enums["noname"].enummap.begin(); it!=context.Enums["noname"].enummap.end(); it++){
-        std::cout << it->first << std::endl;
-        std::cout << it->second << std::endl;
-    }
+
     // if(firststepchecker == true){
     //     context.is_firststep = false;
     //     firststepchecker = false;
@@ -2472,10 +2468,21 @@ inline void Enumerator::print_asm(std::ofstream& out){
                         context.enumoperands.pop_back();
                         operand1 = context.enumoperands.back();
                         context.enumoperands.pop_back();
-
-                        searchupdate(operand1);
-                        searchupdate(operand2);
-
+                        bool found = false;
+                        for(context.Enums_it=context.Enums.begin(); context.Enums_it!=context.Enums.end(); context.Enums_it++){
+                            if(found == true){
+                                break;
+                            }
+                            context.searchupdate(operand1, context.Enums_it->second.enummap);
+                        }
+                        found = false;
+                        for(context.Enums_it=context.Enums.begin();context.Enums_it!=context.Enums.end(); context.Enums_it++){
+                            if(found == true){
+                                break;
+                            }
+                            context.searchupdate(operand2, context.Enums_it->second.enummap);
+                        }
+                        found = false;
                         operand1.second = std::to_string(context.int_house_solver(std::stoi(operand1.second), std::stoi(operand2.second), context.enumoperators.back()));
                         context.enumoperands.push_back(operand1);
                         context.enumoperators.pop_back();
@@ -2494,25 +2501,6 @@ inline void Enumerator::print_asm(std::ofstream& out){
     }
 }
 
-inline void Enumerator::searchupdate(std::pair<std::string, std::string>& operand){
-    if(operand.first == "variable"){
-        bool found = false;
-        for(context.Enums_it=context.Enums.begin();context.Enums_it!=context.Enums.end(); context.Enums_it++){
-            if(found == true){
-                break;
-            }
-            std::unordered_map<std::string,int>::iterator sec_it;
-            for(sec_it=context.Enums_it->second.enummap.begin(); sec_it!=context.Enums_it->second.enummap.end(); sec_it++){
-                if(sec_it->first == operand.second){
-                    found = true;
-                    operand.first = "constant";
-                    operand.second = std::to_string(sec_it->second);
-                    break;
-                }
-            }
-        }
-    }
-}
 
 
 //ALLOCATING MEMORY//

@@ -1246,8 +1246,6 @@ class Enumerator{
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
         void print_asm(std::ofstream& out);
-        void searchupdate(std::pair<std::string, std::string>& operand);
-        
     private:
         std::string *iden;
         ConstantExpr *const_expr;

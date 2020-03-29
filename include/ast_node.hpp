@@ -81,6 +81,32 @@ struct Context{
     std::string arr_name;
     int arr_index = -1;
 
+    
+    
+    bool searchupdate(std::pair<std::string, std::string>& operand, std::unordered_map<std::string, int> variable_map){
+        if(operand.first == "variable"){
+            bool found = false;
+            std::unordered_map<std::string,int>::iterator it;  
+            for(it=variable_map.begin(); it!=variable_map.end(); it++){
+                if(it->first == operand.second){
+                    found = true;
+                    operand.first = "constant";
+                    operand.second = std::to_string(it->second);
+                    break;
+                }
+            }
+            return true;
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     int int_house_solver(int first, int second, std::string operatorr){
         if(operatorr == "||"){
             first = first||second;
