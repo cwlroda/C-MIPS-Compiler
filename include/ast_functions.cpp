@@ -1028,6 +1028,10 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         dir_declr->print_asm(out);
     }
 
+    if(param_list != NULL){
+        param_list -> print_asm(out);
+    }
+
     if(context.is_GlobalVar == true){
         if(brac_type != NULL){
             context.arr_size = std::stoi(*constant);
@@ -1053,6 +1057,20 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     if(context.in_func == true && iden != NULL && !context.got_func_name){
         context.FuncName = *iden;
         context.got_func_name = true;
+    }
+}
+
+inline void ParameterList::print_asm(std::ofstream& out){
+    if(param_list != NULL){
+        param_list -> print_asm(out);
+    }
+    param_decl->print_asm(out);
+}
+
+inline void ParameterDeclaration::print_asm(std::ofstream& out){
+    decl_spec->print_asm(out);
+    if(declr != NULL){
+        declr->print_asm(out);
     }
 }
 

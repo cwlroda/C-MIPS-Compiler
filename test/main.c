@@ -1,8 +1,6 @@
 int main(){
-    f(1,2,3,4,5,6);
+    int z=10;
+    int x = 10;
+    int y=10;
 }
 
-int f(int x, int y, int z, int a, int b, int c){
-    x = 1;
-    y = 2;
-}
