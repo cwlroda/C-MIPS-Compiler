@@ -21,9 +21,7 @@ struct WithinEnum{
     std::unordered_map<std::string, int> enummap;
     int enumcounter = 0;
 };
-WithinEnum* enumgen;
-std::unordered_map<std::string, WithinEnum> Enums;
-std::unordered_map<std::string, WithinEnum>::iterator Enums_it;
+
 struct Context{
     bool in_func = false; // check if entering function
     bool is_init = false; // check if function/variable is initialised
@@ -69,6 +67,9 @@ struct Context{
     int enumerator_start = 0;
     std::vector<std::string> enumoperators;
     std::vector<std::pair<std::string, std::string>> enumoperands;
+    WithinEnum* enumgen;
+    std::unordered_map<std::string, WithinEnum> Enums;
+    std::unordered_map<std::string, WithinEnum>::iterator Enums_it;
 
 
     bool is_array = false; // check if it is an array

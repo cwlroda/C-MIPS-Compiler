@@ -242,6 +242,10 @@ inline void ConditionalExpr::print_py(std::ofstream& out){
     }
 }
 
+inline void ConstantExpr::print_asm(std::ofstream& out){
+    cond_expr->print_asm(out);
+}
+
 inline void LogicalOrExpr::print_py(std::ofstream& out){
     if(log_or_expr != NULL){
         log_or_expr->print_py(out);
@@ -741,8 +745,8 @@ inline void TranslationUnit::print_asm_main(std::string& filename) const{
     outfile << "\t.module nooddspreg" << std::endl;
     outfile << "\t.abicalls" << std::endl;   
     outfile << "\t.abicalls" << std::endl << std::endl;
-    enumgen = new WithinEnum;
-    Enums.insert(std::pair<std::string, WithinEnum>("noname", *enumgen));
+    context.enumgen = new WithinEnum;
+    context.Enums.insert(std::pair<std::string, WithinEnum>("noname", *context.enumgen));
     if(trans_unit != NULL){
         trans_unit->print_asm(outfile);
     }
@@ -910,164 +914,6 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     context.stack_offset = 0;
 }
 
-inline void CompoundStatement::alloc_mem(std::vector<int>& mv){
-    if(decl_list != NULL){
-        decl_list->alloc_mem(mv);
-    }
-
-    if(state_list != NULL){
-        state_list->alloc_mem(mv);
-    }
-}
-inline void StatementList::alloc_mem(std::vector<int>& mv){
-    if(state_list != NULL){
-        state_list -> alloc_mem(mv);
-    }
-    state -> alloc_mem(mv);
-}
-inline void Statement::alloc_mem(std::vector<int>& mv){
-    if(comp_state != NULL){
-        comp_state -> alloc_mem(mv);
-    }
-    if(expr_state != NULL){
-        expr_state -> alloc_mem(mv);
-    }
-}
-
-inline void ExprStatement::alloc_mem(std::vector<int>& mv){
-    if(expr != NULL){
-        expr->alloc_mem(mv);
-        
-    }
-}
-inline void Expr::alloc_mem(std::vector<int>& mv){
-    if(assign_expr != NULL){
-        int iterations = 0;
-        assign_expr -> alloc_mem(iterations);
-
-        if(iterations > 0 && iterations < 3){
-            mv.push_back(1);
-            mv.push_back(1);
-            mv.push_back(1);
-            mv.push_back(1);
-        }
-
-        else{
-            for(int i=0; i<iterations; i++){
-                mv.push_back(1);
-                mv.push_back(1);
-            }
-        }
-    }
-}
-inline void AssignmentExpr::alloc_mem(int& iterations){
-    if(cond_expr != NULL){
-        cond_expr -> alloc_mem(iterations);
-    }
-}
-inline void ConditionalExpr::alloc_mem(int& iterations){
-    if( log_or_expr != NULL){
-        log_or_expr -> alloc_mem(iterations);
-    }
-}
-inline void LogicalOrExpr::alloc_mem(int& iterations){
-    if( log_and_expr != NULL){
-        log_and_expr -> alloc_mem(iterations);
-    }
-}
-inline void LogicalAndExpr::alloc_mem(int& iterations){
-    if( incl_or_expr != NULL){
-        incl_or_expr -> alloc_mem(iterations);
-    }
-}
-inline void InclusiveOrExpr::alloc_mem(int& iterations){
-    if( excl_or_expr != NULL){
-        excl_or_expr -> alloc_mem(iterations);
-    }
-}
-inline void ExclusiveOrExpr::alloc_mem(int& iterations){
-    if( and_expr != NULL){
-        and_expr -> alloc_mem(iterations);
-    }
-}
-inline void AndExpr::alloc_mem(int& iterations){
-    if( equal_expr != NULL){
-        equal_expr -> alloc_mem(iterations);
-    }
-}
-inline void EqualityExpr::alloc_mem(int& iterations){
-    if( rel_expr != NULL){
-        rel_expr -> alloc_mem(iterations);
-    }
-}
-inline void RelationalExpr::alloc_mem(int& iterations){
-    if( shift_expr != NULL){
-        shift_expr -> alloc_mem(iterations);
-    }
-}
-inline void ShiftExpr::alloc_mem(int& iterations){
-    if( add_expr != NULL){
-        add_expr -> alloc_mem(iterations);
-    }
-}
-inline void AdditiveExpr::alloc_mem(int& iterations){
-    if( mul_expr != NULL){
-        mul_expr -> alloc_mem(iterations);
-    }
-}
-inline void MultiplicativeExpr::alloc_mem(int& iterations){
-    if( cast_expr != NULL){
-        cast_expr -> alloc_mem(iterations);
-    }
-}
-inline void CastExpr::alloc_mem(int& iterations){
-    if( un_expr != NULL){
-        un_expr -> alloc_mem(iterations);
-    }
-}
-inline void UnaryExpr::alloc_mem(int& iterations){
-    if( post_expr != NULL){
-        post_expr -> alloc_mem(iterations);
-    }
-}
-inline void PostfixExpr::alloc_mem(int& iterations){
-    if( arg_expr_list != NULL){
-        arg_expr_list -> alloc_mem(iterations);
-    }
-}
-inline void ArgumentExprList::alloc_mem(int& iterations){
-    if(arg_expr_list != NULL){
-        arg_expr_list->alloc_mem(iterations);
-    }
-
-    if( ass_expr != NULL){
-        iterations ++;
-        ass_expr -> alloc_mem(iterations);
-    }
-}
-inline void DeclarationList::alloc_mem(std::vector<int>& mv){
-    if(decl_list!=NULL){
-        decl_list->alloc_mem(mv);
-    }
-
-    decl->alloc_mem(mv);
-}
-inline void Declaration::alloc_mem(std::vector<int>& mv){
-    decl_spec->alloc_mem(mv);
-}
-
-inline void DeclarationSpecifier::alloc_mem(std::vector<int>& mv){
-    type_spec->alloc_mem(mv);
-}
-inline void TypeSpecifier::alloc_mem(std::vector<int>& mv){
-    if(*type == "double"){
-        mv.push_back(2);
-        mv.push_back(3);
-    }
-    else{
-        mv.push_back(1);
-    }
-}
 inline void DeclarationList::print_asm(std::ofstream& out){
     if(decl_list!=NULL){
         decl_list->print_asm(out);
@@ -1388,6 +1234,8 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         if(context.is_solving == true || context.is_cond || context.arr_access){
             std::unordered_map<std::string, Bindings*>::iterator global_it;
 
+            
+
             global_it = context.GlobalVar.find(*iden);
 
             if(global_it != context.GlobalVar.end()){
@@ -1397,10 +1245,35 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
             }
 
             else{
-                context.solving_out.push_back(context.LocalVar[*iden]);
-                context.solving_out_constant.push_back("");
+
+                bool found = false;
+                for(context.Enums_it=context.Enums.begin();context.Enums_it!=context.Enums.end(); context.Enums_it++){
+                    if(found == true){
+                        break;
+                    }
+                    std::unordered_map<std::string,int>::iterator sec_it;
+                    for(sec_it=context.Enums_it->second.enummap.begin();sec_it!=context.Enums_it->second.enummap.end();sec_it++){
+                        if(sec_it->first == *iden){
+                            found = true;
+                            *constant = std::to_string(sec_it->second);
+                            iden = NULL;
+                            context.solving_out_constant.push_back(*constant);
+                        }
+                    }
+                }
+                if(found == false){
+                    context.solving_out.push_back(context.LocalVar[*iden]);
+                    context.solving_out_constant.push_back("");
+                }
+                found == false;
+                
             }
+
+            
+
         }
+
+        
         if(context.function_call > 0){
             context.function_name = *iden;
         }
@@ -2508,12 +2381,12 @@ inline void PrimaryExpr::checking_enum(){
 inline void EnumSpecifier::print_asm(std::ofstream& out){
     if(iden != NULL){
         *context.enum_name = *iden;
-        Enums_it = Enums.find(*iden);
-        if(Enums_it == Enums.end()){
-            enumgen = new WithinEnum;
-            Enums.insert(std::pair<std::string, WithinEnum>(*iden,*enumgen));
+        context.Enums_it = context.Enums.find(*iden);
+        if(context.Enums_it == context.Enums.end()){
+            context.enumgen = new WithinEnum;
+            context.Enums.insert(std::pair<std::string, WithinEnum>(*iden,*context.enumgen));
         }
-        Enums_it = Enums.begin();
+        context.Enums_it = context.Enums.begin();
     }
     else{
         *context.enum_name = "noname";
@@ -2545,10 +2418,10 @@ inline void EnumeratorList::print_asm(std::ofstream& out){
 inline void Enumerator::print_asm(std::ofstream& out){
     if(const_expr != NULL){
         const_expr -> print_asm(out);
-        if(Enums[*context.enum_name].enummap.size() == 0){
+        if(context.Enums[*context.enum_name].enummap.size() == 0){
             if(context.enumoperators.size() == 1){
                 std::pair<std::string, int>tmp(context.enumoperands[0].first, std::stoi(context.enumoperands[1].first));
-                Enums[*context.enum_name].enummap.insert(tmp);
+                context.Enums[*context.enum_name].enummap.insert(tmp);
                 context.enumoperands.pop_back();
                 context.enumoperands.pop_back();
                 context.enumoperators.pop_back();
@@ -2631,24 +2504,24 @@ inline void Enumerator::print_asm(std::ofstream& out){
                 }
             }
         }
-        Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden,std::stoi(context.enumoperands.front().second)));
-        Enums[*context.enum_name].enumcounter = std::stoi(context.enumoperands.front().second);
+        context.Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden,std::stoi(context.enumoperands.front().second)));
+        context.Enums[*context.enum_name].enumcounter = std::stoi(context.enumoperands.front().second);
     }
     else{
-        Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden, Enums[*context.enum_name].enumcounter));
-        Enums[*context.enum_name].enumcounter++;
+        context.Enums[*context.enum_name].enummap.insert(std::pair<std::string, int>(*iden, context.Enums[*context.enum_name].enumcounter));
+        context.Enums[*context.enum_name].enumcounter++;
     }
 }
 
 inline void Enumerator::searchupdate(std::pair<std::string, std::string>& operand){
     if(operand.first == "variable"){
         bool found = false;
-        for(Enums_it=Enums.begin();Enums_it!=Enums.end(); Enums_it++){
+        for(context.Enums_it=context.Enums.begin();context.Enums_it!=context.Enums.end(); context.Enums_it++){
             if(found == true){
                 break;
             }
             std::unordered_map<std::string,int>::iterator sec_it;
-            for(sec_it=Enums_it->second.enummap.begin(); sec_it!=Enums_it->second.enummap.end(); sec_it++){
+            for(sec_it=context.Enums_it->second.enummap.begin(); sec_it!=context.Enums_it->second.enummap.end(); sec_it++){
                 if(sec_it->first == operand.second){
                     found = true;
                     operand.first = "number";
@@ -2657,5 +2530,167 @@ inline void Enumerator::searchupdate(std::pair<std::string, std::string>& operan
                 }
             }
         }
+    }
+}
+
+
+//ALLOCATING MEMORY//
+
+inline void CompoundStatement::alloc_mem(std::vector<int>& mv){
+    if(decl_list != NULL){
+        decl_list->alloc_mem(mv);
+    }
+
+    if(state_list != NULL){
+        state_list->alloc_mem(mv);
+    }
+}
+inline void StatementList::alloc_mem(std::vector<int>& mv){
+    if(state_list != NULL){
+        state_list -> alloc_mem(mv);
+    }
+    state -> alloc_mem(mv);
+}
+inline void Statement::alloc_mem(std::vector<int>& mv){
+    if(comp_state != NULL){
+        comp_state -> alloc_mem(mv);
+    }
+    if(expr_state != NULL){
+        expr_state -> alloc_mem(mv);
+    }
+}
+
+inline void ExprStatement::alloc_mem(std::vector<int>& mv){
+    if(expr != NULL){
+        expr->alloc_mem(mv);
+        
+    }
+}
+inline void Expr::alloc_mem(std::vector<int>& mv){
+    if(assign_expr != NULL){
+        int iterations = 0;
+        assign_expr -> alloc_mem(iterations);
+
+        if(iterations > 0 && iterations < 3){
+            mv.push_back(1);
+            mv.push_back(1);
+            mv.push_back(1);
+            mv.push_back(1);
+        }
+
+        else{
+            for(int i=0; i<iterations; i++){
+                mv.push_back(1);
+                mv.push_back(1);
+            }
+        }
+    }
+}
+inline void AssignmentExpr::alloc_mem(int& iterations){
+    if(cond_expr != NULL){
+        cond_expr -> alloc_mem(iterations);
+    }
+}
+inline void ConditionalExpr::alloc_mem(int& iterations){
+    if( log_or_expr != NULL){
+        log_or_expr -> alloc_mem(iterations);
+    }
+}
+inline void LogicalOrExpr::alloc_mem(int& iterations){
+    if( log_and_expr != NULL){
+        log_and_expr -> alloc_mem(iterations);
+    }
+}
+inline void LogicalAndExpr::alloc_mem(int& iterations){
+    if( incl_or_expr != NULL){
+        incl_or_expr -> alloc_mem(iterations);
+    }
+}
+inline void InclusiveOrExpr::alloc_mem(int& iterations){
+    if( excl_or_expr != NULL){
+        excl_or_expr -> alloc_mem(iterations);
+    }
+}
+inline void ExclusiveOrExpr::alloc_mem(int& iterations){
+    if( and_expr != NULL){
+        and_expr -> alloc_mem(iterations);
+    }
+}
+inline void AndExpr::alloc_mem(int& iterations){
+    if( equal_expr != NULL){
+        equal_expr -> alloc_mem(iterations);
+    }
+}
+inline void EqualityExpr::alloc_mem(int& iterations){
+    if( rel_expr != NULL){
+        rel_expr -> alloc_mem(iterations);
+    }
+}
+inline void RelationalExpr::alloc_mem(int& iterations){
+    if( shift_expr != NULL){
+        shift_expr -> alloc_mem(iterations);
+    }
+}
+inline void ShiftExpr::alloc_mem(int& iterations){
+    if( add_expr != NULL){
+        add_expr -> alloc_mem(iterations);
+    }
+}
+inline void AdditiveExpr::alloc_mem(int& iterations){
+    if( mul_expr != NULL){
+        mul_expr -> alloc_mem(iterations);
+    }
+}
+inline void MultiplicativeExpr::alloc_mem(int& iterations){
+    if( cast_expr != NULL){
+        cast_expr -> alloc_mem(iterations);
+    }
+}
+inline void CastExpr::alloc_mem(int& iterations){
+    if( un_expr != NULL){
+        un_expr -> alloc_mem(iterations);
+    }
+}
+inline void UnaryExpr::alloc_mem(int& iterations){
+    if( post_expr != NULL){
+        post_expr -> alloc_mem(iterations);
+    }
+}
+inline void PostfixExpr::alloc_mem(int& iterations){
+    if( arg_expr_list != NULL){
+        arg_expr_list -> alloc_mem(iterations);
+    }
+}
+inline void ArgumentExprList::alloc_mem(int& iterations){
+    if(arg_expr_list != NULL){
+        arg_expr_list->alloc_mem(iterations);
+    }
+
+    if( ass_expr != NULL){
+        iterations ++;
+        ass_expr -> alloc_mem(iterations);
+    }
+}
+inline void DeclarationList::alloc_mem(std::vector<int>& mv){
+    if(decl_list!=NULL){
+        decl_list->alloc_mem(mv);
+    }
+
+    decl->alloc_mem(mv);
+}
+inline void Declaration::alloc_mem(std::vector<int>& mv){
+    decl_spec->alloc_mem(mv);
+}
+
+inline void DeclarationSpecifier::alloc_mem(std::vector<int>& mv){
+    type_spec->alloc_mem(mv);
+}
+inline void TypeSpecifier::alloc_mem(std::vector<int>& mv){
+    if(*type == "double"){
+        mv.push_back(2);
+        mv.push_back(3);
+    }
+    else{
+        mv.push_back(1);
     }
 }

@@ -392,15 +392,15 @@ STRUCT_DECLARATOR: DECLARATOR
                 |  DECLARATOR COLON CONSTANT_EXPR                                               
                 |  COLON CONSTANT_EXPR                                                          
 
-ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB                                         { $$ = new EnumSpecifier($1, $2); }                                     
-                | ENUM LCB ENUMERATOR_LIST RCB                                                  { $$ = new EnumSpecifier(NULL, $2); }
-                | ENUM IDENTIFIER                                                               { $$ = new EnumSpecifier($1, NULL); }
+ENUM_SPECIFIER: ENUM IDENTIFIER LCB ENUMERATOR_LIST RCB                                         { $$ = new EnumSpecifier($2, $4); }                                     
+                | ENUM LCB ENUMERATOR_LIST RCB                                                  { $$ = new EnumSpecifier(NULL, $3); }
+                | ENUM IDENTIFIER                                                               { $$ = new EnumSpecifier($2, NULL); }
 
 ENUMERATOR_LIST: ENUMERATOR                                                                     { $$ = new EnumeratorList(NULL, $1); }
-        |  ENUMERATOR_LIST COMMA ENUMERATOR                                                     { $$ = new EnumeratorList($1, $2); }
+        |  ENUMERATOR_LIST COMMA ENUMERATOR                                                     { $$ = new EnumeratorList($1, $3); }
 
 ENUMERATOR: IDENTIFIER                                                                          { $$ = new Enumerator($1, NULL); }
-        |   IDENTIFIER EQUAL CONSTANT_EXPR                                                      { $$ = new Enumerator($1, $2); }
+        |   IDENTIFIER EQUAL CONSTANT_EXPR                                                      { $$ = new Enumerator($1, $3); }
 
 %%
 
