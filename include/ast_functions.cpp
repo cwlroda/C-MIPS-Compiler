@@ -964,6 +964,10 @@ inline void Declaration::print_asm(std::ofstream& out){
                 out << "\tsw\t\t$2," << context.frame_offset_counter << "($fp)" << std::endl;
             }
 
+            else if(context.empty_var){
+                out << "\tsw\t\t$0," << local_var->frame_offset << "($fp)" << std::endl;
+            }
+
             else{
                 if(context.solving_out_constant.back() == ""){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
@@ -972,23 +976,16 @@ inline void Declaration::print_asm(std::ofstream& out){
                     context.solving_out_constant.pop_back();
                 }
                 else{
-                    if(context.solving_out_constant.size() == 0){
-                        out << "\tli\t\t$2,0" << std::endl;
-                    }
-                    else{
-                        out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
-                        context.solving_out_constant.pop_back();
-                    }
-                    
+                    out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
+                    context.solving_out_constant.pop_back();
                 }
                 out << "\tsw\t\t$2," << local_var->frame_offset << "($fp)" << std::endl;
-                
             }
 
             context.frame_offset_counter += 4;
         }
 
-        
+        context.empty_var = false;
     }
 }
 
@@ -1019,6 +1016,10 @@ inline void InitDeclarator::print_asm(std::ofstream& out){
 
     if(init != NULL){
         init->print_asm(out);
+    }
+
+    else{
+        context.empty_var = true;
     }
 }
 
