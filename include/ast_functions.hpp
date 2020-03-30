@@ -814,7 +814,7 @@ class UnaryOperator{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        void print_asm(std::ofstream& out);
+        std::string print_asm(std::ofstream& out){ return *op; }
         void checking_enum();
 
     private:

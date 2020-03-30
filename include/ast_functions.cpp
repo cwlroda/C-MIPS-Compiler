@@ -769,7 +769,6 @@ inline void TranslationUnit::print_asm(std::ofstream& out){
 
 inline void ExternalDeclaration::print_asm(std::ofstream& out){
     if(decl != NULL){
-        context.is_GlobalVar = true;
         context.is_enum = false;
         decl->print_asm(out);
         if(context.is_enum == false){
@@ -819,35 +818,12 @@ inline void ExternalDeclaration::print_asm(std::ofstream& out){
 
             
         }
-        Bindings* global_var = new Bindings;
-        global_var->id = context.var_iden;
-        global_var->value = context.var_val;
-        global_var->type = context.what_typeSpec;
-
-        if(context.is_array){
-            global_var->is_arr = true;
-        }
-
-        std::pair<std::string, Bindings*> var (context.var_iden, global_var);
-        context.GlobalVar.insert(var);
 
         context.is_array = false;
         context.arr_size = 0;
-        context.is_GlobalVar = false;
         context.what_typeSpec = "0";
         context.var_iden = "0";
         context.is_enum = false;
-        
-
-        int size = context.solving_out.size();
-        for(int i=0; i<size; i++){
-            context.solving_out.pop_back();
-        }
-
-        size = context.solving_out_constant.size();
-        for(int i=0; i<size; i++){
-            context.solving_out_constant.pop_back();
-        }
     }
 
     else if(func_def != NULL){
@@ -919,8 +895,8 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
 
 
     comp_state -> print_asm(out);
-    out << "\tmove\t$16,$2" << std::endl;
     out << "$" << context.FuncName << "END:" << std::endl;
+    out << "\tmove\t$16,$2" << std::endl;
     out << "\tmove\t$sp,$fp" << std::endl;
     out << "\tlw\t\t$31,"<< context.NeededMem - 4<<"($sp)" << std::endl;
     out << "\tlw\t\t$fp,"<< context.NeededMem - 8 <<"($sp)" << std::endl;
@@ -957,6 +933,13 @@ inline void Declaration::print_asm(std::ofstream& out){
         local_var->id = context.var_iden;
         local_var->value = context.var_val;
         local_var->frame_offset = context.frame_offset_counter;
+        
+        if(context.what_typeSpec == "int"){
+            local_var->size = 4;
+        }
+        else if(context.what_typeSpec == "char"){
+            local_var->size = 1;
+        }
 
         if(context.is_array){
             local_var->is_arr = true;
@@ -985,13 +968,7 @@ inline void Declaration::print_asm(std::ofstream& out){
             else{
                 if(!context.solving_out.empty() && context.solving_out_constant.back() == ""){
                     if(!context.solving_out.back()->is_parameter){
-                        if(!context.solving_out.back()->is_parameter){
-                            out << "hi" << std::endl;
-                            out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                        }
-                        else{
-                            out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                        }
+                        out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     }
                     else{
                         out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
@@ -1001,7 +978,6 @@ inline void Declaration::print_asm(std::ofstream& out){
                     context.solving_out_constant.pop_back();
                 }
                 else if(!context.solving_out_constant.empty()){
-                    out << "hi" << std::endl;
                     out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
                     context.solving_out_constant.pop_back();
                 }
@@ -1012,6 +988,8 @@ inline void Declaration::print_asm(std::ofstream& out){
         }
 
         context.empty_var = false;
+        context.is_solving = false;
+        context.is_firststep = false;
     }
 }
 
@@ -1031,7 +1009,7 @@ inline void TypeSpecifier::print_asm(std::ofstream& out){
         enum_spec -> print_asm(out);
     }
     else{
-    context.what_typeSpec = *type;
+        context.what_typeSpec = *type;
     }
 }
 
@@ -1087,17 +1065,6 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         context.getting_functionname = false;
     }
 
-    if(context.is_GlobalVar == true){
-        if(brac_type != NULL){
-            context.arr_size = std::stoi(*constant);
-            context.is_array = true;
-        }
-
-        else{
-            context.var_iden = *iden;
-        }
-    }
-
     if(context.is_LocalVar){
         if(brac_type != NULL){
             context.arr_size = std::stoi(*constant);
@@ -1113,7 +1080,6 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         context.FuncName = *iden;
         context.got_func_name = true;
     }
-    
 }
 
 inline void ParameterList::print_asm(std::ofstream& out, std::unordered_map<std::string, int>& fn_parameter_list){
@@ -1142,7 +1108,9 @@ inline void Initializer::print_asm(std::ofstream& out){
     }
     if(assign_expr != NULL){
         context.is_solving = true;
+        context.is_firststep = true;
         assign_expr -> print_asm(out);
+        context.is_firststep = false;
         context.is_solving = false;
     }
 }
@@ -1167,30 +1135,20 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         context.is_cond = false;
 
         if((context.function_call > 0)){
-            if(context.is_GlobalVar){
-                out << "\tlui\t\t$2,%hi(" << context.solving_out.back()->id << ")" << std::endl;
-                out << "\tlw\t\t$2,%lo(" << context.solving_out.back()->id << ")($2)" << std::endl;
-                out << "\tnop" << std::endl;
-                context.solving_out.pop_back();
-                context.solving_out_constant.pop_back();
-            }
-
-            else{
-                if(context.solving_out_constant.back() == ""){
-                    if(!context.solving_out.back()->is_parameter){
-                        out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                    }
-                    else{
-                        out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                    }
-                    context.solving_out.pop_back();
-                    context.solving_out_constant.pop_back();
-                    out << "\tnop" << std::endl;
+            if(context.solving_out_constant.back() == ""){
+                if(!context.solving_out.back()->is_parameter){
+                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
                 else{
-                    out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
-                    context.solving_out_constant.pop_back();
+                    out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+                out << "\tnop" << std::endl;
+            }
+            else{
+                out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
+                context.solving_out_constant.pop_back();
             }
         }
     }
@@ -1200,39 +1158,30 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             un_expr->print_asm(out);
         }
 
-        std::string global_name = "";
-
-        if(context.is_GlobalVar){
-            global_name = context.solving_out.back()->id;
-            context.is_GlobalVar = false;
-        }
-
-        out << global_name << "1" << std::endl;
-
         int result_var = context.solving_out.back()->frame_offset;
 
         if(ass_expr != NULL){
             ass_expr->print_asm(out);
         }
 
-        context.ExprHelper(out);
+        //context.ExprHelper(out);
+        if(context.function_call != 0 && !context.sizeof_type){
+            if(context.is_a_parameter){
+                out << "\tlw\t\t$2," << context.parameteroffset <<"($fp)" << std::endl;
+                out << "\tnop" << std::endl;
+            }
 
-        if(global_name != ""){
-            out << "\tlui\t\t$3,%hi(" << global_name << ")" << std::endl;
-            out <<"\tsw\t\t$2,%lo(" << global_name << ")($3)" << std::endl;
-        }
-
-        else if(context.is_a_parameter){
-            out << "\tlw\t\t$2," << context.parameteroffset <<"($fp)" << std::endl;
-            out << "\tnop" << std::endl;
+            else{
+                out << "\tsw\t\t$2," << context.NeededMem + result_var - 4 << "($fp)" << std::endl;
+            }
         }
 
         else{
-            out << "\tsw\t\t$2," << context.NeededMem + result_var - 4 << "($fp)" << std::endl;
+            out << "\tsw\t\t$2," << result_var << "($fp)" << std::endl;
         }
 
         context.function_call = 0;
-        context.is_GlobalVar = false;
+        context.sizeof_type = false;
     }
 }
 
@@ -1240,15 +1189,114 @@ inline void UnaryExpr::print_asm(std::ofstream& out){
     if(post_expr != NULL){
         post_expr->print_asm(out);
     }
-    // else{
-    //     if(un_op != NULL){
-    //         std::string type = un_op->print_asm(out);
-    //         cast_expr->print_asm(out);
-    //     }
-    //     if(type_name != NULL){
-    //         // type_name->print_asm(out);
-    //     }
-    // }
+
+    else if(un_expr != NULL){
+        if(*op == "++"){
+            un_expr->print_asm(out);
+
+            if(!context.solving_out.back()->is_parameter){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            }
+            else{
+                out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            }
+            out << "\tnop" << std::endl;
+            out << "\taddiu\t$2,$2,1" << std::endl;
+            out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
+        }
+        if(*op == "--"){
+            un_expr->print_asm(out);
+
+            if(!context.solving_out.back()->is_parameter){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            }
+            else{
+                out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            }
+            out << "\tnop" << std::endl;
+            out << "\taddiu\t$2,$2,-1" << std::endl;
+            out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
+        }
+
+        if(*op == "sizeof"){
+            un_expr->print_asm(out);
+
+            out << "\tli\t\t$2," << context.solving_out.back()->size << std::endl;
+            context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
+        }
+    }
+
+    else if(type_name != NULL){
+        context.sizeof_type = true;
+        type_name->print_asm(out);
+
+        if(context.what_typeSpec == "int"){
+            out << "\tli\t\t$2,4" << std::endl;
+        }
+
+        else if(context.what_typeSpec == "char"){
+            out << "\tli\t\t$2,1" << std::endl;
+        }
+    }
+
+    else{
+        if(un_op != NULL){
+            std::string type = un_op->print_asm(out);
+            cast_expr->print_asm(out);
+
+            if(type == "+"){
+
+            }
+
+            else if(type == "-"){
+                if(!context.solving_out.back()->is_parameter){
+                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                else{
+                    out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                out << "\tnop" << std::endl;
+                out << "\tsubu\t$2,$0,$2" << std::endl;
+                out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+            }
+
+            else if(type == "~"){
+                if(!context.solving_out.back()->is_parameter){
+                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                else{
+                    out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                out << "\tnop" << std::endl;
+                out << "\tnor\t\t$2,$0,$2" << std::endl;
+                out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+            }
+
+            else if(type == "!"){
+                if(!context.solving_out.back()->is_parameter){
+                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                else{
+                    out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                out << "\tnop" << std::endl;
+                out << "\tsltu\t$2,$2,1" << std::endl;
+                out << "\tandi\t$2,$2,0x00ff" << std::endl;
+                out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+            }
+        }
+    }
 }
 
 inline void PostfixExpr::print_asm(std::ofstream& out){
@@ -1283,65 +1331,33 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
 
         if(*op == "++"){
             post_expr->print_asm(out);
-            if(context.is_GlobalVar){
-                out << "\tlui\t\t$2,%hi(" << context.solving_out.back()->id << ")" << std::endl;
-                out << "\tlw\t\t$2,%lo(" << context.solving_out.back()->id << ")($2)" << std::endl;
-                out << "\tnop" << std::endl;
-                context.solving_out.pop_back();
-                context.solving_out_constant.pop_back();
-            }
 
+            if(!context.solving_out.back()->is_parameter){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            }
             else{
-                if(!context.solving_out.back()->is_parameter){
-                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                }
-                else{
-                    out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                }
-                out << "\tnop" << std::endl;
+                out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             }
-
+            out << "\tnop" << std::endl;
             out << "\taddiu\t$2,$2,1"<<std::endl;
-
-            if(context.is_GlobalVar){
-                out << "\tlui\t\t$3,%hi(" << context.solving_out.back()->id << ")" << std::endl;
-                out <<"\tsw\t\t$2,%lo(" << context.solving_out.back()->id << ")($3)" << std::endl;
-            }
-
-            else{
-                out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-            }
+            out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
         }
         if(*op == "--"){
             post_expr->print_asm(out);
-            if(context.is_GlobalVar){
-                out << "\tlui\t\t$2,%hi(" << context.solving_out.back()->id << ")" << std::endl;
-                out << "\tlw\t\t$2,%lo(" << context.solving_out.back()->id << ")($2)" << std::endl;
-                out << "\tnop" << std::endl;
-                context.solving_out.pop_back();
-                context.solving_out_constant.pop_back();
-            }
 
-            else{
-                if(!context.solving_out.back()->is_parameter){
-                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                }
-                else{
-                    out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                }
-                out << "\tnop" << std::endl;
+            if(!context.solving_out.back()->is_parameter){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             }
+            else{
+                out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+            }
+            out << "\tnop" << std::endl;
             out << "\taddiu\t$2,$2,-1"<<std::endl;
-            if(context.is_GlobalVar){
-                out << "\tlui\t\t$3,%hi(" << context.solving_out.back()->id << ")" << std::endl;
-                out <<"\tsw\t\t$2,%lo(" << context.solving_out.back()->id << ")($3)" << std::endl;
-            }
-
-            else{
-                out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-            }
+            out << "\tsw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
             context.solving_out.pop_back();
+            context.solving_out_constant.pop_back();
         }
     }
 }
@@ -1372,45 +1388,26 @@ inline void ArgumentExprList::print_asm(std::ofstream& out){
 
 inline void PrimaryExpr::print_asm(std::ofstream& out){
     if(constant != NULL){
-        if(context.is_GlobalVar == true){
-            if(context.is_array){
-                context.arr_vals.push_back(*constant);
-            }
-
-            else{
-                context.var_val = stoi(*constant);
-            }
+        if(context.is_array){
+            context.arr_vals.push_back(*constant);
         }
 
-        if(context.is_LocalVar == true){
-            if(context.is_array){
-                context.arr_vals.push_back(*constant);
-            }
-
-            else{
-                context.var_val = stoi(*constant);
-            }
+        else if(context.is_LocalVar){
+            context.var_val = stoi(*constant);
         }
 
-        if(context.is_return == true){
+        if(context.is_return){
             context.returnNum = stoi(*constant);
         }
-        if(context.is_solving == true || context.is_cond){
+        if(context.is_solving || context.is_cond){
             context.solving_out_constant.push_back(*constant);
         }
     }
 
-    else if(iden != NULL){
-        if(context.is_solving == true || context.is_cond || context.arr_access){
-            std::unordered_map<std::string, Bindings*>::iterator global_it;
-            
-
-            global_it = context.GlobalVar.find(*iden);
-
-            if(global_it != context.GlobalVar.end()){
-                context.is_GlobalVar = true;
-                context.solving_out.push_back(context.GlobalVar[*iden]);
-                context.solving_out_constant.push_back("");
+    if(iden != NULL){
+        if(context.is_solving || context.is_cond || context.arr_access){
+            if(context.global_arr){
+                
             }
 
             else{
@@ -1444,6 +1441,20 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         }
         if(context.is_return){
             context.return_var = true;
+        }
+    }
+
+    if(expr != NULL){
+        bool firststepchecker = false;
+        if(context.is_firststep == false){
+            context.is_firststep = true;
+            firststepchecker = true;
+        }
+
+        expr->print_asm(out);
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
         }
     }
 }
@@ -1501,14 +1512,15 @@ inline void LogicalAndExpr::print_asm(std::ofstream& out){
 
         log_and_expr -> print_asm(out);
         context.ExprHelper(out);
-        out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
+        out << "\tbeq\t\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
 
         incl_or_expr -> print_asm(out);
         context.ExprHelperRHS(out);
-        out << "\tbeq\t$2,$0,$L" << l2 << std::endl;
-        out << "\tnop" << std::endl;
-        out << std::endl;
+        out << "\tbeq\t\t$3,$0,$L" << l2 << std::endl;
+        out << "\tnop" << std::endl << std::endl;
+        out << "\tli\t\t$2,1" << std::endl;
+        out << "\tb\t\t$L" << l3 << std::endl << std::endl;
         out << "$L" << l2 << ":" << std::endl;
         out << "\tmove\t$2,$0" << std::endl;
         out << "$L" << l3 << ":" << std::endl;
@@ -1775,18 +1787,6 @@ inline void Statement::print_asm(std::ofstream& out){
     if(jump_state != NULL){
         jump_state -> print_asm(out);
     }
-
-    context.is_GlobalVar = false;
-
-    int size = context.solving_out.size();
-    for(int i=0; i<size; i++){
-        context.solving_out.pop_back();
-    }
-
-    size = context.solving_out_constant.size();
-    for(int i=0; i<size; i++){
-        context.solving_out_constant.pop_back();
-    }
 }
 
 inline void LabeledStatement::print_asm(std::ofstream& out){
@@ -1801,7 +1801,11 @@ inline void ExprStatement::print_asm(std::ofstream& out){
 
 inline void SelectionStatement::print_asm(std::ofstream& out){
     if(expr != NULL){
+        context.is_solving = true;
+        context.is_firststep = true;
         expr->print_asm(out);
+        context.is_firststep = false;
+        context.is_solving = false;
     }
 
     std::string if_return = "$L" + std::to_string(context.gen_label);
@@ -1829,8 +1833,10 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
         firststepchecker = false;
     }
     
-    out << "\tb\t\t" << if_return << std::endl;
-    out << "\tnop" << std::endl;
+    if(ELSE != NULL){
+        out << "\tb\t\t" << if_return << std::endl;
+        out << "\tnop" << std::endl;
+    }
 
     if(else_state != NULL){
         out << else_label << ":" << std::endl;
@@ -1846,7 +1852,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             firststepchecker = false;
         }
     }
-
+    
     out << if_return << ":" << std::endl;
 }
 
@@ -1993,26 +1999,20 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         context.is_return = true;
         context.return_are_u_single = true;
         if(expr != NULL){
+            context.is_solving = true;
             context.is_firststep = true;
-            context.is_cond = true;
             expr -> print_asm(out);
-            context.is_cond = false;
             context.is_firststep = false;
-            if(context.return_are_u_single && context.return_var){
-                if(context.is_GlobalVar){
-                    out << "\tlui\t\t$2,%hi(" << context.solving_out.back()->id << ")" << std::endl;
-                    out << "\tlw\t\t$2,%lo(" << context.solving_out.back()->id << ")($2)" << std::endl;
-                }
+            context.is_solving = false;
 
-                else{
-                    if(!context.solving_out.back()->is_parameter){
-                        out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                    }
-                    else{
-                        out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                    }
-                    out << "\tnop" << std::endl;
+            if(context.return_are_u_single && context.return_var){
+                if(!context.solving_out.back()->is_parameter){
+                    out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
+                else{
+                    out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                out << "\tnop" << std::endl;
 
                 context.solving_out.pop_back();
                 context.solving_out_constant.pop_back();
@@ -2035,6 +2035,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
         context.returnNum = 0;
 
         out << "\tb\t\t$" << context.FuncName << "END" << std::endl;
+        out << "\tnop" << std::endl;
     }
     if(*type == "break"){
         out << "\tb\t\t" << context.break_number.back() << "END" << std::endl;
@@ -2042,6 +2043,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
     }
     if(*type == "continue"){
         out << "\tb\t\t" << context.break_number.back() << "CONT" << std::endl;
+        out << "\tnop" << std::endl;
     }
     //DO SOMETHING ABOUT TYPE
 }
@@ -2050,9 +2052,17 @@ inline void Expr::print_asm(std::ofstream& out){
     assign_expr -> print_asm(out);
 }
 
+inline void TypeName::print_asm(std::ofstream& out){
+    if(spec_qual_list != NULL){
+        spec_qual_list->print_asm(out);
+    }
+}
 
-
-
+inline void SpecifierQualifierList::print_asm(std::ofstream& out){
+    if(type_spec != NULL){
+        type_spec->print_asm(out);
+    }
+}
 
 
 
@@ -2073,7 +2083,7 @@ inline void ConditionalExpr::checking_enum(){
 inline void LogicalOrExpr::checking_enum(){
     if(log_or_expr != NULL){
         context.enumoperators.push_back("||");
-        log_or_expr -> checking_enum(); 
+        log_or_expr -> checking_enum();
     }
         log_and_expr -> checking_enum();
 }

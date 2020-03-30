@@ -13,6 +13,7 @@ struct Bindings{
     bool typdef = false;
     int stack_offset = 0;
     int frame_offset = 0;
+    int size = 0;
 
     bool is_pointer = false;
     bool is_init = false;
@@ -69,13 +70,12 @@ struct Context{
 
     bool is_a_parameter = false;
     
-    
-    
+    bool sizeof_type = false; // checks if sizeof contains a type
     
     
     //solving expressions
     std::vector<std::string> solving_out_constant;
-    std::vector<Bindings*> solving_out;
+    std::vector<Bindings*> solving_out; 
     int stack_offset = 0;
     int function_call = 0;
     std::string function_name;
@@ -102,6 +102,7 @@ struct Context{
     bool arr_access = false;
     std::string arr_name;
     int arr_index = -1;
+    bool global_arr = false;
 
     bool searchupdate(std::pair<std::string, std::string>& operand, std::unordered_map<std::string, int> variable_map){
         if(operand.first == "variable"){
@@ -176,30 +177,20 @@ struct Context{
 
     void ExprHelper(std::ostream& out){
         if((is_firststep == true || is_cond)){
-            if(is_GlobalVar){
-                out << "\tlui\t\t$2,%hi(" << solving_out.back()->id << ")" << std::endl;
-                out << "\tlw\t\t$2,%lo(" << solving_out.back()->id << ")($2)" << std::endl;
-                out << "\tnop" << std::endl;
-                solving_out.pop_back();
-                solving_out_constant.pop_back();
-            }
-
-            else{
-                if(solving_out_constant.back() == ""){
-                    if(!solving_out.back()->is_parameter){
-                        out << "\tlw\t\t$2," << solving_out.back()->frame_offset << "($fp)" << std::endl;
-                    }
-                    else{
-                        out << "\tlw\t\t$2," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
-                    }
-                    solving_out.pop_back();
-                    solving_out_constant.pop_back();
-                    out << "\tnop" << std::endl;
+            if(solving_out_constant.back() == ""){
+                if(!solving_out.back()->is_parameter){
+                    out << "\tlw\t\t$2," << solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
                 else{
-                    out << "\tli\t\t$2," << solving_out_constant.back() << std::endl;
-                    solving_out_constant.pop_back();
+                    out << "\tlw\t\t$2," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
+                solving_out.pop_back();
+                solving_out_constant.pop_back();
+                out << "\tnop" << std::endl;
+            }
+            else{
+                out << "\tli\t\t$2," << solving_out_constant.back() << std::endl;
+                solving_out_constant.pop_back();
             }
 
             is_firststep = false;
@@ -207,30 +198,20 @@ struct Context{
     }
 
     void ExprHelperRHS(std::ostream& out){
-        if(is_GlobalVar){
-            out << "\tlui\t\t$3,%hi(" << solving_out.back()->id << ")" << std::endl;
-            out << "\tlw\t\t$3,%lo(" << solving_out.back()->id << ")($3)" << std::endl;
-            out << "\tnop" << std::endl;
-            solving_out.pop_back();
-            solving_out_constant.pop_back();
-        }
-
-        else{
-            if(solving_out_constant.back() == ""){
-                if(!solving_out.back()->is_parameter){
-                    out << "\tlw\t\t$3," << solving_out.back()->frame_offset << "($fp)" << std::endl;
-                }
-                else{
-                    out << "\tlw\t\t$3," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
-                }
-                solving_out.pop_back();
-                solving_out_constant.pop_back();
-                out << "\tnop" << std::endl;
+        if(solving_out_constant.back() == ""){
+            if(!solving_out.back()->is_parameter){
+                out << "\tlw\t\t$3," << solving_out.back()->frame_offset << "($fp)" << std::endl;
             }
             else{
-                out << "\tli\t\t$3," << solving_out_constant.back() << std::endl;
-                solving_out_constant.pop_back();
+                out << "\tlw\t\t$3," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
             }
+            solving_out.pop_back();
+            solving_out_constant.pop_back();
+            out << "\tnop" << std::endl;
+        }
+        else{
+            out << "\tli\t\t$3," << solving_out_constant.back() << std::endl;
+            solving_out_constant.pop_back();
         }
     }
 };
