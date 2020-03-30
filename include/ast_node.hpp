@@ -1,6 +1,7 @@
 #ifndef AST_NODE_HPP
 #define AST_NODE_HPP
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -102,10 +103,6 @@ struct Context{
     std::string arr_name;
     int arr_index = -1;
 
-    
-
-    
-    
     bool searchupdate(std::pair<std::string, std::string>& operand, std::unordered_map<std::string, int> variable_map){
         if(operand.first == "variable"){
             bool found = false;
@@ -121,15 +118,7 @@ struct Context{
             return true;
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     int int_house_solver(int first, int second, std::string operatorr){
         if(operatorr == "||"){
             first = first||second;
@@ -183,6 +172,66 @@ struct Context{
             first = first%second;
         }
         return first;
+    }
+
+    void ExprHelper(std::ostream& out){
+        if((is_firststep == true || is_cond)){
+            if(is_GlobalVar){
+                out << "\tlui\t\t$2,%hi(" << solving_out.back()->id << ")" << std::endl;
+                out << "\tlw\t\t$2,%lo(" << solving_out.back()->id << ")($2)" << std::endl;
+                out << "\tnop" << std::endl;
+                solving_out.pop_back();
+                solving_out_constant.pop_back();
+            }
+
+            else{
+                if(solving_out_constant.back() == ""){
+                    if(!solving_out.back()->is_parameter){
+                        out << "\tlw\t\t$2," << solving_out.back()->frame_offset << "($fp)" << std::endl;
+                    }
+                    else{
+                        out << "\tlw\t\t$2," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
+                    }
+                    solving_out.pop_back();
+                    solving_out_constant.pop_back();
+                    out << "\tnop" << std::endl;
+                }
+                else{
+                    out << "\tli\t\t$2," << solving_out_constant.back() << std::endl;
+                    solving_out_constant.pop_back();
+                }
+            }
+
+            is_firststep = false;
+        }
+    }
+
+    void ExprHelperRHS(std::ostream& out){
+        if(is_GlobalVar){
+            out << "\tlui\t\t$3,%hi(" << solving_out.back()->id << ")" << std::endl;
+            out << "\tlw\t\t$3,%lo(" << solving_out.back()->id << ")($3)" << std::endl;
+            out << "\tnop" << std::endl;
+            solving_out.pop_back();
+            solving_out_constant.pop_back();
+        }
+
+        else{
+            if(solving_out_constant.back() == ""){
+                if(!solving_out.back()->is_parameter){
+                    out << "\tlw\t\t$3," << solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                else{
+                    out << "\tlw\t\t$3," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
+                }
+                solving_out.pop_back();
+                solving_out_constant.pop_back();
+                out << "\tnop" << std::endl;
+            }
+            else{
+                out << "\tli\t\t$3," << solving_out_constant.back() << std::endl;
+                solving_out_constant.pop_back();
+            }
+        }
     }
 };
 
