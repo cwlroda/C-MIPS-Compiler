@@ -1051,7 +1051,6 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
             std::pair<std::string, Bindings*> var (fn_p_it->first,local_var);
             context.LocalVar.insert(var);
         }
-        out << context.function_name << std::endl;
         context.is_LocalVar = false;
     }
 

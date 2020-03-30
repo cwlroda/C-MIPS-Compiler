@@ -59,7 +59,6 @@ struct Context{
     bool getting_parameters = false;
     int morethanfour = 4;
     int functionregister = 4; //for extra memory allocation
-    std::unordered_map<std::string, std::unordered_map<std::string,int>> function_and_parameters;
     std::string parametername;
     bool getting_parametername = false;
     bool getting_functionname = false;
