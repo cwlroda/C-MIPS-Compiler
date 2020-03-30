@@ -35,7 +35,7 @@ struct Context{
     bool elif_block = false; // check for more else-if blocks
     //bool func_decl = false; // check if it is a function declaration or a global variable
     bool is_GlobalVar = false; // check if it is a global variable
-    bool empty_var = false; // check if variable has no value upon declaration
+     bool empty_var = false; // check if variable has no value upon declaration
 
     std::string what_typeSpec = "0";
     std::string var_iden = "0";
@@ -48,13 +48,31 @@ struct Context{
     bool is_LocalVar = false;
     int frame_offset_counter = 0;
     int NeededMem = 0;
-    int morethanfour = 4;
-    int functionregister = 4;
+    
     bool is_return = false;
     int returnNum = 0;
     bool return_var = false;
     bool is_solving = false;
     bool is_firststep = true;
+    //function parameter stuffs
+    int parameterlist = 0;
+    bool getting_parameters = false;
+    int morethanfour = 4;
+    int functionregister = 4; //for extra memory allocation
+    std::unordered_map<std::string, std::unordered_map<std::string,int>> function_and_parameters;
+    std::string parametername;
+    bool getting_parametername = false;
+    bool getting_functionname = false;
+    std::string functionname;
+    int parameteroffset = 0;
+
+    bool is_a_parameter = false;
+    
+    
+    
+    
+    
+    //solving expressions
     std::vector<std::string> solving_out_constant;
     std::vector<Bindings*> solving_out; 
     int stack_offset = 0;
@@ -83,6 +101,8 @@ struct Context{
     bool arr_access = false;
     std::string arr_name;
     int arr_index = -1;
+
+    
 
     
     

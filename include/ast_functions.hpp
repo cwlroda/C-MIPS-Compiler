@@ -270,7 +270,7 @@ class ParameterList{
 
         void print_c(std::ofstream& out);
         void print_py(std::ofstream& out);
-        void print_asm(std::ofstream& out);
+        void print_asm(std::ofstream& out, std::unordered_map<std::string, int>& fn_parameter_list);
 
     private:
         ParameterDeclaration *param_decl;

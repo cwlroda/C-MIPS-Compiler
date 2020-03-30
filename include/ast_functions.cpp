@@ -878,7 +878,9 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     if(decl_spec != NULL){
         decl_spec->print_asm(out);
     }
+    context.getting_functionname = true;
     declr->print_asm(out);
+    context.getting_functionname = false;
 
     out << "\t.text" << std::endl;
     out << "\t.align\t2" << std::endl;
@@ -903,10 +905,9 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tmove\t$fp,$sp" << std::endl;
     for(int i=0; i<context.parameterlist; i++){
         if(i<4){
-            out << "\tsw\t\t$" << 4+i << "," << context.NeededMem+i << "($fp)" << std::endl;
+            out << "\tsw\t\t$" << 4+i << "," << context.NeededMem*(1+i) << "($fp)" << std::endl;
         }
     }
-
 
 
     comp_state -> print_asm(out);
@@ -1035,8 +1036,32 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
     }
 
     if(param_list != NULL){
+        context.is_LocalVar = true;
         context.parameterlist = 1;
-        param_list -> print_asm(out);
+        std::unordered_map<std::string, int> fn_parameter_list;
+        param_list -> print_asm(out, fn_parameter_list);
+        std::unordered_map<std::string,int>::iterator fn_p_it;
+        
+        for(fn_p_it=fn_parameter_list.begin();fn_p_it!=fn_parameter_list.end();fn_p_it++){
+            Bindings* local_var = new Bindings;
+            local_var->id=fn_p_it->first;
+            out << "first " << fn_p_it->first << std::endl;
+            out << "second " <<fn_p_it->second << std::endl;
+            local_var->stack_offset=fn_p_it->second*8;
+            std::pair<std::string, Bindings*> var (fn_p_it->first,local_var);
+            context.LocalVar.insert(var);
+        }
+        out << context.function_name << std::endl;
+        context.is_LocalVar = false;
+    }
+
+    if(context.getting_parametername == true){
+        context.parametername = *iden;
+        context.getting_parametername = false;
+    }
+    if(context.getting_functionname == true){
+        context.function_name = *iden;
+        context.getting_functionname = false;
     }
 
     if(context.is_GlobalVar == true){
@@ -1065,14 +1090,20 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         context.FuncName = *iden;
         context.got_func_name = true;
     }
+    
 }
 
-inline void ParameterList::print_asm(std::ofstream& out){
+inline void ParameterList::print_asm(std::ofstream& out, std::unordered_map<std::string, int>& fn_parameter_list){
+    int temp = 1;
     if(param_list != NULL){
         context.parameterlist++;
-        param_list -> print_asm(out);
+        temp = context.parameterlist;
+        param_list -> print_asm(out, fn_parameter_list);
     }
+    context.getting_parametername = true;
     param_decl->print_asm(out);
+    context.getting_parametername = false;
+    fn_parameter_list.insert(std::pair<std::string, int>(context.parametername, temp));
 }
 
 inline void ParameterDeclaration::print_asm(std::ofstream& out){
@@ -1104,6 +1135,7 @@ inline void InitializerList::print_asm(std::ofstream& out){
 }
 
 inline void AssignmentExpr::print_asm(std::ofstream& out){
+    out << 101 << std::endl;
     if(cond_expr != NULL){
         if(context.in_if || context.in_while){
             context.is_cond = true;
@@ -1140,7 +1172,9 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
     }
 
     else{
+        out << 201 << std::endl;
         if(un_expr != NULL){
+            out << 301 << std::endl;
             un_expr->print_asm(out);
         }
 
@@ -1184,6 +1218,10 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         if(context.is_GlobalVar){
             out << "\tlui\t\t$3,%hi(" << global_name << ")" << std::endl;
             out <<"\tsw\t\t$2,%lo(" << global_name << ")($3)" << std::endl;
+        }
+        else if(context.is_a_parameter){
+            out << "\tlw\t\t$2," << context.parameteroffset <<"($fp)" << std::endl;
+            out << "\tnop" << std::endl;
         }
 
         else{
@@ -1328,6 +1366,7 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
 
             else{
                 bool found = false;
+                               
                 for(context.Enums_it=context.Enums.begin();context.Enums_it!=context.Enums.end(); context.Enums_it++){
                     if(found == true){
                         break;
