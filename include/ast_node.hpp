@@ -75,7 +75,7 @@ struct Context{
     
     //solving expressions
     std::vector<std::string> solving_out_constant;
-    std::vector<Bindings*> solving_out; 
+    std::vector<Bindings*> solving_out;
     int stack_offset = 0;
     int function_call = 0;
     std::string function_name;
@@ -89,7 +89,7 @@ struct Context{
     std::string* enum_name = NULL;
     int enumerator_start = 0;
     std::vector<std::string> enumoperators;
-    std::vector<std::pair<std::string, std::string>> enumoperands;
+    std::vector<std::pair<std::string, std::string> > enumoperands;
     WithinEnum* enumgen;
     std::unordered_map<std::string, WithinEnum> Enums;
     std::unordered_map<std::string, WithinEnum>::iterator Enums_it;
