@@ -976,7 +976,7 @@ inline void Declaration::print_asm(std::ofstream& out){
                     context.solving_out.pop_back();
                     context.solving_out_constant.pop_back();
                 }
-                else{
+                else if(!context.solving_out_constant.empty()){
                     out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
                     context.solving_out_constant.pop_back();
                 }
@@ -1134,7 +1134,6 @@ inline void InitializerList::print_asm(std::ofstream& out){
 }
 
 inline void AssignmentExpr::print_asm(std::ofstream& out){
-    out << 101 << std::endl;
     if(cond_expr != NULL){
         if(context.in_if || context.in_while){
             context.is_cond = true;
@@ -1166,8 +1165,6 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             }
 
         }
-
-
     }
 
     else{
@@ -1177,10 +1174,11 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             un_expr->print_asm(out);
         }
 
-        std::string global_name;
+        std::string global_name = "";
 
         if(context.is_GlobalVar){
             global_name = context.solving_out.back()->id;
+            context.is_GlobalVar = false;
         }
 
         int result_var = context.solving_out.back()->frame_offset;
@@ -1214,7 +1212,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             context.is_firststep = false;
         }
 
-        if(context.is_GlobalVar){
+        if(global_name != ""){
             out << "\tlui\t\t$3,%hi(" << global_name << ")" << std::endl;
             out <<"\tsw\t\t$2,%lo(" << global_name << ")($3)" << std::endl;
         }
@@ -1350,7 +1348,7 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
         }
     }
 
-    if(iden != NULL){
+    else if(iden != NULL){
         if(context.is_solving == true || context.is_cond || context.arr_access){
             std::unordered_map<std::string, Bindings*>::iterator global_it;
             
@@ -1381,10 +1379,10 @@ inline void PrimaryExpr::print_asm(std::ofstream& out){
                     }
                 }
                 if(found == false){
-                     context.solving_out.push_back(context.LocalVar[*iden]);
-                     context.solving_out_constant.push_back("");
+                    context.solving_out.push_back(context.LocalVar[*iden]);
+                    context.solving_out_constant.push_back("");
                 }
-                found == false;
+                found = false;
                 
             }
 
