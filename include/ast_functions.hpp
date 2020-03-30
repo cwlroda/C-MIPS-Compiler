@@ -1026,10 +1026,12 @@ class LabeledStatement{
 
         void print_c(std::ofstream& out);
         void print_asm(std::ofstream& out);
+        
 
     private:
-        Statement *state;
+        
         ConstantExpr *const_expr;
+        Statement *state;
         // identifier
 };
 

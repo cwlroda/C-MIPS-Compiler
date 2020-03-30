@@ -25,6 +25,76 @@ struct WithinEnum{
 };
 
 
+
+
+
+// Declarations
+class TranslationUnit;
+class ExternalDeclaration;
+class FunctionDefinition;
+class Declaration;
+class DeclarationSpecifier;
+class DeclarationList;
+class InitDeclaratorList;
+class InitDeclarator;
+class Initializer;
+class InitializerList;
+class Declarator;
+class DirectDeclarator;
+class ParameterList;
+class ParameterDeclaration;
+class AbstractDeclarator;
+class DirectAbstractDeclarator;
+class SpecifierQualifierList;
+class StructSpecifier;
+class StructDeclarationList;
+class StructDeclaration;
+class StructDeclaratorList;
+class StructDeclarator;
+
+// Statements
+class CompoundStatement;
+class StatementList;
+class Statement;
+class LabeledStatement;
+class ExprStatement;
+class SelectionStatement;
+class IterationStatement;
+class JumpStatement;
+
+// Expressions
+class Expr;
+class ConstantExpr;
+class ConditionalExpr;
+class LogicalOrExpr;
+class LogicalAndExpr;
+class InclusiveOrExpr;
+class ExclusiveOrExpr;
+class AndExpr;
+class EqualityExpr;
+class RelationalExpr;
+class ShiftExpr;
+class AdditiveExpr;
+class MultiplicativeExpr;
+class AssignmentExpr;
+class AssignmentOperator;
+class UnaryExpr;
+class UnaryOperator;
+class PostfixExpr;
+class PrimaryExpr;
+class ArgumentExprList;
+class CastExpr;
+
+// Others
+class IdentifierList;
+class TypeSpecifier;
+class TypeName;
+class StorageClassSpecifier;
+class Pointer;
+class EnumSpecifier;
+class EnumeratorList;
+class Enumerator;
+
 struct Context{
     bool in_func = false; // check if entering function
     bool is_init = false; // check if function/variable is initialised
@@ -69,7 +139,10 @@ struct Context{
 
     bool is_a_parameter = false;
     
-    
+    //switch statement stuffs
+    std::vector<int> nested_switch; //for every nested switch statement, push back this
+    // for every case in the switch statement, the last element of this will increment
+    std::unordered_map<int, Statement*> defaultstatemap; 
     
     
     
@@ -234,75 +307,6 @@ struct Context{
         }
     }
 };
-
-
-
-// Declarations
-class TranslationUnit;
-class ExternalDeclaration;
-class FunctionDefinition;
-class Declaration;
-class DeclarationSpecifier;
-class DeclarationList;
-class InitDeclaratorList;
-class InitDeclarator;
-class Initializer;
-class InitializerList;
-class Declarator;
-class DirectDeclarator;
-class ParameterList;
-class ParameterDeclaration;
-class AbstractDeclarator;
-class DirectAbstractDeclarator;
-class SpecifierQualifierList;
-class StructSpecifier;
-class StructDeclarationList;
-class StructDeclaration;
-class StructDeclaratorList;
-class StructDeclarator;
-
-// Statements
-class CompoundStatement;
-class StatementList;
-class Statement;
-class LabeledStatement;
-class ExprStatement;
-class SelectionStatement;
-class IterationStatement;
-class JumpStatement;
-
-// Expressions
-class Expr;
-class ConstantExpr;
-class ConditionalExpr;
-class LogicalOrExpr;
-class LogicalAndExpr;
-class InclusiveOrExpr;
-class ExclusiveOrExpr;
-class AndExpr;
-class EqualityExpr;
-class RelationalExpr;
-class ShiftExpr;
-class AdditiveExpr;
-class MultiplicativeExpr;
-class AssignmentExpr;
-class AssignmentOperator;
-class UnaryExpr;
-class UnaryOperator;
-class PostfixExpr;
-class PrimaryExpr;
-class ArgumentExprList;
-class CastExpr;
-
-// Others
-class IdentifierList;
-class TypeSpecifier;
-class TypeName;
-class StorageClassSpecifier;
-class Pointer;
-class EnumSpecifier;
-class EnumeratorList;
-class Enumerator;
 
 
 #endif

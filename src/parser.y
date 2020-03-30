@@ -347,8 +347,8 @@ STATEMENT: LABELED_STATEMENT                                                    
         |  JUMP_STATEMENT                                                                       { $$ = new Statement(NULL, NULL, NULL, NULL, NULL, $1); }
 
 LABELED_STATEMENT: IDENTIFIER COLON STATEMENT                                                   
-                |  CASE CONSTANT_EXPR COLON STATEMENT                                           
-                |  DEFAULT COLON STATEMENT                                                      
+                |  CASE CONSTANT_EXPR COLON STATEMENT                                           { $$ = new LabeledStatement($4, $2); }
+                |  DEFAULT COLON STATEMENT                                                      { $$ = new LabeledStatement($3, NULL); }
 
 EXPR_STATEMENT: EXPR SEMICOLON                                                                  { $$ = new ExprStatement($1); }
             |   SEMICOLON                                                                       { $$ = new ExprStatement(NULL); }
