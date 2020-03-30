@@ -1,13 +1,10 @@
-int f(int x, int y){
-    int a = 7;
-    x = a+1;
-    y = x+2;
-}
 int main(){
-    int x = 6;
-    int y = 7;
-    f(x,y);
-    return 0;
+    int x = 0;
+    switch(x+1){
+        case 1: x = 0;
+        default: x = 777;
+        case 2: x = x + 1;
+    }
 }
 
 
