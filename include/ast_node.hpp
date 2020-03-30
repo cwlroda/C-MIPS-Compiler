@@ -16,6 +16,7 @@ struct Bindings{
     bool is_pointer = false;
     bool is_init = false;
     bool is_arr = false;
+    bool is_parameter = false;
 };
 struct WithinEnum{
     std::unordered_map<std::string, int> enummap;
