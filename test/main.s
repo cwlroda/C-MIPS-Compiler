@@ -7,7 +7,6 @@
 	.abicalls
 
 
-
 	.text
 	.align	2
 	.globl	g
@@ -20,10 +19,32 @@ g:
 	sw		$31,4($sp)
 	sw		$fp,0($sp)
 	move	$fp,$sp
-	li		$2,13
-	li		$3,10
-	addu	$2,$2,$3
+	sw		$4,8($fp)
+	lw		$8,8($fp)
+	nop
+$S1C1cond:
+	li		$9,1
+	bne		$8,$9,$S1C2cond
+	nop
+$S1C1body:
+	li		$2,10
 	b		$gEND
+	nop
+	b		$S1END
+	nop
+$S1C2cond:
+	li		$9,2
+	bne		$8,$9,$S1C3cond
+	nop
+$S1C2body:
+	li		$2,11
+	b		$gEND
+	nop
+	b		$S1END
+	nop
+$S1C3cond:
+	nop
+$S1END:
 	nop
 $gEND:
 	move	$16,$2
