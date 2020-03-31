@@ -27,7 +27,7 @@ f:
 	nop
 	lw		$3,12($fp)
 	nop
-	beq	$2,$0,$L2
+	beq	$3,$0,$L2
 	nop
 
 $L1:
