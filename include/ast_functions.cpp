@@ -1805,11 +1805,11 @@ inline void LabeledStatement::print_asm(std::ofstream& out){
         const_expr->print_asm(out);
         context.is_solving = false;
         if(context.return_are_u_single == true){
-            out << "\tli\t\t$" << context.saved_register_counter-1 << "," << context.solving_out_constant.back() << std::endl;
+            out << "\tli\t\t$" << 9 << "," << context.solving_out_constant.back() << std::endl;
             context.solving_out_constant.pop_back();
         }
         context.return_are_u_single = true;
-        out << "\tbne\t\t$" << context.saved_register_counter -2 << ",$" << context.saved_register_counter-1 << ",$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond" << std::endl;
+        out << "\tbne\t\t$" << 8 << ",$" << 9 << ",$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond" << std::endl;
         out << "\tnop" << std::endl;
         out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() << "body:" << std::endl;
         state->print_asm(out);
@@ -1841,25 +1841,23 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             context.is_solving = false;
             if(context.return_are_u_single == true){
                 if(context.solving_out_constant.back()!=""){
-                    out << "\tli\t\t$"  << context.saved_register_counter << "," << context.solving_out_constant.back() << std::endl;
+                    out << "\tli\t\t$"  << 8 << "," << context.solving_out_constant.back() << std::endl;
                     context.solving_out_constant.pop_back();
                 }
                 else{
-                    out << "\tlw\t\t$" << context.saved_register_counter << "," << context.solving_out.back()->frame_offset << std::endl;
+                    out << "\tlw\t\t$" << 8 << "," << context.solving_out.back()->frame_offset << std::endl;
                     out << "\tnop" << std::endl;
                     context.solving_out.pop_back();
                     context.solving_out_constant.pop_back();
                 }
             }else{
-                out << "\tmove\t$" << context.saved_register_counter << ",$2" << std::endl;
+                out << "\tmove\t$" << 8 << ",$2" << std::endl;
             }
-            context.saved_register_counter = context.saved_register_counter + 2;
             context.return_are_u_single = true;
             context.is_switch = false;
         }
         context.nested_switch.push_back(0);
         context.defaultstatemap.insert(std::pair<int, Statement*>(context.nested_switch.size(),NULL));
-        context.saved_register_counter - 2;
         context.is_solving=true;
         context.is_firststep = true;
         context.return_are_u_single = true;
