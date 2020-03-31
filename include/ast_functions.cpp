@@ -1051,7 +1051,12 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         for(fn_p_it=fn_parameter_list.begin();fn_p_it!=fn_parameter_list.end();fn_p_it++){
             Bindings* local_var = new Bindings;
             local_var->id=fn_p_it->first;
-            local_var->frame_offset=fn_p_it->second*4;
+            if(context.NeededMem == 0){
+                local_var->frame_offset=fn_p_it->second*4+4;
+            }
+            else{
+                local_var->frame_offset=fn_p_it->second*4;
+            }
             local_var->is_parameter=true;
             std::pair<std::string, Bindings*> var (fn_p_it->first,local_var);
             context.LocalVar.insert(var);
@@ -1501,11 +1506,11 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
 
         context.ExprHelper(out);
 
-        out << "\tbne\t$2,$0,$L" << l2 << std::endl;
+        out << "\tbne\t\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
         log_and_expr -> print_asm(out);
         context.ExprHelperRHS(out);
-        out << "\tbeq\t$2,$0,$L" << l3 << std::endl;
+        out << "\tbeq\t\t$3,$0,$L" << l3 << std::endl;
         out << "\tnop" << std::endl;
         out << std::endl;
         out << "$L" << l2 << ":" << std::endl;
@@ -1651,7 +1656,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
             context.ExprHelper(out);
             shift_expr -> print_asm(out);
             context.ExprHelperRHS(out);
-            out << "\tslt\t$2,$2,$3" << std::endl;
+            out << "\tslt\t$2,$3,$2" << std::endl;
             out << "\txori\t$2,$2,0x1" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
         }
@@ -1860,7 +1865,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
                     context.solving_out_constant.pop_back();
                 }
                 else{
-                    out << "\tlw\t\t$" << context.saved_register_counter << "," << context.solving_out.back()->frame_offset << std::endl;
+                    out << "\tlw\t\t$" << 8 << "," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     out << "\tnop" << std::endl;
                     context.solving_out.pop_back();
                     context.solving_out_constant.pop_back();
@@ -1892,6 +1897,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             out << "\tb\t\t$S" << context.nested_switch.size() << "END" << std::endl;
             out << "\tnop" << std::endl;
         }
+        out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() +1 << "cond:"<< std::endl;
         out << "$S" << context.nested_switch.size() << "END:" << std::endl;
         context.nested_switch.pop_back();
     }

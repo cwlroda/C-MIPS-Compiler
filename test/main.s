@@ -9,30 +9,27 @@
 
 	.text
 	.align	2
-	.globl	main
+	.globl	g
 	.set	nomips16
 	.set	nomicromips
-	.ent	main
-	.type	main, @function
-main:
-	addiu	$sp,$sp,-16
-	sw		$31,12($sp)
-	sw		$fp,8($sp)
+	.ent	g
+	.type	g, @function
+g:
+	addiu	$sp,$sp,-8
+	sw		$31,4($sp)
+	sw		$fp,0($sp)
 	move	$fp,$sp
-	li		$2,0
-	sw		$2,8($fp)
-	lw		$2,8($fp)
+	sw		$4,8($fp)
+	lw		$8,8($fp)
 	nop
-	li		$3,1
-	addu	$2,$2,$3
-	move	$8,$2
 $S1C1cond:
 	li		$9,1
 	bne		$8,$9,$S1C2cond
 	nop
 $S1C1body:
-	li		$2,0
-	sw		$2,8($fp)
+	li		$2,10
+	b		$gEND
+	nop
 	b		$S1END
 	nop
 $S1C2cond:
@@ -40,46 +37,19 @@ $S1C2cond:
 	bne		$8,$9,$S1C3cond
 	nop
 $S1C2body:
-	lw		$2,8($fp)
+	li		$2,11
+	b		$gEND
 	nop
-	li		$3,2
-	addu	$2,$2,$3
-	move	$8,$2
-$S2C1cond:
-	li		$9,1
-	bne		$8,$9,$S2C2cond
-	nop
-$S2C1body:
-	li		$2,7
-	sw		$2,8($fp)
-	b		$S2END
-	nop
-$S2C2cond:
-	li		$9,2
-	bne		$8,$9,$S2C3cond
-	nop
-$S2C2body:
-	li		$2,8
-	sw		$2,8($fp)
-	b		$S2END
-	nop
-$S2END:
 	b		$S1END
 	nop
 $S1C3cond:
-	nop
-$DEFAULT1:
-	li		$2,777
-	sw		$2,8($fp)
-	b		$S1END
-	nop
 $S1END:
-$mainEND:
+$gEND:
 	move	$16,$2
 	move	$sp,$fp
-	lw		$31,12($sp)
-	lw		$fp,8($sp)
-	addiu	$sp,$sp,16
+	lw		$31,4($sp)
+	lw		$fp,0($sp)
+	addiu	$sp,$sp,8
 	j		$31
 	nop
 
