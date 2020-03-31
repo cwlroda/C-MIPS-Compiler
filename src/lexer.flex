@@ -11,6 +11,7 @@ extern FILE *yyin;
 %%
 
 "typedef"           { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return TYPEDEF; }
+"sizeof"           { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return SIZEOF; }
 "int"               { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return INT; }
 "char"              { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return CHAR; }
 "float"             { yylval.str=new std::string(yytext); /* ECHO; std::cout << std::endl; */ return FLOAT; }

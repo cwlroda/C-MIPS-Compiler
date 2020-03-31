@@ -1,9 +1,5 @@
-int g(int x, int y)
-{
-    return x+y;
-}
-
 int f()
 {
-    return g(10,20);
+    int x;
+    return sizeof(x);
 }

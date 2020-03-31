@@ -904,7 +904,7 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tj\t\t$31" << std::endl;
     out << "\tnop" << std::endl << std::endl;
 
-    out << ".end" << std::endl << std::endl;
+    out << "\t.end" << std::endl << std::endl;
 
     context.frame_offset_counter = 8;
     context.stack_offset = 0;
@@ -1149,7 +1149,9 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         cond_expr->print_asm(out);
         context.is_cond = false;
 
-        if(context.function_call > 0 ){
+        
+
+        if(context.function_call > 0){
             if(context.is_func){}
             else if(context.solving_out_constant.back() == ""){
                 if(!context.solving_out.back()->is_parameter){
@@ -1175,6 +1177,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         }
 
         int result_var = context.solving_out.back()->frame_offset;
+        std::string op = ass_op->get_type();
 
         if(ass_expr != NULL){
             ass_expr->print_asm(out);
@@ -1207,7 +1210,60 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         }
 
         else{
-            out << "\tsw\t\t$2," << result_var << "($fp)" << std::endl;
+            if(op == "+="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\taddu\t$2,$3,$2" << std::endl;
+            }
+            else if(op == "-="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tsubu\t$2,$3,$2" << std::endl;
+            }
+            else if(op == "*="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tmult\t$3,$2" << std::endl;
+                out << "\tmflo\t$2" << std::endl;
+            }
+            else if(op == "/="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tbeq\t$2,$0,$L" << context.gen_label << std::endl;
+                out << "\tdiv\t$0,$3,$2" << std::endl;
+                out << "$L" << context.gen_label << ":" << std::endl;
+                out << "\tmfhi\t$2" << std::endl;
+                out << "\tmflo\t$2" << std::endl;
+                context.gen_label++;
+            }
+            else if(op == "%="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tbeq\t$2,$0,$L" << context.gen_label << std::endl;
+                out << "\tdiv\t$0,$3,$2" << std::endl;
+                out << "$L" << context.gen_label << ":" << std::endl;
+                out << "\tmflo\t$2" << std::endl;
+                out << "\tmfhi\t$2" << std::endl;
+                context.gen_label++;
+            }
+            else if(op == "<<="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tsll\t$2,$3,$2" << std::endl;
+            }
+            else if(op == ">>="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tsra\t$2,$3,$2" << std::endl;
+            }
+            else if(op == "&="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tand\t$2,$3,$2" << std::endl;
+            }
+            else if(op == "^="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\txor\t$2,$3,$2" << std::endl;
+            }
+            else if(op == "|="){
+                out << "\tlw\t\t$3," << result_var << "($fp)" << std::endl;
+                out << "\tor\t$2,$3,$2" << std::endl;
+            }
+            else{
+                out << "\tsw\t\t$2," << result_var << "($fp)" << std::endl;
+            }
         }
 
         context.function_call = 0;
@@ -1253,9 +1309,12 @@ inline void UnaryExpr::print_asm(std::ofstream& out){
         }
 
         if(*op == "sizeof"){
-            un_expr->print_asm(out);
+            if(un_expr != NULL){
+                un_expr->print_asm(out);
+            }
 
             out << "\tli\t\t$2," << context.solving_out.back()->size << std::endl;
+            context.is_sizeof = true;
             context.solving_out.pop_back();
             context.solving_out_constant.pop_back();
         }
@@ -1591,7 +1650,6 @@ inline void ExclusiveOrExpr::print_asm(std::ofstream& out){
     else{
         and_expr -> print_asm(out);
     }
-    
 }
 
 inline void AndExpr::print_asm(std::ofstream& out){
@@ -1599,7 +1657,7 @@ inline void AndExpr::print_asm(std::ofstream& out){
         context.return_are_u_single = false; 
         and_expr -> print_asm(out);
         context.ExprHelper(out);
-        
+
         equal_expr -> print_asm(out);
         context.ExprHelperRHS(out);
         out << "\tand\t$2,$2,$3" << std::endl;
@@ -1607,7 +1665,6 @@ inline void AndExpr::print_asm(std::ofstream& out){
     else{
         equal_expr -> print_asm(out);
     }
-    
 }
 
 inline void EqualityExpr::print_asm(std::ofstream& out){
@@ -1806,6 +1863,8 @@ inline void Statement::print_asm(std::ofstream& out){
         context.is_solving = false;
         context.is_firststep = false;
         context.return_are_u_single = true;
+        context.is_sizeof = false;
+        context.sizeof_type = false;
     }
     if(select_state != NULL){
         context.in_if = true;
@@ -2156,6 +2215,8 @@ inline void JumpStatement::print_asm(std::ofstream& out){
                 context.solving_out.pop_back();
                 context.solving_out_constant.pop_back();
             }
+
+            else if(context.is_sizeof || context.sizeof_type){}
 
             else if(!context.return_var){
                 if(context.returnNum != 0){

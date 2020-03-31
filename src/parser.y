@@ -305,7 +305,7 @@ UNARY_EXPR: POSTFIX_EXPR                                                        
         |   INCREMENT UNARY_EXPR                                                                { $$ = new UnaryExpr(NULL, $2, NULL, NULL, NULL, $1); }
         |   DECREMENT UNARY_EXPR                                                                { $$ = new UnaryExpr(NULL, $2, NULL, NULL, NULL, $1); }
         |   UNARY_OPERATOR CAST_EXPR                                                            { $$ = new UnaryExpr(NULL, NULL, $1, $2, NULL, NULL); }
-        |   SIZEOF UNARY_EXPR                                                                   { $$ = new UnaryExpr(NULL, $2, NULL, NULL, NULL, $1); }
+        |   SIZEOF LB UNARY_EXPR RB                                                             { $$ = new UnaryExpr(NULL, $3, NULL, NULL, NULL, $1); }
         |   SIZEOF LB TYPE_NAME RB                                                              { $$ = new UnaryExpr(NULL, NULL, NULL, NULL, $3, $1); }
 
 UNARY_OPERATOR: AMPERSAND                                                                       { $$ = new UnaryOperator($1); }
@@ -327,8 +327,7 @@ POSTFIX_EXPR: PRIMARY_EXPR                                                      
 PRIMARY_EXPR: IDENTIFIER                                                                        { $$ = new PrimaryExpr($1, NULL, NULL, NULL); }
             | CONSTANT                                                                          { $$ = new PrimaryExpr(NULL, $1, NULL, NULL); }
             | STRING_LITERAL                                                                    { $$ = new PrimaryExpr(NULL, NULL, $1, NULL); }
-            | LB EXPR
-             RB                                                                        { $$ = new PrimaryExpr(NULL, NULL, NULL, $2); }
+            | LB EXPR RB                                                                        { $$ = new PrimaryExpr(NULL, NULL, NULL, $2); }
 
 ARGUMENT_EXPR_LIST: ASSIGNMENT_EXPR                                                             { $$ = new ArgumentExprList($1, NULL); }
                 |   ARGUMENT_EXPR_LIST COMMA ASSIGNMENT_EXPR                                    { $$ = new ArgumentExprList($3, $1); }
@@ -337,7 +336,7 @@ CAST_EXPR: UNARY_EXPR                                                           
         |  LB TYPE_NAME RB CAST_EXPR                                                            { $$ = new CastExpr(NULL, $2, $4); }
 
 TYPE_NAME: SPECIFIER_QUALIFIER_LIST ABSTRACT_DECLARATOR                                         
-        |  SPECIFIER_QUALIFIER_LIST                                                             
+        |  SPECIFIER_QUALIFIER_LIST                                                             { $$ = new TypeName($1, NULL); }
 
 STATEMENT: LABELED_STATEMENT                                                                    { $$ = new Statement($1, NULL, NULL, NULL, NULL, NULL); }
         |  COMPOUND_STATEMENT                                                                   { $$ = new Statement(NULL, $1, NULL, NULL, NULL, NULL); }

@@ -141,6 +141,7 @@ struct Context{
     bool is_func = false; // check if need the return value of function
     bool is_a_parameter = false;
     
+    bool is_sizeof = false;
     bool sizeof_type = false; // checks if sizeof contains a type
     //switch statement stuffs
     std::vector<int> nested_switch; //for every nested switch statement, push back this
