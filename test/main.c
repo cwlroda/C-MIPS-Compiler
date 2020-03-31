@@ -1,9 +1,4 @@
-enum X{
-    vv = 13,
-    yy = 10
-};
-
-int g()
+int f(int x, int y)
 {
-    return vv+yy;
+    return x+y;
 }

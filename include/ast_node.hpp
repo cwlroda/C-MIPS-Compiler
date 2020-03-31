@@ -258,7 +258,7 @@ struct Context{
                     out << "\tlw\t\t$2," << solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
                 else{
-                    out << "\tlw\t\t$2," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
+                    out << "\tlw\t\t$2," << NeededMem -8 + solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
                 solving_out.pop_back();
                 solving_out_constant.pop_back();
@@ -279,7 +279,7 @@ struct Context{
                 out << "\tlw\t\t$3," << solving_out.back()->frame_offset << "($fp)" << std::endl;
             }
             else{
-                out << "\tlw\t\t$3," << NeededMem -4 + solving_out.back()->frame_offset << "($fp)" << std::endl;
+                out << "\tlw\t\t$3," << NeededMem -8 + solving_out.back()->frame_offset << "($fp)" << std::endl;
             }
             solving_out.pop_back();
             solving_out_constant.pop_back();

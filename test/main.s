@@ -7,25 +7,28 @@
 	.abicalls
 
 
-
 	.text
 	.align	2
-	.globl	g
+	.globl	f
 	.set	nomips16
 	.set	nomicromips
-	.ent	g
-	.type	g, @function
-g:
+	.ent	f
+	.type	f, @function
+f:
 	addiu	$sp,$sp,-8
 	sw		$31,4($sp)
 	sw		$fp,0($sp)
 	move	$fp,$sp
-	li		$2,13
-	li		$3,10
-	addu	$2,$2,$3
-	b		$gEND
+	sw		$4,8($fp)
+	sw		$5,12($fp)
+	lw		$2,8($fp)
 	nop
-$gEND:
+	lw		$3,12($fp)
+	nop
+	addu	$2,$2,$3
+	b		$fEND
+	nop
+$fEND:
 	move	$16,$2
 	move	$sp,$fp
 	lw		$31,4($sp)
