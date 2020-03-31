@@ -6,10 +6,6 @@
 	.module nooddspreg
 	.abicalls
 
-Color
-
-Sky
-
 
 	.text
 	.align	2
@@ -23,20 +19,24 @@ main:
 	sw		$31,12($sp)
 	sw		$fp,8($sp)
 	move	$fp,$sp
-	li		$2,10
+	li		$2,0
 	sw		$2,8($fp)
-	lw		$8,8
+	lw		$2,8($fp)
 	nop
+	li		$3,1
+	addu	$2,$2,$3
+	move	$8,$2
 $S1C1cond:
-	li		$9,0
+	li		$9,1
 	bne		$8,$9,$S1C2cond
 	nop
 $S1C1body:
+	li		$2,0
 	sw		$2,8($fp)
 	b		$S1END
 	nop
 $S1C2cond:
-	li		$9,1
+	li		$9,2
 	bne		$8,$9,$S1C3cond
 	nop
 $S1C2body:
@@ -48,41 +48,9 @@ $S1C2body:
 	b		$S1END
 	nop
 $S1C3cond:
-	li		$9,11
-	bne		$8,$9,$S1C4cond
-	nop
-$S1C3body:
-	lw		$2,8($fp)
-	nop
-	li		$3,2
-	addu	$2,$2,$3
-	move	$10,$2
-	lw		$2,8($fp)
-	nop
-	li		$3,2
-	addu	$2,$2,$3
-$S2C1cond:
-	li		$11,2
-	bne		$10,$11,$S2C2cond
-	nop
-$S2C1body:
-	sw		$2,8($fp)
-	b		$S2END
-	nop
-$S2C2cond:
-	li		$11,3
-	bne		$10,$11,$S2C3cond
-	nop
-$S2C2body:
-	sw		$2,8($fp)
-	b		$S2END
-	nop
-$S2END:
-	b		$S1END
-	nop
-$S1C4cond:
 	nop
 $DEFAULT1:
+	li		$2,777
 	sw		$2,8($fp)
 	b		$S1END
 	nop

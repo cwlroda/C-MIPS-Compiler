@@ -145,8 +145,8 @@ struct Context{
     std::vector<int> nested_switch; //for every nested switch statement, push back this
     // for every case in the switch statement, the last element of this will increment
     std::unordered_map<int, Statement*> defaultstatemap; 
-    
-    
+    int saved_register_counter = 8;
+    bool is_switch = false;
     
     //solving expressions
     std::vector<std::string> solving_out_constant;
