@@ -968,12 +968,7 @@ inline void Declaration::print_asm(std::ofstream& out){
             else{
                 if(!context.solving_out.empty() && context.solving_out_constant.back() == ""){
                     if(!context.solving_out.back()->is_parameter){
-                        if(!context.solving_out.back()->is_parameter){
-                            out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                        }
-                        else{
-                            out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
-                        }
+                        out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     }
                     else{
                         out << "\tlw\t\t$2," << context.NeededMem -4 + context.solving_out.back()->frame_offset << "($fp)" << std::endl;
@@ -995,9 +990,6 @@ inline void Declaration::print_asm(std::ofstream& out){
         context.empty_var = false;
         context.is_solving = false;
         context.is_firststep = false;
-
-        context.solving_out.clear();
-        context.solving_out_constant.clear();
     }
 }
 
@@ -1138,6 +1130,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         if(context.in_if || context.in_while){
             context.is_cond = true;
         }
+
         cond_expr->print_asm(out);
         context.is_cond = false;
 
@@ -1801,26 +1794,16 @@ inline void LabeledStatement::print_asm(std::ofstream& out){
     if(const_expr!= NULL){
         //THIS IS CASE STATEMENT
         out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() << "cond:" << std::endl;
-        context.return_are_u_single = true;
-        context.is_solving = true;
         const_expr->print_asm(out);
-        context.is_solving = false;
-        if(context.return_are_u_single == true){
-            out << "\tli\t\t$" << context.saved_register_counter-1 << "," << context.solving_out_constant.back() << std::endl;
-            context.solving_out_constant.pop_back();
-        }
-        context.return_are_u_single = true;
-        out << "\tbne\t\t$" << context.saved_register_counter -2 << ",$" << context.saved_register_counter-1 << ",$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond" << std::endl;
+        out << "\tbne\t$2,$3,$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond" << std::endl;
         out << "\tnop" << std::endl;
         out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() << "body:" << std::endl;
         state->print_asm(out);
         out << "\tb\t\t$S" << context.nested_switch.size() << "END" << std::endl; 
-        out << "\tnop" << std::endl;
     }
     else{
         //THIS IS DEFAULT STATEMENT WHICH WILL BE WITHELD TILL THE END OF THE CASES
         context.defaultstatemap[context.nested_switch.size()] = state;
-        context.nested_switch.back()--;
     }
 
 
@@ -1836,61 +1819,47 @@ inline void ExprStatement::print_asm(std::ofstream& out){
 
 inline void SelectionStatement::print_asm(std::ofstream& out){
     if(expr != NULL){
-        if(SWITCH!= NULL){
-            context.is_switch = true;
-        }
-        context.return_are_u_single = true;
         context.is_solving = true;
         context.is_firststep = true;
         expr->print_asm(out);
         context.is_firststep = false;
         context.is_solving = false;
-        if(context.return_are_u_single == true){
-            if(context.solving_out_constant.back()!=""){
-                out << "\tli\t\t$"  << context.saved_register_counter << "," << context.solving_out_constant.back() << std::endl;
-                context.solving_out_constant.pop_back();
-            }
-            else{
-                out << "\tlw\t\t$" << context.saved_register_counter << "," << context.solving_out.back()->frame_offset << std::endl;
-                out << "\tnop" << std::endl;
-                context.solving_out.pop_back();
-                context.solving_out_constant.pop_back();
-            }
-        }else{
-            out << "\tmove\t$" << context.saved_register_counter << ",$2" << std::endl;
-        }
-        context.saved_register_counter = context.saved_register_counter + 2;
-        context.return_are_u_single = true;
-        context.is_switch = false;
     }
     if(SWITCH != NULL){
         context.nested_switch.push_back(0);
         context.defaultstatemap.insert(std::pair<int, Statement*>(context.nested_switch.size(),NULL));
         expr->print_asm(out);
-        context.saved_register_counter - 2;
         if_state->print_asm(out);
         if(context.defaultstatemap[context.nested_switch.size()]!= NULL){
-            out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond:" << std::endl;
-            out << "\tnop" << std::endl;
             out << "$DEFAULT" << context.nested_switch.size() << ":" << std::endl;
             context.defaultstatemap[context.nested_switch.size()]->print_asm(out);
             out << "\tb\t\t$S" << context.nested_switch.size() << "END" << std::endl;
-            out << "\tnop" << std::endl;
         }
         out << "$S" << context.nested_switch.size() << "END:" << std::endl;
         context.nested_switch.pop_back();
         
     }
-    if(IF!= NULL){
+    if(IF != NULL){
         std::string if_return = "$L" + std::to_string(context.gen_label);
         std::string else_label = if_return;
 
         if(ELSE != NULL){
             context.gen_label++;
             if_return = "$L" + std::to_string(context.gen_label);
+            context.gen_label++;
         }
 
-        context.gen_label++;
+        if_state->print_asm(out);
+        if(firststepchecker == true){
+            context.is_firststep = false;
+            firststepchecker = false;
+        }
+        
+        if(ELSE != NULL){
+            out << "\tb\t\t" << if_return << std::endl;
+            out << "\tnop" << std::endl;
+        }
+        
 
         //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
         out << "\tbeq\t\t$2,$0," << else_label << std::endl;
@@ -1907,10 +1876,8 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             firststepchecker = false;
         }
         
-        if(ELSE != NULL){
-            out << "\tb\t\t" << if_return << std::endl;
-            out << "\tnop" << std::endl;
-        }
+        out << "\tb\t\t" << if_return << std::endl;
+        out << "\tnop" << std::endl;
 
         if(else_state != NULL){
             out << else_label << ":" << std::endl;
@@ -1926,9 +1893,10 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
                 firststepchecker = false;
             }
         }
-        
+
         out << if_return << ":" << std::endl;
     }
+    
 }
 
 inline void IterationStatement::print_asm(std::ofstream& out){
@@ -2067,6 +2035,7 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl;
         context.break_number.pop_back();
     }
+    
 }
 
 inline void JumpStatement::print_asm(std::ofstream& out){
@@ -2099,7 +2068,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
                 }
 
                 else{
-                    out << "\tmove\t$2,$0" << std::endl;
+                    out << "\tmove\t\t$2,$0" << std::endl;
                 }
             }
         }
@@ -2275,8 +2244,7 @@ inline void PrimaryExpr::checking_enum(){
 
 inline void EnumSpecifier::print_asm(std::ofstream& out){
     if(iden != NULL){
-        out << *iden << std::endl;
-        context.enum_name = new std::string(*iden);
+        *context.enum_name = *iden;
         context.Enums_it = context.Enums.find(*iden);
         if(context.Enums_it == context.Enums.end()){
             context.enumgen = new WithinEnum;
@@ -2286,13 +2254,6 @@ inline void EnumSpecifier::print_asm(std::ofstream& out){
     }
     else{
         context.enum_name = new std::string("noname");
-        context.Enums_it = context.Enums.find("noname");
-        if(context.Enums_it == context.Enums.end()){
-            context.enum_name = new std::string("noname");
-            context.enumgen = new WithinEnum;
-            context.Enums.insert(std::pair<std::string,WithinEnum>("noname", *context.enumgen));
-        }
-        
     }
 
     // context.is_solving = true;
