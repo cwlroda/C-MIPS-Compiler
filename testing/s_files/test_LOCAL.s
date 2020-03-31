@@ -15,9 +15,9 @@
 	.ent	ffff
 	.type	ffff, @function
 ffff:
-	addiu	$sp,$sp,-16
-	sw		$31,12($sp)
-	sw		$fp,8($sp)
+	addiu	$sp,$sp,-24
+	sw		$31,20($sp)
+	sw		$fp,16($sp)
 	move	$fp,$sp
 	sw		$0,8($fp)
 	li		$2,10
@@ -29,9 +29,9 @@ ffff:
 $ffffEND:
 	move	$16,$2
 	move	$sp,$fp
-	lw		$31,12($sp)
-	lw		$fp,8($sp)
-	addiu	$sp,$sp,16
+	lw		$31,20($sp)
+	lw		$fp,16($sp)
+	addiu	$sp,$sp,24
 	j		$31
 	nop
 

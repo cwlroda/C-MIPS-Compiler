@@ -1505,7 +1505,7 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl;
         log_and_expr -> print_asm(out);
         context.ExprHelperRHS(out);
-        out << "\tbeq\t$2,$0,$L" << l3 << std::endl;
+        out << "\tbeq\t$3,$0,$L" << l3 << std::endl;
         out << "\tnop" << std::endl;
         out << std::endl;
         out << "$L" << l2 << ":" << std::endl;
@@ -1651,7 +1651,7 @@ inline void RelationalExpr::print_asm(std::ofstream& out){
             context.ExprHelper(out);
             shift_expr -> print_asm(out);
             context.ExprHelperRHS(out);
-            out << "\tslt\t$2,$2,$3" << std::endl;
+            out << "\tslt\t$2,$3,$2" << std::endl;
             out << "\txori\t$2,$2,0x1" << std::endl;
             out << "\tandi\t$2,$2,0x00ff" << std::endl;
         }

@@ -15,9 +15,9 @@
 	.ent	f
 	.type	f, @function
 f:
-	addiu	$sp,$sp,-16
-	sw		$31,12($sp)
-	sw		$fp,8($sp)
+	addiu	$sp,$sp,-24
+	sw		$31,20($sp)
+	sw		$fp,16($sp)
 	move	$fp,$sp
 	sw		$0,8($fp)
 	lw		$2,8($fp)

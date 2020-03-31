@@ -15,16 +15,16 @@
 	.ent	f
 	.type	f, @function
 f:
-	addiu	$sp,$sp,-24
-	sw		$31,20($sp)
-	sw		$fp,16($sp)
+	addiu	$sp,$sp,-32
+	sw		$31,28($sp)
+	sw		$fp,24($sp)
 	move	$fp,$sp
-	sw		$4,24($fp)
-	sw		$5,28($fp)
+	sw		$4,32($fp)
+	sw		$5,36($fp)
 	sw		$0,8($fp)
-	lw		$2,24($fp)
+	lw		$2,32($fp)
 	nop
-	lw		$3,28($fp)
+	lw		$3,36($fp)
 	nop
 	nop
 	or	$2,$2,$3
@@ -36,9 +36,9 @@ f:
 $fEND:
 	move	$16,$2
 	move	$sp,$fp
-	lw		$31,20($sp)
-	lw		$fp,16($sp)
-	addiu	$sp,$sp,24
+	lw		$31,28($sp)
+	lw		$fp,24($sp)
+	addiu	$sp,$sp,32
 	j		$31
 	nop
 

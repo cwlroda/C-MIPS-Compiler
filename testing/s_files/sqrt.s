@@ -54,6 +54,7 @@ $L1:
 	b		$L4
 	nop
 $L3:
+	lw		$2,8($fp)
 	sw		$2,12($fp)
 $L4:
 $L2CONT:
@@ -63,7 +64,7 @@ $L2:
 	nop
 	li		$3,1
 	addu	$2,$2,$3
-	lw		$2,8($fp)
+	lw		$2,16($fp)
 	nop
 	lw		$3,16($fp)
 	nop
@@ -78,7 +79,7 @@ $L2END:
 	nop
 	mul	$2,$2,$3
 	mflo	$2
-	lw		$2,16($fp)
+	lw		$2,8($fp)
 	nop
 	lw		$3,12($fp)
 	nop
