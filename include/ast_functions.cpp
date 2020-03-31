@@ -855,7 +855,7 @@ inline int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
         }
     }
     int sizee = ((mv.size()+context.parameterlist)+((mv.size()+context.parameterlist)%2==1))/2;
-    return 8+8*sizee;
+    return 16+8*sizee;
 }
 inline void FunctionDefinition::print_asm(std::ofstream& out){
     context.frame_offset_counter = 8;
