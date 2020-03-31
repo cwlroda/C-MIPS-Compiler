@@ -754,7 +754,7 @@ inline void TranslationUnit::print_asm_main(std::string& filename) const{
     if(ext_decl != NULL){
         ext_decl->print_asm(outfile);
     }
-
+    context.LocalVar.clear();
     outfile.close();
 }
 
@@ -1897,7 +1897,10 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             out << "\tb\t\t$S" << context.nested_switch.size() << "END" << std::endl;
             out << "\tnop" << std::endl;
         }
+        out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() +1 << "cond:" << std::endl;
+        out << "\tnop" << std::endl;
         out << "$S" << context.nested_switch.size() << "END:" << std::endl;
+        out << "\tnop" << std::endl;
         context.nested_switch.pop_back();
     }
     

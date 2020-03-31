@@ -1,9 +1,10 @@
-enum X{
-    vv = 13,
-    yy = 10
-};
-
-int g()
+int g(int x)
 {
-    return vv+yy;
+    switch(x)
+    {
+        case 1:
+            return 10;
+        case 2:
+            return 11;
+    }
 }
