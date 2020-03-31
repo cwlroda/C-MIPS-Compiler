@@ -1501,11 +1501,11 @@ inline void LogicalOrExpr::print_asm(std::ofstream& out){
 
         context.ExprHelper(out);
 
-        out << "\tbne\t\t$2,$0,$L" << l2 << std::endl;
+        out << "\tbne\t$2,$0,$L" << l2 << std::endl;
         out << "\tnop" << std::endl;
         log_and_expr -> print_asm(out);
         context.ExprHelperRHS(out);
-        out << "\tbeq\t\t$3,$0,$L" << l3 << std::endl;
+        out << "\tbeq\t$3,$0,$L" << l3 << std::endl;
         out << "\tnop" << std::endl;
         out << std::endl;
         out << "$L" << l2 << ":" << std::endl;
