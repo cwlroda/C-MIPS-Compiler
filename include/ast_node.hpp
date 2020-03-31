@@ -126,6 +126,10 @@ struct Context{
     bool return_var = false;
     bool is_solving = false;
     bool is_firststep = true;
+
+    //saved registers
+    int saved_register_counter = 8;
+
     //function parameter stuffs
     int parameterlist = 0;
     bool getting_parameters = false;
@@ -136,14 +140,13 @@ struct Context{
     bool getting_functionname = false;
     std::string functionname;
     int parameteroffset = 0;
-
     bool is_a_parameter = false;
     
     //switch statement stuffs
     std::vector<int> nested_switch; //for every nested switch statement, push back this
     // for every case in the switch statement, the last element of this will increment
     std::unordered_map<int, Statement*> defaultstatemap; 
-    
+    bool is_switch = false;
     
     
     //solving expressions
@@ -159,6 +162,9 @@ struct Context{
     //std::vector<bool> firststepchecker;
     int gen_label = 1;
     bool return_are_u_single = true;
+
+
+    //Enumerator stuffs
     std::string* enum_name = NULL;
     int enumerator_start = 0;
     std::vector<std::string> enumoperators;
@@ -168,6 +174,7 @@ struct Context{
     std::unordered_map<std::string, WithinEnum>::iterator Enums_it;
     bool is_enum = false;
 
+    //Array Stuffs
     bool is_array = false; // check if it is an array
     bool store_arr_vals = false; // check if array is initialised
     int arr_size = 0;
