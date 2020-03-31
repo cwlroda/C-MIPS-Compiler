@@ -243,200 +243,252 @@ Grammar
 
 Terminals, with rules where they appear
 
-$end (0) 0
-error (256)
-IDENTIFIER (258) 32 118 119 122 138 159 161 172 174 177 178
-CONSTANT (259) 34 123
-STRING_LITERAL (260) 124
-SIZEOF (261) 106 107
-SEMICOLON (262) 10 11 141 142 149 150 151 164
-INCREMENT (263) 103 120
-DECREMENT (264) 104 121
-LSHIFT (265) 78
-RSHIFT (266) 79
-LE (267) 75
-GE (268) 76
-EQUALITY (269) 70
-NOTEQUAL (270) 71
-ARROW (271) 119
-DOT (272) 118
-LOGICAL_OR (273) 60
-LOGICAL_AND (274) 62
-PLUSEQUAL (275) 95
-MULEQUAL (276) 92
-DIVEQUAL (277) 93
-MODEQUAL (278) 94
-MINUSEQUAL (279) 96
-ANDEQUAL (280) 99
-LSHIFTEQUAL (281) 97
-RSHIFTEQUAL (282) 98
-EQUAL (283) 25 91 178
-PLUS (284) 81 110
-MINUS (285) 82 111
-ASTERISK (286) 37 38 84 109
-DIV (287) 85
-MOD (288) 86
-TILDE (289) 112
-LT (290) 73
-GT (291) 74
-OREQUAL (292) 101
-XOREQUAL (293) 100
-BITWISE_OR (294) 64
-AMPERSAND (295) 68 108
-EXCLAMATION (296) 113
-QUESTION (297) 58
-XOR (298) 66
-CHAR (299) 152
-INT (300) 153
-FLOAT (301) 154
-DOUBLE (302) 155
-UNSIGNED (303) 156
-TYPEDEF (304) 12 13
-STRUCT (305) 159 160 161
-ENUM (306) 172 173 174
-IF (307) 143 144
-ELSE (308) 144
-SWITCH (309) 145
-CASE (310) 139
-DEFAULT (311) 140
-FOR (312) 147 148
-WHILE (313) 146
-CONTINUE (314) 149
-BREAK (315) 150
-RETURN (316) 151
-LB (317) 33 35 36 48 53 54 55 56 107 116 117 125 129 143 144 145 146
-    147 148
-RB (318) 33 35 36 48 53 54 55 56 107 116 117 125 129 143 144 145 146
-    147 148
-LSB (319) 34 49 50 51 52 115
-RSB (320) 34 49 50 51 52 115
-LCB (321) 18 19 20 21 27 159 160 172 173
-RCB (322) 18 19 20 21 27 159 160 172 173
-COLON (323) 58 138 139 140 170 171
-COMMA (324) 29 40 88 127 168 176
+    $end (0) 0
+    error (256)
+    IDENTIFIER <str> (258) 32 118 119 122 138 159 161 172 174 177 178
+    CONSTANT <str> (259) 34 123
+    STRING_LITERAL <str> (260) 124
+    SIZEOF <str> (261) 106 107
+    SEMICOLON <str> (262) 10 11 141 142 149 150 151 164
+    INCREMENT <str> (263) 103 120
+    DECREMENT <str> (264) 104 121
+    LSHIFT <str> (265) 78
+    RSHIFT <str> (266) 79
+    LE <str> (267) 75
+    GE <str> (268) 76
+    EQUALITY <str> (269) 70
+    NOTEQUAL <str> (270) 71
+    ARROW <str> (271) 119
+    DOT <str> (272) 118
+    LOGICAL_OR <str> (273) 60
+    LOGICAL_AND <str> (274) 62
+    PLUSEQUAL <str> (275) 95
+    MULEQUAL <str> (276) 92
+    DIVEQUAL <str> (277) 93
+    MODEQUAL <str> (278) 94
+    MINUSEQUAL <str> (279) 96
+    ANDEQUAL <str> (280) 99
+    LSHIFTEQUAL <str> (281) 97
+    RSHIFTEQUAL <str> (282) 98
+    EQUAL <str> (283) 25 91 178
+    PLUS <str> (284) 81 110
+    MINUS <str> (285) 82 111
+    ASTERISK <str> (286) 37 38 84 109
+    DIV <str> (287) 85
+    MOD <str> (288) 86
+    TILDE <str> (289) 112
+    LT <str> (290) 73
+    GT <str> (291) 74
+    OREQUAL <str> (292) 101
+    XOREQUAL <str> (293) 100
+    BITWISE_OR <str> (294) 64
+    AMPERSAND <str> (295) 68 108
+    EXCLAMATION <str> (296) 113
+    QUESTION <str> (297) 58
+    XOR <str> (298) 66
+    CHAR <str> (299) 152
+    INT <str> (300) 153
+    FLOAT <str> (301) 154
+    DOUBLE <str> (302) 155
+    UNSIGNED <str> (303) 156
+    TYPEDEF <str> (304) 12 13
+    STRUCT <str> (305) 159 160 161
+    ENUM <str> (306) 172 173 174
+    IF <str> (307) 143 144
+    ELSE <str> (308) 144
+    SWITCH <str> (309) 145
+    CASE <str> (310) 139
+    DEFAULT <str> (311) 140
+    FOR <str> (312) 147 148
+    WHILE <str> (313) 146
+    CONTINUE <str> (314) 149
+    BREAK <str> (315) 150
+    RETURN <str> (316) 151
+    LB <str> (317) 33 35 36 48 53 54 55 56 107 116 117 125 129 143 144 145 146 147 148
+    RB <str> (318) 33 35 36 48 53 54 55 56 107 116 117 125 129 143 144 145 146 147 148
+    LSB <str> (319) 34 49 50 51 52 115
+    RSB <str> (320) 34 49 50 51 52 115
+    LCB <str> (321) 18 19 20 21 27 159 160 172 173
+    RCB <str> (322) 18 19 20 21 27 159 160 172 173
+    COLON <str> (323) 58 138 139 140 170 171
+    COMMA <str> (324) 29 40 88 127 168 176
 
 
 Nonterminals, with rules where they appear
 
-$accept (70)
-    on left: 0
-ROOT (71)
-    on left: 1, on right: 0
-TRANSLATION_UNIT (72)
-    on left: 2 3, on right: 1 2
-EXTERNAL_DECLARATION (73)
-    on left: 4 5, on right: 2 3
-FUNCTION_DEFINITION (74)
-    on left: 6 7 8 9, on right: 4
-DECLARATION (75)
-    on left: 10 11, on right: 5 16 17
-DECLARATION_SPECIFIER (76)
-    on left: 12 13 14 15, on right: 6 7 10 11 12 14 41 42 43
-DECLARATION_LIST (77)
-    on left: 16 17, on right: 6 8 17 18 19
-COMPOUND_STATEMENT (78)
-    on left: 18 19 20 21, on right: 6 7 8 9 133
-STATEMENT_LIST (79)
-    on left: 22 23, on right: 18 20 23
-INIT_DECLARATOR (80)
-    on left: 24 25, on right: 10
-INITIALIZER (81)
-    on left: 26 27, on right: 25 28 29
-INITIALIZER_LIST (82)
-    on left: 28 29, on right: 27 29
-DECLARATOR (83)
-    on left: 30 31, on right: 6 7 8 9 24 25 33 41 169 170
-DIRECT_DECLARATOR (84)
-    on left: 32 33 34 35 36, on right: 30 31 34 35 36
-POINTER (85)
-    on left: 37 38, on right: 30 37 45 46
-PARAMETER_LIST (86)
-    on left: 39 40, on right: 35 40 53 55
-PARAMETER_DECLARATION (87)
-    on left: 41 42 43, on right: 39 40
-CONSTANT_EXPR (88)
-    on left: 44, on right: 49 51 139 170 171 178
-ABSTRACT_DECLARATOR (89)
-    on left: 45 46 47, on right: 42 48 130
-DIRECT_ABSTRACT_DECLARATOR (90)
-    on left: 48 49 50 51 52 53 54 55 56, on right: 46 47 49 50 53 54
-CONDITIONAL_EXPR (91)
-    on left: 57 58, on right: 44 58 89
-LOGICAL_OR_EXPR (92)
-    on left: 59 60, on right: 57 58 60
-LOGICAL_AND_EXPR (93)
-    on left: 61 62, on right: 59 60 62
-INCLUSIVE_OR_EXPR (94)
-    on left: 63 64, on right: 61 62 64
-EXCLUSIVE_OR_EXPR (95)
-    on left: 65 66, on right: 63 64 66
-AND_EXPR (96)
-    on left: 67 68, on right: 65 66 68
-EQUALITY_EXPR (97)
-    on left: 69 70 71, on right: 67 68 70 71
-RELATIONAL_EXPR (98)
-    on left: 72 73 74 75 76, on right: 69 70 71 73 74 75 76
-SHIFT_EXPR (99)
-    on left: 77 78 79, on right: 72 73 74 75 76 78 79
-ADDITIVE_EXPR (100)
-    on left: 80 81 82, on right: 77 78 79 81 82
-MULTIPLICATIVE_EXPR (101)
-    on left: 83 84 85 86, on right: 80 81 82 84 85 86
-EXPR (102)
-    on left: 87 88, on right: 58 88 115 125 141 143 144 145 146 148
-    151
-ASSIGNMENT_EXPR (103)
-    on left: 89 90, on right: 26 87 88 90 126 127
-ASSIGNMENT_OPERATOR (104)
-    on left: 91 92 93 94 95 96 97 98 99 100 101, on right: 90
-UNARY_EXPR (105)
-    on left: 102 103 104 105 106 107, on right: 90 103 104 106 128
-UNARY_OPERATOR (106)
-    on left: 108 109 110 111 112 113, on right: 105
-POSTFIX_EXPR (107)
-    on left: 114 115 116 117 118 119 120 121, on right: 102 116 117
-    118 119 120 121
-PRIMARY_EXPR (108)
-    on left: 122 123 124 125, on right: 114 115
-ARGUMENT_EXPR_LIST (109)
-    on left: 126 127, on right: 116 127
-CAST_EXPR (110)
-    on left: 128 129, on right: 83 84 85 86 105 129
-TYPE_NAME (111)
-    on left: 130 131, on right: 107 129
-STATEMENT (112)
-    on left: 132 133 134 135 136 137, on right: 22 23 138 139 140 143
-    144 145 146 147 148
-LABELED_STATEMENT (113)
-    on left: 138 139 140, on right: 132
-EXPR_STATEMENT (114)
-    on left: 141 142, on right: 134 147 148
-SELECTION_STATEMENT (115)
-    on left: 143 144 145, on right: 135
-ITERATION_STATEMENT (116)
-    on left: 146 147 148, on right: 136
-JUMP_STATEMENT (117)
-    on left: 149 150 151, on right: 137
-TYPE_SPECIFIER (118)
-    on left: 152 153 154 155 156 157 158, on right: 14 15 165 166
-STRUCT_SPECIFIER (119)
-    on left: 159 160 161, on right: 157
-STRUCT_DECLARATION_LIST (120)
-    on left: 162 163, on right: 159 160 163
-STRUCT_DECLARATION (121)
-    on left: 164, on right: 162 163
-SPECIFIER_QUALIFIER_LIST (122)
-    on left: 165 166, on right: 130 131 164 165
-STRUCT_DECLARATOR_LIST (123)
-    on left: 167 168, on right: 164
-STRUCT_DECLARATOR (124)
-    on left: 169 170 171, on right: 167 168
-ENUM_SPECIFIER (125)
-    on left: 172 173 174, on right: 158
-ENUMERATOR_LIST (126)
-    on left: 175 176, on right: 172 173 176
-ENUMERATOR (127)
-    on left: 177 178, on right: 175 176
+    $accept (70)
+        on left: 0
+    ROOT (71)
+        on left: 1
+        on right: 0
+    TRANSLATION_UNIT <trans_unit> (72)
+        on left: 2 3
+        on right: 1 2
+    EXTERNAL_DECLARATION <ext_decl> (73)
+        on left: 4 5
+        on right: 2 3
+    FUNCTION_DEFINITION <func_def> (74)
+        on left: 6 7 8 9
+        on right: 4
+    DECLARATION <decl> (75)
+        on left: 10 11
+        on right: 5 16 17
+    DECLARATION_SPECIFIER <decl_spec> (76)
+        on left: 12 13 14 15
+        on right: 6 7 10 11 12 14 41 42 43
+    DECLARATION_LIST <decl_list> (77)
+        on left: 16 17
+        on right: 6 8 17 18 19
+    COMPOUND_STATEMENT <comp_state> (78)
+        on left: 18 19 20 21
+        on right: 6 7 8 9 133
+    STATEMENT_LIST <state_list> (79)
+        on left: 22 23
+        on right: 18 20 23
+    INIT_DECLARATOR <init_declr> (80)
+        on left: 24 25
+        on right: 10
+    INITIALIZER <init> (81)
+        on left: 26 27
+        on right: 25 28 29
+    INITIALIZER_LIST <init_list> (82)
+        on left: 28 29
+        on right: 27 29
+    DECLARATOR <declr> (83)
+        on left: 30 31
+        on right: 6 7 8 9 24 25 33 41 169 170
+    DIRECT_DECLARATOR <dir_declr> (84)
+        on left: 32 33 34 35 36
+        on right: 30 31 34 35 36
+    POINTER <ptr> (85)
+        on left: 37 38
+        on right: 30 37 45 46
+    PARAMETER_LIST <param_list> (86)
+        on left: 39 40
+        on right: 35 40 53 55
+    PARAMETER_DECLARATION <param_decl> (87)
+        on left: 41 42 43
+        on right: 39 40
+    CONSTANT_EXPR <const_expr> (88)
+        on left: 44
+        on right: 49 51 139 170 171 178
+    ABSTRACT_DECLARATOR <abs_declr> (89)
+        on left: 45 46 47
+        on right: 42 48 130
+    DIRECT_ABSTRACT_DECLARATOR <dir_abs_declr> (90)
+        on left: 48 49 50 51 52 53 54 55 56
+        on right: 46 47 49 50 53 54
+    CONDITIONAL_EXPR <cond_expr> (91)
+        on left: 57 58
+        on right: 44 58 89
+    LOGICAL_OR_EXPR <log_or_expr> (92)
+        on left: 59 60
+        on right: 57 58 60
+    LOGICAL_AND_EXPR <log_and_expr> (93)
+        on left: 61 62
+        on right: 59 60 62
+    INCLUSIVE_OR_EXPR <incl_or_expr> (94)
+        on left: 63 64
+        on right: 61 62 64
+    EXCLUSIVE_OR_EXPR <excl_or_expr> (95)
+        on left: 65 66
+        on right: 63 64 66
+    AND_EXPR <and_expr> (96)
+        on left: 67 68
+        on right: 65 66 68
+    EQUALITY_EXPR <equal_expr> (97)
+        on left: 69 70 71
+        on right: 67 68 70 71
+    RELATIONAL_EXPR <rel_expr> (98)
+        on left: 72 73 74 75 76
+        on right: 69 70 71 73 74 75 76
+    SHIFT_EXPR <shift_expr> (99)
+        on left: 77 78 79
+        on right: 72 73 74 75 76 78 79
+    ADDITIVE_EXPR <add_expr> (100)
+        on left: 80 81 82
+        on right: 77 78 79 81 82
+    MULTIPLICATIVE_EXPR <mul_expr> (101)
+        on left: 83 84 85 86
+        on right: 80 81 82 84 85 86
+    EXPR <expr> (102)
+        on left: 87 88
+        on right: 58 88 115 125 141 143 144 145 146 148 151
+    ASSIGNMENT_EXPR <ass_expr> (103)
+        on left: 89 90
+        on right: 26 87 88 90 126 127
+    ASSIGNMENT_OPERATOR <ass_op> (104)
+        on left: 91 92 93 94 95 96 97 98 99 100 101
+        on right: 90
+    UNARY_EXPR <un_expr> (105)
+        on left: 102 103 104 105 106 107
+        on right: 90 103 104 106 128
+    UNARY_OPERATOR <un_op> (106)
+        on left: 108 109 110 111 112 113
+        on right: 105
+    POSTFIX_EXPR <post_expr> (107)
+        on left: 114 115 116 117 118 119 120 121
+        on right: 102 116 117 118 119 120 121
+    PRIMARY_EXPR <pri_expr> (108)
+        on left: 122 123 124 125
+        on right: 114 115
+    ARGUMENT_EXPR_LIST <arg_expr_list> (109)
+        on left: 126 127
+        on right: 116 127
+    CAST_EXPR <cast_expr> (110)
+        on left: 128 129
+        on right: 83 84 85 86 105 129
+    TYPE_NAME <type_name> (111)
+        on left: 130 131
+        on right: 107 129
+    STATEMENT <state> (112)
+        on left: 132 133 134 135 136 137
+        on right: 22 23 138 139 140 143 144 145 146 147 148
+    LABELED_STATEMENT <label_state> (113)
+        on left: 138 139 140
+        on right: 132
+    EXPR_STATEMENT <expr_state> (114)
+        on left: 141 142
+        on right: 134 147 148
+    SELECTION_STATEMENT <select_state> (115)
+        on left: 143 144 145
+        on right: 135
+    ITERATION_STATEMENT <it_state> (116)
+        on left: 146 147 148
+        on right: 136
+    JUMP_STATEMENT <jump_state> (117)
+        on left: 149 150 151
+        on right: 137
+    TYPE_SPECIFIER <type_spec> (118)
+        on left: 152 153 154 155 156 157 158
+        on right: 14 15 165 166
+    STRUCT_SPECIFIER <struct_spec> (119)
+        on left: 159 160 161
+        on right: 157
+    STRUCT_DECLARATION_LIST <struct_decl_list> (120)
+        on left: 162 163
+        on right: 159 160 163
+    STRUCT_DECLARATION <struct_decl> (121)
+        on left: 164
+        on right: 162 163
+    SPECIFIER_QUALIFIER_LIST <spec_qual_list> (122)
+        on left: 165 166
+        on right: 130 131 164 165
+    STRUCT_DECLARATOR_LIST <struct_declr_list> (123)
+        on left: 167 168
+        on right: 164
+    STRUCT_DECLARATOR <struct_declr> (124)
+        on left: 169 170 171
+        on right: 167 168
+    ENUM_SPECIFIER <enum_spec> (125)
+        on left: 172 173 174
+        on right: 158
+    ENUMERATOR_LIST <enum_list> (126)
+        on left: 175 176
+        on right: 172 173 176
+    ENUMERATOR <enume> (127)
+        on left: 177 178
+        on right: 175 176
 
 
 State 0

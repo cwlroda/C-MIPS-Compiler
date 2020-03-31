@@ -1,9 +1,9 @@
-int g()
+int g(int x, int y)
 {
-    return 20;
+    return x+y;
 }
 
 int f()
 {
-    return g();
+    return g(10,20);
 }

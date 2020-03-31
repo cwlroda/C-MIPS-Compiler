@@ -19,7 +19,13 @@ g:
 	sw		$31,4($sp)
 	sw		$fp,0($sp)
 	move	$fp,$sp
-	li		$2,20
+	sw		$4,8($fp)
+	sw		$5,12($fp)
+	lw		$2,8($fp)
+	nop
+	lw		$3,12($fp)
+	nop
+	addu	$2,$2,$3
 	b		$gEND
 	nop
 $gEND:
@@ -30,6 +36,9 @@ $gEND:
 	addiu	$sp,$sp,8
 	j		$31
 	nop
+
+.end
+
 
 
 	.text
@@ -44,5 +53,23 @@ f:
 	sw		$31,4($sp)
 	sw		$fp,0($sp)
 	move	$fp,$sp
+	move	$4,$2
+	move	$5,$2
 	jal	g
 	nop
+	move	$2,$16
+	nop
+	b		$fEND
+	nop
+$fEND:
+	move	$16,$2
+	move	$sp,$fp
+	lw		$31,4($sp)
+	lw		$fp,0($sp)
+	addiu	$sp,$sp,8
+	j		$31
+	nop
+
+.end
+
+

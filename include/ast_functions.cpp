@@ -902,7 +902,9 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     out << "\tlw\t\t$fp,"<< context.NeededMem - 8 <<"($sp)" << std::endl;
     out << "\taddiu\t$sp,$sp," << context.NeededMem << std::endl;
     out << "\tj\t\t$31" << std::endl;
-    out << "\tnop" << std::endl;
+    out << "\tnop" << std::endl << std::endl;
+
+    out << ".end" << std::endl << std::endl;
 
     context.frame_offset_counter = 8;
     context.stack_offset = 0;
@@ -910,7 +912,6 @@ inline void FunctionDefinition::print_asm(std::ofstream& out){
     while(context.LocalVar.size()>0){
         context.LocalVar.erase(context.LocalVar.begin());
     }
-    
 }
 
 inline void DeclarationList::print_asm(std::ofstream& out){
@@ -966,7 +967,10 @@ inline void Declaration::print_asm(std::ofstream& out){
             }
 
             else{
-                if(!context.solving_out.empty() && context.solving_out_constant.back() == ""){
+                if(context.is_func){
+                    out << "\tmove\t\t$2,$16" << std::endl;
+                }
+                else if(!context.solving_out.empty() && context.solving_out_constant.back() == ""){
                     if(!context.solving_out.back()->is_parameter){
                         out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     }
@@ -981,6 +985,7 @@ inline void Declaration::print_asm(std::ofstream& out){
                     out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
                     context.solving_out_constant.pop_back();
                 }
+
                 out << "\tsw\t\t$2," << local_var->frame_offset << "($fp)" << std::endl;
             }
 
@@ -1145,7 +1150,8 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         context.is_cond = false;
 
         if(context.function_call > 0 ){
-            if(context.solving_out_constant.back() == ""){
+            if(context.is_func){}
+            else if(context.solving_out_constant.back() == ""){
                 if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
@@ -1174,12 +1180,10 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             ass_expr->print_asm(out);
         }
 
-        if(context.return_are_u_single == true){
-            if(context.is_func){
-                out << "\tlw\t\t$2,$16" << std::endl;
-            }
+        if(context.is_func){}
 
-            else if(context.solving_out_constant.back() == ""){
+        else if(context.return_are_u_single == true){
+            if(context.solving_out_constant.back() == ""){
                 out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 context.solving_out.pop_back();
                 context.solving_out_constant.pop_back();
@@ -1191,7 +1195,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
             }
         }
         //context.ExprHelper(out);
-        if(context.function_call != 0 && !context.sizeof_type){
+        if(context.function_call != 0 && !context.sizeof_type && !context.is_func){
             if(context.is_a_parameter){
                 out << "\tlw\t\t$2," << context.parameteroffset <<"($fp)" << std::endl;
                 out << "\tnop" << std::endl;
@@ -1349,6 +1353,7 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
         }
         out << "\tjal\t"<< temp << std::endl;
         out << "\tnop" << std::endl;
+        out << "\tmove\t$2,$16" << std::endl;
         context.function_name = "";
     }
     else if(post_expr != NULL){
@@ -1911,6 +1916,19 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             context.is_solving = false;
         }
 
+        if(context.return_are_u_single){
+            if(context.solving_out_constant.back() == ""){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+            }
+
+            else{
+                out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
+                context.solving_out_constant.pop_back();
+            }
+        }
+
         std::string if_return = "$L" + std::to_string(context.gen_label);
         std::string else_label = if_return;
 
@@ -2001,6 +2019,19 @@ inline void IterationStatement::print_asm(std::ofstream& out){
             context.is_solving = true;
             expr -> print_asm(out);
             context.is_solving = false;
+        }
+
+        if(context.return_are_u_single){
+            if(context.solving_out_constant.back() == ""){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+            }
+
+            else{
+                out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
+                context.solving_out_constant.pop_back();
+            }
         }
         
         if(firststepchecker == true){
@@ -2111,7 +2142,10 @@ inline void JumpStatement::print_asm(std::ofstream& out){
             context.is_solving = false;
 
             if(context.return_are_u_single && context.return_var){
-                if(!context.solving_out.back()->is_parameter){
+                if(context.is_func){
+
+                }
+                else if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
                 else{
