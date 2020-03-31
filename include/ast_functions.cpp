@@ -990,6 +990,8 @@ inline void Declaration::print_asm(std::ofstream& out){
         context.empty_var = false;
         context.is_solving = false;
         context.is_firststep = false;
+
+        context.solving_out.clear();
     }
 }
 
@@ -1790,7 +1792,6 @@ inline void Statement::print_asm(std::ofstream& out){
 }
 
 inline void LabeledStatement::print_asm(std::ofstream& out){
-    context.nested_switch.back()++;
     if(const_expr!= NULL){
         //THIS IS CASE STATEMENT
         out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() << "cond:" << std::endl;
@@ -1825,78 +1826,53 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
         context.is_firststep = false;
         context.is_solving = false;
     }
-    if(SWITCH != NULL){
-        context.nested_switch.push_back(0);
-        context.defaultstatemap.insert(std::pair<int, Statement*>(context.nested_switch.size(),NULL));
-        expr->print_asm(out);
-        if_state->print_asm(out);
-        if(context.defaultstatemap[context.nested_switch.size()]!= NULL){
-            out << "$DEFAULT" << context.nested_switch.size() << ":" << std::endl;
-            context.defaultstatemap[context.nested_switch.size()]->print_asm(out);
-            out << "\tb\t\t$S" << context.nested_switch.size() << "END" << std::endl;
-        }
-        out << "$S" << context.nested_switch.size() << "END:" << std::endl;
-        context.nested_switch.pop_back();
-        
+
+    std::string if_return = "$L" + std::to_string(context.gen_label);
+    std::string else_label = if_return;
+
+    if(ELSE != NULL){
+        context.gen_label++;
+        if_return = "$L" + std::to_string(context.gen_label);
     }
-    if(IF != NULL){
-        std::string if_return = "$L" + std::to_string(context.gen_label);
-        std::string else_label = if_return;
 
-        if(ELSE != NULL){
-            context.gen_label++;
-            if_return = "$L" + std::to_string(context.gen_label);
-            context.gen_label++;
-        }
+    context.gen_label++;
 
-        if_state->print_asm(out);
-        if(firststepchecker == true){
-            context.is_firststep = false;
-            firststepchecker = false;
-        }
-        
-        if(ELSE != NULL){
-            out << "\tb\t\t" << if_return << std::endl;
-            out << "\tnop" << std::endl;
-        }
-        
+    //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
+    out << "\tbeq\t\t$2,$0," << else_label << std::endl;
+    out << "\tnop" << std::endl;
+    bool firststepchecker = false;
+    if(context.is_firststep == false){
+        context.is_firststep = true;
+        firststepchecker = true;
+    }
 
-        //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
-        out << "\tbeq\t\t$2,$0," << else_label << std::endl;
+    if_state->print_asm(out);
+    if(firststepchecker == true){
+        context.is_firststep = false;
+        firststepchecker = false;
+    }
+    
+    if(ELSE != NULL){
+        out << "\tb\t\t" << if_return << std::endl;
         out << "\tnop" << std::endl;
+    }
+
+    if(else_state != NULL){
+        out << else_label << ":" << std::endl;
         bool firststepchecker = false;
         if(context.is_firststep == false){
             context.is_firststep = true;
             firststepchecker = true;
         }
-
-        if_state->print_asm(out);
+        context.gen_label++;
+        else_state->print_asm(out);
         if(firststepchecker == true){
             context.is_firststep = false;
             firststepchecker = false;
         }
-        
-        out << "\tb\t\t" << if_return << std::endl;
-        out << "\tnop" << std::endl;
-
-        if(else_state != NULL){
-            out << else_label << ":" << std::endl;
-            bool firststepchecker = false;
-            if(context.is_firststep == false){
-                context.is_firststep = true;
-                firststepchecker = true;
-            }
-            context.gen_label++;
-            else_state->print_asm(out);
-            if(firststepchecker == true){
-                context.is_firststep = false;
-                firststepchecker = false;
-            }
-        }
-
-        out << if_return << ":" << std::endl;
     }
     
+    out << if_return << ":" << std::endl;
 }
 
 inline void IterationStatement::print_asm(std::ofstream& out){
@@ -2035,7 +2011,6 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl;
         context.break_number.pop_back();
     }
-    
 }
 
 inline void JumpStatement::print_asm(std::ofstream& out){
