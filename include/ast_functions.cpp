@@ -1137,7 +1137,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         cond_expr->print_asm(out);
         context.is_cond = false;
 
-        if((context.function_call > 0)){
+        if(context.function_call > 0 || context.return_are_u_single){
             if(context.solving_out_constant.back() == ""){
                 if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
@@ -1719,19 +1719,19 @@ inline void MultiplicativeExpr::print_asm(std::ofstream& out){
     if(mul_expr != NULL){
         context.return_are_u_single = false; 
         if(*op == "*"){
-            cast_expr -> print_asm(out);
-            context.ExprHelper(out);
             mul_expr -> print_asm(out);
+            context.ExprHelper(out);
+            cast_expr -> print_asm(out);
             context.ExprHelperRHS(out);
-            out << "\tmul\t$2,$2,$3" << std::endl;
+            out << "\tmult\t$2,$3" << std::endl;
             out << "\tmflo\t$2" << std::endl;
         }
         if(*op == "/"){
             int l2 = context.gen_label;
             context.gen_label++;
-            cast_expr -> print_asm(out);
-            context.ExprHelper(out);
             mul_expr -> print_asm(out);
+            context.ExprHelper(out);
+            cast_expr -> print_asm(out);
             context.ExprHelperRHS(out);
             out << "\tbeq\t$3,$0,$L" << l2 << std::endl;
             out << "\tdiv\t$0,$2,$3" << std::endl;
