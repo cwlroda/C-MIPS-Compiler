@@ -1142,9 +1142,8 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         }
 
         cond_expr->print_asm(out);
-        context.is_cond = false;
 
-        if(context.function_call > 0 ){
+        if(context.function_call > 0 || (context.return_are_u_single && context.is_cond)){
             if(context.solving_out_constant.back() == ""){
                 if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
@@ -1161,6 +1160,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
                 context.solving_out_constant.pop_back();
             }
         }
+        context.is_cond = false;
     }
 
     else{
@@ -2110,7 +2110,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
             context.is_firststep = false;
             context.is_solving = false;
 
-            if(context.return_are_u_single && context.return_var){
+            /* if(context.return_are_u_single && context.return_var){
                 if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
@@ -2131,7 +2131,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
                 else{
                     out << "\tmove\t\t$2,$0" << std::endl;
                 }
-            }
+            } */
         }
 
         context.return_are_u_single = true;
