@@ -1137,7 +1137,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         cond_expr->print_asm(out);
         context.is_cond = false;
 
-        if(context.function_call > 0 || context.return_are_u_single){
+        if((context.function_call > 0)){
             if(context.solving_out_constant.back() == ""){
                 if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
@@ -1719,19 +1719,19 @@ inline void MultiplicativeExpr::print_asm(std::ofstream& out){
     if(mul_expr != NULL){
         context.return_are_u_single = false; 
         if(*op == "*"){
-            mul_expr -> print_asm(out);
-            context.ExprHelper(out);
             cast_expr -> print_asm(out);
+            context.ExprHelper(out);
+            mul_expr -> print_asm(out);
             context.ExprHelperRHS(out);
-            out << "\tmult\t$2,$3" << std::endl;
+            out << "\tmul\t$2,$2,$3" << std::endl;
             out << "\tmflo\t$2" << std::endl;
         }
         if(*op == "/"){
             int l2 = context.gen_label;
             context.gen_label++;
-            mul_expr -> print_asm(out);
-            context.ExprHelper(out);
             cast_expr -> print_asm(out);
+            context.ExprHelper(out);
+            mul_expr -> print_asm(out);
             context.ExprHelperRHS(out);
             out << "\tbeq\t$3,$0,$L" << l2 << std::endl;
             out << "\tdiv\t$0,$2,$3" << std::endl;
@@ -1868,13 +1868,11 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             }else{
                 out << "\tmove\t$" << 8 << ",$2" << std::endl;
             }
-            context.saved_register_counter = context.saved_register_counter + 2;
             context.return_are_u_single = true;
             context.is_switch = false;
         }
         context.nested_switch.push_back(0);
         context.defaultstatemap.insert(std::pair<int, Statement*>(context.nested_switch.size(),NULL));
-        context.saved_register_counter - 2;
         context.is_solving=true;
         context.is_firststep = true;
         context.return_are_u_single = true;
@@ -2105,7 +2103,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
             context.is_firststep = false;
             context.is_solving = false;
 
-            /* if(context.return_are_u_single && context.return_var){
+            if(context.return_are_u_single && context.return_var){
                 if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                 }
@@ -2126,7 +2124,7 @@ inline void JumpStatement::print_asm(std::ofstream& out){
                 else{
                     out << "\tmove\t\t$2,$0" << std::endl;
                 }
-            } */
+            }
         }
 
         context.return_are_u_single = true;
