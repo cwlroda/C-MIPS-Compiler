@@ -1,4 +1,10 @@
-int f(int x, int y)
+int g(int x)
 {
-    return x||y;
+    switch(x)
+    {
+        case 1:
+            return 10;
+        case 2:
+            return 11;
+    }
 }
