@@ -1,5 +1,5 @@
 int f()
 {
     int x;
-    return sizeof(x);
+    return sizeof(int);
 }
