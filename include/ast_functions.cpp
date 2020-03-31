@@ -2305,7 +2305,7 @@ inline void PrimaryExpr::checking_enum(){
 
 inline void EnumSpecifier::print_asm(std::ofstream& out){
     if(iden != NULL){
-        *context.enum_name = *iden;
+        context.enum_name = new std::string(*iden);
         context.Enums_it = context.Enums.find(*iden);
         if(context.Enums_it == context.Enums.end()){
             context.enumgen = new WithinEnum;
@@ -2315,6 +2315,13 @@ inline void EnumSpecifier::print_asm(std::ofstream& out){
     }
     else{
         context.enum_name = new std::string("noname");
+        context.Enums_it = context.Enums.find("noname");
+        if(context.Enums_it == context.Enums.end()){
+            context.enum_name = new std::string("noname");
+            context.enumgen = new WithinEnum;
+            context.Enums.insert(std::pair<std::string,WithinEnum>("noname", *context.enumgen));
+        }
+        
     }
 
     // context.is_solving = true;
