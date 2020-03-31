@@ -21,11 +21,11 @@ f:
 	move	$fp,$sp
 	sw		$4,8($fp)
 	sw		$5,12($fp)
-	lw		$2,12($fp)
+	lw		$2,8($fp)
 	nop
-	lw		$3,8($fp)
+	lw		$3,12($fp)
 	nop
-	mul	$2,$2,$3
+	mult	$2,$3
 	mflo	$2
 	b		$fEND
 	nop

@@ -38,24 +38,24 @@ $L1:
 	nop
 	lw		$3,8($fp)
 	nop
-	mul	$2,$2,$3
+	mult	$2,$3
 	mflo	$2
 	sw		$2,12($fp)
 	lw		$2,12($fp)
 	nop
 	lw		$3,12($fp)
 	nop
-	slt	$2,$2,$3
+	slt	$2,$3,$2
 	xori	$2,$2,0x1
 	andi	$2,$2,0x00ff
 	beq		$2,$0,$L3
 	nop
-	sw		$2,4($fp)
+	sw		$2,8($fp)
 	b		$L4
 	nop
 $L3:
 	lw		$2,8($fp)
-	sw		$2,12($fp)
+	sw		$2,16($fp)
 $L4:
 $L2CONT:
 	nop
@@ -77,7 +77,7 @@ $L2END:
 	nop
 	lw		$3,8($fp)
 	nop
-	mul	$2,$2,$3
+	mult	$2,$3
 	mflo	$2
 	lw		$2,8($fp)
 	nop
@@ -87,14 +87,14 @@ $L2END:
 	andi	$2,$2,0x00ff
 	beq		$2,$0,$L6
 	nop
-	lw		$2,16($fp)
+	lw		$2,20($fp)
 	nop
 	b		$bsqrtEND
 	nop
 	b		$L7
 	nop
 $L6:
-	lw		$2,8($fp)
+	lw		$2,12($fp)
 	nop
 	b		$bsqrtEND
 	nop

@@ -23,7 +23,7 @@ fib:
 	lw		$2,8($fp)
 	nop
 	li		$3,0
-	slt	$2,$2,$3
+	slt	$2,$3,$2
 	xori	$2,$2,0x1
 	andi	$2,$2,0x00ff
 	beq		$2,$0,$L1

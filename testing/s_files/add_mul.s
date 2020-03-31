@@ -24,11 +24,11 @@ f:
 	sw		$6,16($fp)
 	lw		$2,8($fp)
 	nop
-	lw		$3,16($fp)
-	nop
-	mul	$2,$2,$3
-	mflo	$2
 	lw		$3,12($fp)
+	nop
+	mult	$2,$3
+	mflo	$2
+	lw		$3,16($fp)
 	nop
 	addu	$2,$2,$3
 	b		$fEND

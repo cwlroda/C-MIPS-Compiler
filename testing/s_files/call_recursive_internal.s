@@ -36,7 +36,7 @@ $L1:
 	nop
 	li		$3,1
 	subu	$2,$2,$3
-	lw		$2,8($fp)
+	lw		$2,12($fp)
 	nop
 	move	$4,$2
 	jal	f

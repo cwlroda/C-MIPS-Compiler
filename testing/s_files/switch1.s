@@ -20,7 +20,7 @@ g:
 	sw		$fp,0($sp)
 	move	$fp,$sp
 	sw		$4,8($fp)
-	lw		$8,4
+	lw		$8,8($fp)
 	nop
 $S1C1cond:
 	li		$9,1

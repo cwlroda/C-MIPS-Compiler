@@ -26,7 +26,7 @@ f:
 	nop
 	lw		$3,36($fp)
 	nop
-	slt	$2,$2,$3
+	slt	$2,$3,$2
 	xori	$2,$2,0x1
 	andi	$2,$2,0x00ff
 	sw		$2,8($fp)

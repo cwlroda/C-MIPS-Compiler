@@ -23,7 +23,7 @@ g:
 	sw		$0,8($fp)
 	li		$2,0
 	sw		$2,8($fp)
-	lw		$8,4
+	lw		$8,8($fp)
 	nop
 $S1C1cond:
 	li		$9,0

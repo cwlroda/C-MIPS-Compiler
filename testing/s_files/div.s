@@ -21,9 +21,9 @@ f:
 	move	$fp,$sp
 	sw		$4,8($fp)
 	sw		$5,12($fp)
-	lw		$2,12($fp)
+	lw		$2,8($fp)
 	nop
-	lw		$3,8($fp)
+	lw		$3,12($fp)
 	nop
 	beq	$3,$0,$L1
 	div	$0,$2,$3

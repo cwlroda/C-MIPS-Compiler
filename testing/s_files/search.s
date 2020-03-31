@@ -34,7 +34,7 @@ $L1:
 	andi	$2,$2,0x00ff
 	beq		$2,$0,$L3
 	nop
-	lw		$2,8($fp)
+	lw		$2,12($fp)
 	nop
 	b		$searchEND
 	nop
@@ -43,7 +43,7 @@ $L3:
 	nop
 	li		$3,1
 	addu	$2,$2,$3
-	sw		$2,4($fp)
+	sw		$2,8($fp)
 $L2CONT:
 	nop
 $L2:

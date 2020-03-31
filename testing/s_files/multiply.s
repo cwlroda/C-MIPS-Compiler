@@ -30,7 +30,7 @@ multiply:
 	andi	$2,$2,0x00ff
 	beq		$2,$0,$L1
 	nop
-	lw		$2,32($fp)
+	lw		$2,36($fp)
 	nop
 	subu	$2,$0,$2
-	sw		$2,4($fp)
+	sw		$2,8($fp)

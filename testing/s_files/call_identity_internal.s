@@ -20,7 +20,7 @@ g:
 	sw		$fp,0($sp)
 	move	$fp,$sp
 	sw		$4,8($fp)
-	lw		$2,8($fp)
+	lw		$2,12($fp)
 	nop
 	b		$gEND
 	nop

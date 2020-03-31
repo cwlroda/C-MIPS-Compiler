@@ -24,8 +24,8 @@ f:
 	nop
 	li		$3,1
 	addu	$2,$2,$3
-	sw		$2,4($fp)
-	lw		$2,8($fp)
+	sw		$2,8($fp)
+	lw		$2,12($fp)
 	nop
 	b		$fEND
 	nop
