@@ -1144,7 +1144,7 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         cond_expr->print_asm(out);
         context.is_cond = false;
 
-        if(context.function_call > 0 || context.return_are_u_single){
+        if(context.function_call > 0 ){
             if(context.solving_out_constant.back() == ""){
                 if(!context.solving_out.back()->is_parameter){
                     out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
