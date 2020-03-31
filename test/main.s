@@ -32,8 +32,7 @@ $S1C1cond:
 	bne		$8,$9,$S1C2cond
 	nop
 $S1C1body:
-	li		$2,0
-	sw		$2,20($fp)
+	sw		$2,8($fp)
 	b		$S1END
 	nop
 $S1C2cond:
@@ -45,7 +44,7 @@ $S1C2body:
 	nop
 	li		$3,1
 	addu	$2,$2,$3
-	sw		$2,20($fp)
+	sw		$2,8($fp)
 	b		$S1END
 	nop
 $S1C3cond:
@@ -67,8 +66,7 @@ $S2C1cond:
 	bne		$10,$11,$S2C2cond
 	nop
 $S2C1body:
-	li		$2,5
-	sw		$2,20($fp)
+	sw		$2,8($fp)
 	b		$S2END
 	nop
 $S2C2cond:
@@ -76,8 +74,7 @@ $S2C2cond:
 	bne		$10,$11,$S2C3cond
 	nop
 $S2C2body:
-	li		$2,7
-	sw		$2,20($fp)
+	sw		$2,8($fp)
 	b		$S2END
 	nop
 $S2END:
@@ -86,13 +83,12 @@ $S2END:
 $S1C4cond:
 	nop
 $DEFAULT1:
-	li		$2,777
-	sw		$2,20($fp)
+	sw		$2,8($fp)
 	b		$S1END
 	nop
 $S1END:
-	move	$16,$2
 $mainEND:
+	move	$16,$2
 	move	$sp,$fp
 	lw		$31,12($sp)
 	lw		$fp,8($sp)
