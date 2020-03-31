@@ -1051,12 +1051,7 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         for(fn_p_it=fn_parameter_list.begin();fn_p_it!=fn_parameter_list.end();fn_p_it++){
             Bindings* local_var = new Bindings;
             local_var->id=fn_p_it->first;
-            if(context.NeededMem == 0){
-                local_var->frame_offset=fn_p_it->second*4+4;
-            }
-            else{
-                local_var->frame_offset=fn_p_it->second*4;
-            }
+            local_var->frame_offset=fn_p_it->second*4;
             local_var->is_parameter=true;
             std::pair<std::string, Bindings*> var (fn_p_it->first,local_var);
             context.LocalVar.insert(var);
@@ -1825,11 +1820,11 @@ inline void LabeledStatement::print_asm(std::ofstream& out){
         const_expr->print_asm(out);
         context.is_solving = false;
         if(context.return_are_u_single == true){
-            out << "\tli\t\t$" << context.saved_register_counter-1 << "," << context.solving_out_constant.back() << std::endl;
+            out << "\tli\t\t$" << 9 << "," << context.solving_out_constant.back() << std::endl;
             context.solving_out_constant.pop_back();
         }
         context.return_are_u_single = true;
-        out << "\tbne\t\t$" << context.saved_register_counter -2 << ",$" << context.saved_register_counter-1 << ",$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond" << std::endl;
+        out << "\tbne\t\t$" << 8 << ",$" << 9 << ",$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond" << std::endl;
         out << "\tnop" << std::endl;
         out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() << "body:" << std::endl;
         state->print_asm(out);
@@ -1861,17 +1856,17 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             context.is_solving = false;
             if(context.return_are_u_single == true){
                 if(context.solving_out_constant.back()!=""){
-                    out << "\tli\t\t$"  << context.saved_register_counter << "," << context.solving_out_constant.back() << std::endl;
+                    out << "\tli\t\t$"  << 8 << "," << context.solving_out_constant.back() << std::endl;
                     context.solving_out_constant.pop_back();
                 }
                 else{
-                    out << "\tlw\t\t$" << 8 << "," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                    out << "\tlw\t\t$" << 8 << "," << context.solving_out.back()->frame_offset << std::endl;
                     out << "\tnop" << std::endl;
                     context.solving_out.pop_back();
                     context.solving_out_constant.pop_back();
                 }
             }else{
-                out << "\tmove\t$" << context.saved_register_counter << ",$2" << std::endl;
+                out << "\tmove\t$" << 8 << ",$2" << std::endl;
             }
             context.saved_register_counter = context.saved_register_counter + 2;
             context.return_are_u_single = true;
@@ -1897,7 +1892,6 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             out << "\tb\t\t$S" << context.nested_switch.size() << "END" << std::endl;
             out << "\tnop" << std::endl;
         }
-        out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() +1 << "cond:"<< std::endl;
         out << "$S" << context.nested_switch.size() << "END:" << std::endl;
         context.nested_switch.pop_back();
     }
