@@ -9,38 +9,42 @@
 
 	.text
 	.align	2
-	.globl	f
+	.globl	g
 	.set	nomips16
 	.set	nomicromips
-	.ent	f
-	.type	f, @function
-f:
+	.ent	g
+	.type	g, @function
+g:
 	addiu	$sp,$sp,-8
 	sw		$31,4($sp)
 	sw		$fp,0($sp)
 	move	$fp,$sp
 	sw		$4,8($fp)
-	sw		$5,12($fp)
-	lw		$2,8($fp)
+	lw		$8,8($fp)
 	nop
-	bne	$2,$0,$L1
+$S1C1cond:
+	li		$9,1
+	bne		$8,$9,$S1C2cond
 	nop
-	lw		$3,12($fp)
+$S1C1body:
+	li		$2,10
+	b		$gEND
 	nop
-	beq	$2,$0,$L2
+	b		$S1END
 	nop
-
-$L1:
-	li		$2,1
-	b	$L3
-nop
-
-$L2:
-	move	$2,$0
-$L3:
-	b		$fEND
+$S1C2cond:
+	li		$9,2
+	bne		$8,$9,$S1C3cond
 	nop
-$fEND:
+$S1C2body:
+	li		$2,11
+	b		$gEND
+	nop
+	b		$S1END
+	nop
+$S1C3cond:
+$S1END:
+$gEND:
 	move	$16,$2
 	move	$sp,$fp
 	lw		$31,4($sp)
