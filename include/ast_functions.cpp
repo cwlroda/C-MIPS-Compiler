@@ -1051,9 +1051,16 @@ inline void DirectDeclarator::print_asm(std::ofstream& out){
         for(fn_p_it=fn_parameter_list.begin();fn_p_it!=fn_parameter_list.end();fn_p_it++){
             Bindings* local_var = new Bindings;
             local_var->id=fn_p_it->first;
-            local_var->frame_offset=fn_p_it->second*4;
+            if(context.NeededMem == 0){
+                local_var->frame_offset=fn_p_it->second*4+4;
+            }
+            else{
+                local_var->frame_offset=fn_p_it->second*4;
+            }
+            
             local_var->is_parameter=true;
             std::pair<std::string, Bindings*> var (fn_p_it->first,local_var);
+            
             context.LocalVar.insert(var);
         }
         context.is_LocalVar = false;
@@ -1860,7 +1867,7 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
                     context.solving_out_constant.pop_back();
                 }
                 else{
-                    out << "\tlw\t\t$" << 8 << "," << context.solving_out.back()->frame_offset << std::endl;
+                    out << "\tlw\t\t$" << 8 << "," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
                     out << "\tnop" << std::endl;
                     context.solving_out.pop_back();
                     context.solving_out_constant.pop_back();
