@@ -138,6 +138,7 @@ struct Context{
     std::string functionname;
     int parameteroffset = 0;
 
+    bool is_func = false; // check if need the return value of function
     bool is_a_parameter = false;
     
     bool sizeof_type = false; // checks if sizeof contains a type
