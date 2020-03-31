@@ -855,7 +855,7 @@ inline int FunctionDefinition::CalcMemoryNeeded(std::vector<int> mv){
         }
     }
     int sizee = ((mv.size()+context.parameterlist)+((mv.size()+context.parameterlist)%2==1))/2;
-    return 8+8*sizee;
+    return 16+8*sizee;
 }
 inline void FunctionDefinition::print_asm(std::ofstream& out){
     context.frame_offset_counter = 8;
@@ -1166,9 +1166,22 @@ inline void AssignmentExpr::print_asm(std::ofstream& out){
         if(ass_expr != NULL){
             ass_expr->print_asm(out);
         }
+
         if(context.return_are_u_single == true){
-            out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
-            context.solving_out_constant.pop_back();
+            if(context.is_func){
+                out << "\tlw\t\t$2,$16" << std::endl;
+            }
+
+            else if(context.solving_out_constant.back() == ""){
+                out << "\tlw\t\t$2," << context.solving_out.back()->frame_offset << "($fp)" << std::endl;
+                context.solving_out.pop_back();
+                context.solving_out_constant.pop_back();
+            }
+
+            else{
+                out << "\tli\t\t$2," << context.solving_out_constant.back() << std::endl;
+                context.solving_out_constant.pop_back();
+            }
         }
         //context.ExprHelper(out);
         if(context.function_call != 0 && !context.sizeof_type){
@@ -1316,6 +1329,7 @@ inline void PostfixExpr::print_asm(std::ofstream& out){
         // context.solving_out.back()->frame_offset += val*4;
     }
     if(post_expr != NULL && pri_expr == NULL && op == NULL && iden == NULL){
+        context.is_func = true;
         context.function_call = 1;
         context.morethanfour = 4;
         context.functionregister = 4;
@@ -1705,9 +1719,9 @@ inline void MultiplicativeExpr::print_asm(std::ofstream& out){
     if(mul_expr != NULL){
         context.return_are_u_single = false; 
         if(*op == "*"){
-            mul_expr -> print_asm(out);
-            context.ExprHelper(out);
             cast_expr -> print_asm(out);
+            context.ExprHelper(out);
+            mul_expr -> print_asm(out);
             context.ExprHelperRHS(out);
             out << "\tmul\t$2,$2,$3" << std::endl;
             out << "\tmflo\t$2" << std::endl;
@@ -1715,9 +1729,9 @@ inline void MultiplicativeExpr::print_asm(std::ofstream& out){
         if(*op == "/"){
             int l2 = context.gen_label;
             context.gen_label++;
-            mul_expr -> print_asm(out);
-            context.ExprHelper(out);
             cast_expr -> print_asm(out);
+            context.ExprHelper(out);
+            mul_expr -> print_asm(out);
             context.ExprHelperRHS(out);
             out << "\tbeq\t$3,$0,$L" << l2 << std::endl;
             out << "\tdiv\t$0,$2,$3" << std::endl;
@@ -1779,6 +1793,7 @@ inline void Statement::print_asm(std::ofstream& out){
         expr_state -> print_asm(out);
         context.is_solving = false;
         context.is_firststep = false;
+        context.return_are_u_single = true;
     }
     if(select_state != NULL){
         context.in_if = true;
