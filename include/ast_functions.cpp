@@ -995,6 +995,9 @@ inline void Declaration::print_asm(std::ofstream& out){
         context.empty_var = false;
         context.is_solving = false;
         context.is_firststep = false;
+
+        context.solving_out.clear();
+        context.solving_out_constant.clear();
     }
 }
 
@@ -1878,27 +1881,16 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
         context.nested_switch.pop_back();
         
     }
-    if(IF != NULL){
+    if(IF!= NULL){
         std::string if_return = "$L" + std::to_string(context.gen_label);
         std::string else_label = if_return;
 
         if(ELSE != NULL){
             context.gen_label++;
             if_return = "$L" + std::to_string(context.gen_label);
-            context.gen_label++;
         }
 
-        if_state->print_asm(out);
-        if(firststepchecker == true){
-            context.is_firststep = false;
-            firststepchecker = false;
-        }
-        
-        if(ELSE != NULL){
-            out << "\tb\t\t" << if_return << std::endl;
-            out << "\tnop" << std::endl;
-        }
-        
+        context.gen_label++;
 
         //out << "\tlw\t\t$3," << context.solving_out->frame_offset << "($fp)" << std::endl;
         out << "\tbeq\t\t$2,$0," << else_label << std::endl;
@@ -1915,8 +1907,10 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
             firststepchecker = false;
         }
         
-        out << "\tb\t\t" << if_return << std::endl;
-        out << "\tnop" << std::endl;
+        if(ELSE != NULL){
+            out << "\tb\t\t" << if_return << std::endl;
+            out << "\tnop" << std::endl;
+        }
 
         if(else_state != NULL){
             out << else_label << ":" << std::endl;
@@ -1932,10 +1926,9 @@ inline void SelectionStatement::print_asm(std::ofstream& out){
                 firststepchecker = false;
             }
         }
-
+        
         out << if_return << ":" << std::endl;
     }
-    
 }
 
 inline void IterationStatement::print_asm(std::ofstream& out){
@@ -2074,7 +2067,6 @@ inline void IterationStatement::print_asm(std::ofstream& out){
         out << "\tnop" << std::endl;
         context.break_number.pop_back();
     }
-    
 }
 
 inline void JumpStatement::print_asm(std::ofstream& out){
