@@ -992,6 +992,7 @@ inline void Declaration::print_asm(std::ofstream& out){
         context.is_firststep = false;
 
         context.solving_out.clear();
+        context.solving_out_constant.clear();
     }
 }
 
@@ -1792,23 +1793,6 @@ inline void Statement::print_asm(std::ofstream& out){
 }
 
 inline void LabeledStatement::print_asm(std::ofstream& out){
-    if(const_expr!= NULL){
-        //THIS IS CASE STATEMENT
-        out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() << "cond:" << std::endl;
-        const_expr->print_asm(out);
-        out << "\tbne\t$2,$3,$S" << context.nested_switch.size() << "C" << context.nested_switch.back()+1 << "cond" << std::endl;
-        out << "\tnop" << std::endl;
-        out << "$S" << context.nested_switch.size() << "C" << context.nested_switch.back() << "body:" << std::endl;
-        state->print_asm(out);
-        out << "\tb\t\t$S" << context.nested_switch.size() << "END" << std::endl; 
-    }
-    else{
-        //THIS IS DEFAULT STATEMENT WHICH WILL BE WITHELD TILL THE END OF THE CASES
-        context.defaultstatemap[context.nested_switch.size()] = state;
-    }
-
-
-
 
 }
 
